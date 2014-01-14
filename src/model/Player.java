@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 
 import javax.swing.ImageIcon;
 
@@ -19,7 +20,7 @@ public class Player {
 						player_exiting_warp_down, 
 						player_exiting_warp_left, 
 						player_exiting_warp_up, 
-						player_exiting_warp_right };
+						player_exiting_warp_right }; 
 						
 	enum PlayerAction { player_action_none, 
 					    player_action_bobomb, 
@@ -36,14 +37,26 @@ public class Player {
 	*/
 	
 	//TODO consider defining own version with no get/set. Made these points because I thought it would read better
-	Point position, previous_position, velocity;
+	Point position, previous_position;
+	float velocity_x, velocity_y;
+	
+	boolean moving_x;//This is to signal that friction should start working (key no longer held down)
+	final int RUN_VELOCITY = 10;
+	final int JUMP_VELOCITY = -15;
+	
+	long previous_time;
+	//TODO obviously these need to be calibrated
+	float gravity = 50f;
+	float friction = 30f;
 	//TODO not sure if this will stand
 	Image image;
 	
 	public Player(){
 		this.position = new Point();
 		this.previous_position = new Point();
-		this.velocity = new Point();
+		velocity_x = 0;
+		velocity_y = 0;
+		
 		//TODO temp
 		image = new ImageIcon(this.getClass().getResource("mario.jpg")).getImage();
 	}
@@ -64,37 +77,82 @@ public class Player {
 	public void init(int start_x, int start_y){
 		position.x = start_x;
 		position.y = start_y;
-		velocity.x = 0;
-		velocity.y = 0;
+		velocity_x = 0;
+		velocity_y = 0;
 		previous_position = position.getLocation();
+		previous_time = 0;
 	}
 	
-	public void setVelocityX(int x){
-		velocity.x = x;
+	public void setVelocityX(float x){
+		velocity_x = x;
+		
+		if(velocity_x != 0){
+			moving_x = true;
+		}
 	}
 	
-	public void setVelocityY(int y){
-		velocity.y = y;
+	public void setVelocityY(float y){
+		velocity_y = y;
 	}
 	
 	public void move(){
+		long currentTime = System.currentTimeMillis();
 		previous_position = position.getLocation();
-		position.translate(velocity.x, velocity.y);
+		
+		float timeDif = (currentTime - previous_time)/1000f;
+		
+		if(previous_time != 0){
+			if(timeDif < 0){
+				//TODO log some sort of anomaly
+			}
+			
+			if(!moving_x){
+				if(velocity_x > 0){
+					velocity_x = Math.max((velocity_x - (friction*timeDif)), 0);
+				}
+				else{
+					velocity_x = Math.min((velocity_x + (friction*timeDif)), 0);
+				}
+			}
+			
+			velocity_y = velocity_y + (gravity*timeDif);
+		}
+		
+		//I think this might open a can of worms (rounding)
+		position.translate((int)velocity_x, (int)velocity_y);
+		
+		//TODO bad to hardcode value but this will work for now (trying to make gravity work)
+		if(position.y > 500){
+			position.y = 500;
+			velocity_y = 0;
+		}
+		previous_time = currentTime;
+	}
+	
+	public void jump(){
+		velocity_y = JUMP_VELOCITY;
 	}
 
-	public boolean isMovingLeft() {
-		return velocity.x < 0;
+	public void moveLeft(){
+		velocity_x = (-1)*RUN_VELOCITY;
+		moving_x = true;
 	}
 	
-	public boolean isMovingRight() {
-		return velocity.x > 0;
+	public void moveRight(){
+		velocity_x = RUN_VELOCITY;
+		moving_x = true;
 	}
 	
-	public boolean isMovingUp() {
-		return velocity.y < 0;
+	public void stopMovingLeft(){
+		if(velocity_x < 0){
+			moving_x = false;
+		}
 	}
 	
-	public boolean isMovingDown() {
-		return velocity.y > 0;
+	public void stopMovingRight(){
+		if(velocity_x > 0){
+			moving_x = false;
+		}
 	}
+
 }

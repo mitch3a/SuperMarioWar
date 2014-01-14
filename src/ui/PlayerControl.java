@@ -26,6 +26,7 @@ public class PlayerControl extends KeyAdapter{
 		right = KeyEvent.VK_RIGHT;
 		up = KeyEvent.VK_UP;
 		down = KeyEvent.VK_DOWN;
+		jump = KeyEvent.VK_UP;
 	}
 	
 	public void keyReleased(KeyEvent e) {
@@ -33,53 +34,32 @@ public class PlayerControl extends KeyAdapter{
 
 		//TODOD this (and on keypressed) propose an interesting question of how to handle opposing inputs
         if(key == left){
-        	if(player.isMovingLeft()){
-        		player.setVelocityX(0);
-        	}
+        	player.stopMovingLeft();
         	return;
         }
 	
 		if(key == right){
-	    	if(player.isMovingRight()){
-	    		player.setVelocityX(0);
-	    	}
+	    	player.stopMovingRight();
 	    	return;
 	    }
-        
-        if(key == up){
-        	if(player.isMovingUp()){
-        		player.setVelocityY(0);
-        	}
-        }
-
-        if(key == down){
-        	if(player.isMovingDown()){
-        		player.setVelocityY(0);
-        	}
-        }
     }
 
     public void keyPressed(KeyEvent e) {
     	int key = e.getKeyCode();
 
         if(key == left){
-        	player.setVelocityX(NEGATIVE_VELOCITY);
+        	player.moveLeft();
         	return;
         }
         
         if(key == right){
-        	player.setVelocityX(VELOCITY);
+        	player.moveRight();
         	return;
         }
         
-        if(key == up){
-        	player.setVelocityY(NEGATIVE_VELOCITY);
-        	return;
-        }
-        
-        if(key == down){
-        	player.setVelocityY(VELOCITY);
-        	return;
+        if(key == jump){
+        	//TODO need to only be able to jump once 
+        	player.jump();
         }
     }
 }
