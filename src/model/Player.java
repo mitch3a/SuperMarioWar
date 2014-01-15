@@ -84,8 +84,6 @@ public class Player {
 				}
 			}
 
-			System.out.println("Current velocity: " + velocity_x);
-			
 			velocity_y = velocity_y + (gravity*timeDif);
 
 			//TODO bad to hardcode value but this will work for now (trying to make gravity work)

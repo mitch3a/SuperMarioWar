@@ -37,13 +37,12 @@ public class GameFrame extends JFrame{
     do {
       try {
         g = bs.getDrawGraphics();
-        g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
         
         Graphics2D g2d = (Graphics2D)g;
         if (players != null && players.length > 0) {
           for(Player p : players){
-            g2d.drawImage(p.getImage(), p.getX(), p.getY(), this);
+            g2d.drawImage(p.getImage(), p.getTransform(), this);
           }
         }
       } finally {
