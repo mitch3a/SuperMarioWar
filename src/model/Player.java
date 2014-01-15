@@ -1,103 +1,63 @@
 package model;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.geom.Point2D;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.ImageIcon;
 
+import model.Sprite.Transform;
+
 public class Player {
+	Sprite sprite;
 	
-	/* TODO these are not used yet (and probably shouldn't be in yet but oh well)
-	enum PlayerState {	player_wait, 
-						player_spawning, 
-						player_dead, 
-						player_ready, 
-						player_entering_warp_up, 
-						player_entering_warp_right, 
-						player_entering_warp_down, 
-						player_entering_warp_left, 
-						player_exiting_warp_down, 
-						player_exiting_warp_left, 
-						player_exiting_warp_up, 
-						player_exiting_warp_right }; 
-						
-	enum PlayerAction { player_action_none, 
-					    player_action_bobomb, 
-					    player_action_fireball, 
-					    player_action_hammer, 
-					    player_action_boomerang, 
-					    player_action_iceblast, 
-					    player_action_bomb, 
-					    player_action_spincape, 
-					    player_action_spintail };
-					    
-	Score score;
-	Player state;
-	*/
-	
-	//TODO consider defining own version with no get/set. Made these points because I thought it would read better
-	Point position, previous_position;
 	float velocity_x, velocity_y;
-	
+	float acceleration_x;
 	boolean moving_x;//This is to signal that friction should start working (key no longer held down)
-	final int RUN_VELOCITY = 10;
-	final int JUMP_VELOCITY = -15;
+	boolean moving_right;//TODO don't like this but simple solution for now
+	
+	final int RUN_ACCELERATION = 3;//30;
+	final int MAX_RUN_VELOCITY = 3;
+	final int JUMP_VELOCITY = -13;
 	
 	long previous_time;
 	//TODO obviously these need to be calibrated
 	float gravity = 50f;
-	float friction = 30f;
+	float friction = 1f;//5f;
 	//TODO not sure if this will stand
-	Image image;
 	
 	public Player(){
-		this.position = new Point();
-		this.previous_position = new Point();
 		velocity_x = 0;
 		velocity_y = 0;
+		acceleration_x = 0;
 		
-		//TODO temp
-		image = new ImageIcon(this.getClass().getResource("mario.jpg")).getImage();
+		//TODO obviously not hard coded
+		sprite = new Sprite("Luigi.bmp");
 	}
 	
-	//TODO getters/setters might be slower for something being called so often
+	//TODO getters/setters might be slower for something being called so often (also might want to draw in the sprite level?)
 	public int getX(){
-		return position.x;
+		return sprite.getX();
 	}
 	
 	public int getY(){
-		return position.y;
+		return sprite.getY();
 	}
 	
 	public Image getImage(){
-		return image;
+		return sprite.getImage();
 	}
 	
 	public void init(int start_x, int start_y){
-		position.x = start_x;
-		position.y = start_y;
+		sprite.init(start_x, start_y);
 		velocity_x = 0;
 		velocity_y = 0;
-		previous_position = position.getLocation();
 		previous_time = 0;
 	}
-	
-	public void setVelocityX(float x){
-		velocity_x = x;
-		
-		if(velocity_x != 0){
-			moving_x = true;
-		}
-	}
-	
-	public void setVelocityY(float y){
-		velocity_y = y;
-	}
-	
+
 	public void move(){
 		long currentTime = System.currentTimeMillis();
-		previous_position = position.getLocation();
 		
 		float timeDif = (currentTime - previous_time)/1000f;
 		
@@ -106,53 +66,80 @@ public class Player {
 				//TODO log some sort of anomaly
 			}
 			
-			if(!moving_x){
+			velocity_x += acceleration_x*timeDif;
+			
+			if(acceleration_x > 0){
+				velocity_x = Math.min(MAX_RUN_VELOCITY, velocity_x);
+			}
+			else if(acceleration_x < 0){
+				velocity_x = Math.max((-1)*MAX_RUN_VELOCITY, velocity_x);
+			}
+			else{
+				//No acceleration
 				if(velocity_x > 0){
-					velocity_x = Math.max((velocity_x - (friction*timeDif)), 0);
+					velocity_x = Math.max(0, velocity_x - friction*timeDif);
 				}
-				else{
-					velocity_x = Math.min((velocity_x + (friction*timeDif)), 0);
+				else if (velocity_x < 0){
+					velocity_x = Math.min(0, velocity_x + friction*timeDif);
 				}
 			}
+
+			System.out.println("Current velocity: " + velocity_x);
 			
 			velocity_y = velocity_y + (gravity*timeDif);
+
+			//TODO bad to hardcode value but this will work for now (trying to make gravity work)
+			if(sprite.getY() + velocity_y > 500){
+				velocity_y = 500 - sprite.getY();
+			}
 		}
 		
 		//I think this might open a can of worms (rounding)
-		position.translate((int)velocity_x, (int)velocity_y);
-		
-		//TODO bad to hardcode value but this will work for now (trying to make gravity work)
-		if(position.y > 500){
-			position.y = 500;
-			velocity_y = 0;
-		}
+		sprite.move((int)velocity_x, (int)velocity_y);
 		previous_time = currentTime;
 	}
 	
 	public void jump(){
-		velocity_y = JUMP_VELOCITY;
+		if(velocity_y == 0){
+			velocity_y = JUMP_VELOCITY;
+			sprite.setJumping();
+		}
 	}
 
 	public void moveLeft(){
-		velocity_x = (-1)*RUN_VELOCITY;
-		moving_x = true;
+		if(!moving_x || moving_right){
+			acceleration_x = (-1)*RUN_ACCELERATION;
+			moving_x = true;
+			moving_right = false;
+			sprite.transform(Transform.TRANS_MIRROR);
+		}
 	}
 	
 	public void moveRight(){
-		velocity_x = RUN_VELOCITY;
-		moving_x = true;
+		if(!moving_x || !moving_right){
+			acceleration_x = RUN_ACCELERATION;
+			moving_x = true;
+			moving_right = true;
+			sprite.transform(Transform.TRANS_NONE);
+		}
 	}
 	
+	//TODO there is a bug somewhere in here where Acceleration can get stuck (maybe not garaunteed key strokes in order??)
 	public void stopMovingLeft(){
-		if(velocity_x < 0){
+		if(velocity_x < 0 && !moving_right){
 			moving_x = false;
+			acceleration_x = 0;
 		}
 	}
 	
 	public void stopMovingRight(){
-		if(velocity_x > 0){
+		if(velocity_x > 0 && moving_right){
 			moving_x = false;
+			acceleration_x = 0;
 		}
 	}
 
+	public AffineTransform getTransform() {
+		return sprite.getTransform();
+	}
 }

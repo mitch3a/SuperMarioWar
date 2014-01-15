@@ -14,9 +14,6 @@ public class PlayerControl extends KeyAdapter{
 	int up;
 	int down;
 	int jump;
-
-	final int VELOCITY = 10;
-	final int NEGATIVE_VELOCITY = -10;
 	
 	public PlayerControl(Player player){
 		this.player = player;
