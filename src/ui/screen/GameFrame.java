@@ -32,7 +32,7 @@ public class GameFrame extends JFrame{
         Graphics2D g2d = (Graphics2D)g;
         if(players != null && players.length > 0){
         	for(Player p : players){
-        		g2d.drawImage(p.getImage(), p.getX(), p.getY(), this);
+        		g2d.drawImage(p.getImage(), p.getTransform(), this);
         	}
         }
 
