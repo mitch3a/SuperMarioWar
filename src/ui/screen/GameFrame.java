@@ -26,17 +26,28 @@ public class GameFrame extends JFrame{
 	    this.players = players;
 	}
 
-	public void paint(Graphics g) {
-        super.paint(g);
-
+    @Override
+    public void paint(Graphics g) {
+    // Get buffer strategy and loop to protect against lost frames.
+    BufferStrategy bs = getBufferStrategy();
+    do {
+      try {
+        g = bs.getDrawGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
         Graphics2D g2d = (Graphics2D)g;
-        if(players != null && players.length > 0){
-        	for(Player p : players){
-        		g2d.drawImage(p.getImage(), p.getTransform(), this);
-        	}
+        if (players != null && players.length > 0) {
+          for(Player p : players){
+            g2d.drawImage(p.getImage(), p.getX(), p.getY(), this);
+          }
         }
-
-        Toolkit.getDefaultToolkit().sync();
+      } finally {
+        // Free up graphics.
         g.dispose();
-    }
+      }
+      // Display contents of buffer.
+      bs.show();
+    } while (bs.contentsLost());   
+  }
 }
