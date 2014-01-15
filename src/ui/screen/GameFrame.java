@@ -1,7 +1,9 @@
 package ui.screen;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
+import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
@@ -22,6 +24,8 @@ public class GameFrame extends JFrame{
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 	    setResizable(false);
+	    
+	    createBufferStrategy(3);
 	    
 	    this.players = players;
 	}
