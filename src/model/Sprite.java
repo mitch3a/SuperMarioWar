@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -36,7 +37,7 @@ public class Sprite {
 
     BufferedImage bigImg;
     try {
-      bigImg = ImageIO.read(this.getClass().getResource(image));
+      bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/" + image));
 
       for (int i = 0; i < NUM_IMAGES; i++) {
         sprites[i] = bigImg.getSubimage(i * IMAGE_WIDTH, 0, IMAGE_WIDTH, IMAGE_HEIGHT);

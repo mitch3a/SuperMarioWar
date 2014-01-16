@@ -33,7 +33,7 @@ public class Player {
 		acceleration_x = 0;
 		
 		//TODO obviously not hard coded
-		sprite = new Sprite("Luigi.bmp");
+		sprite = new Sprite("4matsy_BubbleBobble.bmp");
 	}
 	
 	//TODO getters/setters might be slower for something being called so often (also might want to draw in the sprite level?)
