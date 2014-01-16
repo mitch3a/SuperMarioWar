@@ -72,7 +72,7 @@ public class Physics {
 		velocityX += accelerationX*timeDif_ms;
 		
 		//Make sure we don't go over the max velocity in either direction
-		Math.max(MIN_RUN_VELOCITY, Math.min(MAX_RUN_VELOCITY, velocityX ));
+		velocityX = Math.max(MIN_RUN_VELOCITY, Math.min(MAX_RUN_VELOCITY, velocityX ));
 		
 		//Don't want to move passed zero if we stopped trying to move
 		if(!activelyMovingX){
