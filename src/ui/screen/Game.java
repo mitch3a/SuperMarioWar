@@ -20,7 +20,7 @@ public class Game implements ActionListener{
 		player_controls = new PlayerControl[numPlayers];
 		for(int i = 0 ; i < numPlayers ; ++i){
 			players[i] = new Player();
-			players[i].init(0, 0);
+			players[i].init(50, 50, "4matsy_BubbleBobble.bmp");
 			player_controls[i] = new PlayerControl(players[i]);			
 		}
 	

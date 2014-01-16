@@ -26,22 +26,22 @@ public class PlayerControl extends KeyAdapter{
 		jump = KeyEvent.VK_UP;
 	}
 	
-	public void keyReleased(KeyEvent e) {
+	public synchronized void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
 
 		//TODOD this (and on keypressed) propose an interesting question of how to handle opposing inputs
         if(key == left){
-        	player.stopMovingLeft();
+        	player.stopMoving();
         	return;
         }
 	
 		if(key == right){
-	    	player.stopMovingRight();
+	    	player.stopMoving();
 	    	return;
 	    }
     }
 
-    public void keyPressed(KeyEvent e) {
+    public synchronized void keyPressed(KeyEvent e) {
     	int key = e.getKeyCode();
 
         if(key == left){
