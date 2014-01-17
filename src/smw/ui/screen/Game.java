@@ -1,19 +1,19 @@
 package smw.ui.screen;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Timer;
-
 import smw.entity.Player;
 import smw.ui.PlayerControl;
 
-public class Game implements ActionListener {
-
-  GameFrame game_frame;
-  Player[] players;
-  PlayerControl[] player_controls;
-
+public class Game implements Runnable {  
+  private GameFrame game_frame;
+  private Player[] players;
+  private PlayerControl[] player_controls;
+  
+  /** The desired frames per second. */
+  public double FPS = 60.0;
+  
+  /** Indicates if main game loop is running. */
+  private boolean running = false;
+  
   public Game(final int numPlayers) {
     players = new Player[numPlayers];
     player_controls = new PlayerControl[numPlayers];
@@ -27,20 +27,75 @@ public class Game implements ActionListener {
 
     // TODO I think the player/control should be packaged together... but this
     // is good enough for now
-    game_frame.addKeyListener(player_controls[0]);
+    game_frame.addKeyListener(player_controls[0]);    
   }
 
-  public void start() {
-    // TODO this is a temporary way to refresh the screen
-    Timer timer = new Timer(5, this);
-    timer.start();
+  public synchronized void start() {    
+    // TODO start new stuff here
+    running = true;
+    new Thread(this).start();
+  }
+  
+  public synchronized void stop() {
+    running = false;
+    // TODO - is there anything else we need to do with the thread when stopping?
+  }
+  
+  /** Main game loop method. */
+  public void run() {
+    // Time between renders in nanoseconds (1 sec / FPS).
+    double timePerRender_ns = 1000000000.0 / FPS;
+    long lastUpdateTime_ns = System.nanoTime();
+    double neededUpdates = 0.0;
+    
+    // Record keeping to determine FPS and UPS.
+    long secTimer = System.currentTimeMillis();
+    int frames = 0;
+    int updates = 0;
+    
+    while (running) {
+      final long currentTime_ns = System.nanoTime();
+      neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
+      lastUpdateTime_ns = currentTime_ns;
+      boolean needRender = false;
+
+      while (neededUpdates >= 1.0) {
+        updateGame();
+        updates++;
+        neededUpdates -= 1.0;
+        needRender = true;
+      }
+      
+      try {
+        Thread.sleep(2);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      
+      if (needRender) {
+        render();
+        frames++;
+      }
+      
+      if (System.currentTimeMillis() - secTimer > 1000) {
+        System.out.println("FPS " + frames + " UPS " + updates);
+        secTimer += 1000;
+        frames = 0;
+        updates = 0;
+      }
+      
+    }
   }
 
-  // TODO this is probably going to be replaced with actual controls
-  @Override
-  public void actionPerformed(ActionEvent e) {
-    // TODO again this is just for testing 1 player
-    players[0].move();
+  private void render() {
+    // TODO - this will probably change to render individual stuff
     game_frame.repaint();
+  }
+
+  private void updateGame() {
+    // TODO - poll input update    
+    // Poll player update (movement, etc.)
+    // Way later poll level update and all that other junk...
+    players[0].move();
   }
 }
