@@ -1,4 +1,4 @@
-package model;
+package smw.entity;
 
 public class Physics {
 	public static final int RUN_ACCELERATION = 3;

@@ -1,6 +1,8 @@
-package model;
+package smw.entity;
 
 import java.awt.Image;
+
+import smw.gfx.Sprite;
 
 public class Player {
 	

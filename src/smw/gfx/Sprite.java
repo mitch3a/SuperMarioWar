@@ -1,4 +1,4 @@
-package model;
+package smw.gfx;
 
 import java.awt.Image;
 import java.awt.Point;

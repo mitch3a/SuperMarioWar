@@ -1,16 +1,18 @@
-package ui.screen;
+package smw.ui.screen;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
-import model.Player;
+import smw.entity.Player;
 
 public class GameFrame extends JFrame{
-	//TODO this should be in a common area
+
+  private static final long serialVersionUID = 1L;
+
+  //TODO this should be in a common area
 	public static final String Title = "Super Mario War";
 	
 	//TODO this is REALLY hacky but i just wanted to get the stupid thing to work

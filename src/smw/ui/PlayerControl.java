@@ -1,9 +1,9 @@
-package ui;
+package smw.ui;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import model.Player;
+import smw.entity.Player;
 
 //This is a temporary implementation to just get a block moving
 public class PlayerControl extends KeyAdapter{
