@@ -3,6 +3,7 @@ package model;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class Sprite {
 		RIGHT(0), LEFT(1);
 		
 		public static int NUM_DIRECTIONS = 2;
-	  private final int index;
+	  final int index;
 	  private Direction(int index) {
 	    this.index = index;
 	  }
@@ -41,15 +42,14 @@ public class Sprite {
   Direction currentDirection  = Direction.RIGHT;
  
   long timeActionChange_ns = 0;
-  Point position;
+  Point2D position;
 
   public Sprite() {
-    position = new Point();
+    position = new Point2D.Float();
   }
 
   public void init(int x, int y, String image) {
-    position.x = x;
-    position.y = y;
+    position.setLocation((double)x, (double)y);
     
     initSpriteImage(image);
   }
@@ -73,15 +73,15 @@ public class Sprite {
   }
 
   public int getX() {
-    return position.x;
+    return (int)position.getX();
   }
 
   public int getY() {
-    return position.y;
+    return (int)position.getY();
   }
 
   // It is assumed this method is only called after collision detection passed
-  public void move(int dx, int dy) {
+  public void move(float dx, float dy) {
     switch (currentAction) {
 	    case NONE:
 	      checkForRunning(dx);
@@ -104,10 +104,10 @@ public class Sprite {
 	      break;
     }
 
-    position.translate(dx, dy);
+    position.setLocation(position.getX() + dx, position.getY() + dy);
   }
 
-  private void checkForRunningStepChange(int dx, Action nextRunningAction) {
+  private void checkForRunningStepChange(float dx, Action nextRunningAction) {
     if (dx == 0) {
       currentAction = Action.NONE;
     } else {
@@ -130,14 +130,14 @@ public class Sprite {
     }
   }
 
-  private void checkForRunning(int dx) {
+  private void checkForRunning(float dx) {
     if (dx != 0) {
       currentAction = Action.RUNNING_STEP;
       timeActionChange_ns = System.nanoTime();
     }
   }
 
-  private void checkForJumpComplete(int dx, int dy) {
+  private void checkForJumpComplete(float dx, float dy) {
     if (dy == 0) {
       if (dx != 0) {
         currentAction = Action.RUNNING_STEP;
@@ -148,7 +148,7 @@ public class Sprite {
     }
   }
 
-  private void checkForTurnComplete(int dx) {
+  private void checkForTurnComplete(float dx) {
     if (currentDirection == Direction.RIGHT) {
       if (dx >= 0) {
         currentAction = Action.RUNNING_STEP;

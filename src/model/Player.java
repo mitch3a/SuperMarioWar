@@ -5,10 +5,10 @@ import java.awt.Image;
 public class Player {
 	
 	Sprite  sprite;
-	Physics physics;
+	MarioPhysics physics;
 		
 	public Player(){	
-		physics = new Physics();
+		physics = new MarioPhysics();
 		sprite  = new Sprite();
 	}
 	
@@ -36,6 +36,7 @@ public class Player {
 		
 		//TODO this is to simulate ground...
 		if(sprite.getY() > 500){
+			sprite.position.setLocation(sprite.position.getX(), 500);
 			physics.collideWithFloor();
 		}
 	}

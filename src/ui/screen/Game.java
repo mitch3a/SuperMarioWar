@@ -32,7 +32,7 @@ public class Game implements ActionListener{
 	
 	public void start(){
 		//TODO this is a temporary way to refresh the screen
-		Timer timer = new Timer(5, this);
+		Timer timer = new Timer(17, this);
         timer.start();
 	}
 
