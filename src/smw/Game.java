@@ -1,7 +1,8 @@
-package smw.ui.screen;
+package smw;
 
 import smw.entity.Player;
 import smw.ui.PlayerControl;
+import smw.ui.screen.GameFrame;
 
 public class Game implements Runnable {  
   private GameFrame game_frame;

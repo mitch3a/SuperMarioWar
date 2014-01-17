@@ -1,5 +1,4 @@
 package smw;
-import smw.ui.screen.Game;
 
 public class Main {
 //here is a comment
