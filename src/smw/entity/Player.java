@@ -2,6 +2,7 @@ package smw.entity;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
@@ -20,38 +21,42 @@ public class Player extends Rectangle{
 	Sprite  sprite;
 	PlayerPhysics physics;
 	PlayerControl playerControl;
-	Point2D position;
 	final int playerIndex;
 	
 	public Player(PlayerControl playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
 		sprite  = new Sprite();
-		position = new Point2D.Float();
 		this.playerIndex = playerIndex;
+	}
+	
+	void setBounds(int newX, int newY){
+	  //TODO might be a faster way (width/height never change)
+		setBounds(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT);			
 	}
 	
 	public Image getImage(){
 		return sprite.getImage();
 	}
 	
-	public void init(int start_x, int start_y, String image){
-		position.setLocation((double)start_x, (double)start_y);
+	public void init(int newX, int newY, String image){
+		setBounds(newX, newY);
 		sprite.init(image);
 	}
 	
-	public void move(Player[] players){
+	/*** This method is to get the state ready to move ***/
+	public void prepareToMove(){
 		physics.update();
-		
+	}
+	
+	public void move(Player[] players){	
 		float dx = physics.getVelocityX();
 		float dy = physics.getVelocityY();
 		
-		if(playerIndex == 0) System.out.println("Velocity per frame: " + dx + ", " + dy);
-		
 		sprite.update(dx, dy, physics.isJumping, physics.isSkidding);
-		float newX, newY = 0;
+		int newX, newY = 0;
 		
-		newX = (float) (position.getX() + dx);
-		newY = (float) (position.getY() + dy);
+		newX = (int) (x + dx);
+		newY = (int) (y + dy);
 		
 		//TODO this is to simulate ground...
 		if(newY > 500){
@@ -59,23 +64,27 @@ public class Player extends Rectangle{
 			physics.collideWithFloor();
 		}
 		
-		boolean canMove = true;
-		
+		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){
-				if(p.intersects(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-					canMove = false;
+				if(p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+					newX = x;
 					break;
 				}
 			}
 		}
 		
-		if(canMove){
-			position.setLocation(newX, newY);
+		for(Player p : players){
+			if(p.playerIndex != playerIndex){
+				if(p.intersects(x, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+					physics.collideWithFloor();
+					newY = y;
+					break;
+				}
+			}
 		}
-		
-		//TODO might be a faster way (width/height never change)
-		setBounds((int)position.getX(), (int)position.getY(), Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT);
+
+		setBounds(newX, newY);					
 	}
 	
 	public void draw(Graphics2D graphics, ImageObserver observer){

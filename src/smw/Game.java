@@ -114,6 +114,10 @@ public class Game implements Runnable {
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
   	for(Player p : players){
+  		p.prepareToMove();
+  	}
+  	
+  	for(Player p : players){
   		p.move(players);
   	}
   }
