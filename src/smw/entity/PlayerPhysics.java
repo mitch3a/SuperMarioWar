@@ -17,7 +17,7 @@ public class PlayerPhysics {
 	//Explained below
 	public static final int   FRAMES_PER_SECOND = 200; //TODO mk this should be based on the timer
 	public static final float FRAMES_CONVERSION = 60f;
-	public static final float qC2 = 0x0500;
+	public static final float qC2 = 0x0800;
 	public static final float qC = 1/qC2;//(FRAMES_CONVERSION/FRAMES_PER_SECOND)/qC2; //Quick converter. 
 	
 	//These values (actual Velocity/Acceleration) are courtesy of http://s276.photobucket.com/user/jdaster64/media-full//smb_playerphysics.png.html
@@ -247,15 +247,20 @@ public class PlayerPhysics {
     if(!isJumping && playerControl.isJumping()){
     	int speedIndex = getSpeedIndex();
     	velocityY = JUMPING_VELOCITY[speedIndex];
-    	if(playerControl.isRunning()){
+    	setJumpingAccelerationX();
+    	isJumping = true;
+    }
+    
+    if(isJumping){
+    	int speedIndex = getSpeedIndex();
+    	if(playerControl.isJumping()){
     		accelerationY = JUMPING_WEAK_GRAVITY[speedIndex];
     	}
     	else{
     		accelerationY = JUMPING_STRONG_GRAVITY[speedIndex];
     	}
-    	setJumpingAccelerationX();
-    	isJumping = true;
     }
+    
     velocityY = velocityY + (accelerationY*timeDif_ms);
   }
   

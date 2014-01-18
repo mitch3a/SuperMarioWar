@@ -3,6 +3,7 @@ package smw;
 import java.awt.event.KeyEvent;
 
 import smw.entity.Player;
+import smw.settings.Debug;
 import smw.ui.PlayerControl;
 import smw.ui.screen.GameFrame;
 
@@ -18,15 +19,16 @@ public class Game implements Runnable {
   
   public Game(final int numPlayers) {
     players = new Player[numPlayers];
+    PlayerControl[] pc = new PlayerControl[2]; //TODO mk made this 2 on purpose... only for testing (until real input configured);
+    pc[0] = new PlayerControl(KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+    pc[1] = new PlayerControl(KeyEvent.VK_A,   KeyEvent.VK_D,     KeyEvent.VK_W,  KeyEvent.VK_S,    KeyEvent.VK_W, KeyEvent.VK_G);
+    
+    String[] images = {"4matsy_BubbleBobble.bmp", "FTG_Yoshi.png"};
+    
     for (int i = 0; i < numPlayers; ++i) {
     	//TODO this is obviously for just 1 player
-      players[i] = new Player(new PlayerControl(KeyEvent.VK_LEFT,
-																			   	      KeyEvent.VK_RIGHT,
-																			   	      KeyEvent.VK_UP,
-																			   	      KeyEvent.VK_DOWN,
-																			   	      KeyEvent.VK_UP,
-																			   	      KeyEvent.VK_A));
-      players[i].init(50, 50, "4matsy_BubbleBobble.bmp");
+      players[i] = new Player(pc[i], i);
+      players[i].init(50*(i + 2), 50, images[i]);
       
     }
 
@@ -87,7 +89,7 @@ public class Game implements Runnable {
       }
       
       if (System.currentTimeMillis() - secTimer > 1000) {
-        System.out.println("FPS " + frames + " UPS " + updates);
+        if(Debug.LOG_FRAMERATE) System.out.println("FPS " + frames + " UPS " + updates);
         secTimer += 1000;
         frames = 0;
         updates = 0;
@@ -105,6 +107,14 @@ public class Game implements Runnable {
     // TODO - poll input update    
     // Poll player update (movement, etc.)
     // Way later poll level update and all that other junk...
-    players[0].move();
+  	
+  	// Mitch - I set this up to just do the collision and if no collision, then allow the player in.
+  	// not only is this unfair (ie if 2 players are running at each other, player 1 will see the spot
+  	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
+  	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
+  	// closer than 2 pixels to him. But this is good enough for now. 
+  	for(Player p : players){
+  		p.move(players);
+  	}
   }
 }

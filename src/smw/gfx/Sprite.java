@@ -48,14 +48,12 @@ public class Sprite {
   Direction currentDirection  = Direction.RIGHT;
  
   long timeActionChange_ns = 0;
-  Point2D position;
 
   public Sprite() {
-    position = new Point2D.Float();
+    
   }
 
-  public void init(int x, int y, String image) {
-    position.setLocation((double)x, (double)y);
+  public void init(String image) {
     initSpriteImage(image);
   }
   
@@ -99,16 +97,8 @@ public class Sprite {
     }
   }
 
-  public int getX() {
-    return (int)position.getX();
-  }
-
-  public int getY() {
-    return (int)position.getY();
-  }
-
   // It is assumed this method is only called after collision detection passed
-  public void move(float dx, float dy, boolean isJumping, boolean isSkidding) {
+  public void update(float dx, float dy, boolean isJumping, boolean isSkidding) {
     if( dx != 0){
       currentDirection = (dx < 0) ? Direction.LEFT : Direction.RIGHT;
     }
@@ -140,8 +130,6 @@ public class Sprite {
   	      break;
       }
     }
-
-    position.setLocation(position.getX() + dx, position.getY() + dy);
   }
 
   private void checkForRunningStepChange(float dx, Action nextRunningAction) {
@@ -178,10 +166,5 @@ public class Sprite {
 	
 	public void movingRight() {
 	  currentDirection = Direction.RIGHT;
-  }
-
-	public void setY(int i) {
-	  //TODO this is just temp
-		position.setLocation(position.getX(), i);
   }
 }
