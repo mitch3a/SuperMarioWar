@@ -1,62 +1,78 @@
 package smw.ui;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import smw.entity.Player;
+import java.awt.event.KeyListener;
+import java.util.HashMap;
 
 //This is a temporary implementation to just get a block moving
-public class PlayerControl extends KeyAdapter{
-	Player player;
+public class PlayerControl implements KeyListener{
+	final int left;
+	final int right;
+	final int up;
+	final int down;
+	final int jump;
+	final int run; //TODO this might (probably) become action button
 	
-	int left;
-	int right;
-	int up;
-	int down;
-	int jump;
+	final HashMap<Integer, Boolean> keyMap = new HashMap<Integer, Boolean>();
 	
-	public PlayerControl(Player player){
-		this.player = player;
+	public PlayerControl(int left,
+	                     int right,
+	                     int up, 
+	                     int down,
+	                     int jump,
+	                     int run){
 		
-		//TODO these are just temp for testing (or default?)
-		left = KeyEvent.VK_LEFT;
-		right = KeyEvent.VK_RIGHT;
-		up = KeyEvent.VK_UP;
-		down = KeyEvent.VK_DOWN;
-		jump = KeyEvent.VK_UP;
+		this.left  = left;
+		this.right = right;
+		this.up    = up;
+		this.down  = down;
+		this.jump  = jump;
+		this.run   = run;
+		
+	  keyMap.put(this.left, false);
+	  keyMap.put(this.right, false);
+	  keyMap.put(this.up, false);
+	  keyMap.put(this.down, false);
+	  keyMap.put(this.jump, false);
+	  keyMap.put(this.run, false); 
 	}
 	
-	public synchronized void keyReleased(KeyEvent e) {
-		int key = e.getKeyCode();
-
-		//TODOD this (and on keypressed) propose an interesting question of how to handle opposing inputs
-        if(key == left){
-        	player.stopMoving();
-        	return;
-        }
+	//TODO this is BAAAHHHDDDDD
+	public int getDirection(){
+	  if(keyMap.get(right)){
+	    return (keyMap.get(left)) ?  0 : 1;
+	  }
+	  else{
+	    return (keyMap.get(left)) ? -1 : 0;
+	  }
+	}
 	
-		if(key == right){
-	    	player.stopMoving();
-	    	return;
-	    }
-    }
+	public boolean isJumping(){
+	  return keyMap.get(jump);
+	}
+	
+	public boolean isRunning(){
+	  return keyMap.get(run);
+	}
+	
+	@Override
+  public void keyPressed(KeyEvent e){
+          int code = e.getKeyCode();
+          e.consume();
+          
+          keyMap.put(code, true);
+  }
+	
+	@Override
+  public void keyReleased(KeyEvent e){
+          int code = e.getKeyCode();
+          e.consume();
+          
+          keyMap.put(code, false);
+  }
 
-    public synchronized void keyPressed(KeyEvent e) {
-    	int key = e.getKeyCode();
-
-        if(key == left){
-        	player.moveLeft();
-        	return;
-        }
-        
-        if(key == right){
-        	player.moveRight();
-        	return;
-        }
-        
-        if(key == jump){
-        	//TODO need to only be able to jump once 
-        	player.jump();
-        }
-    }
+  @Override
+  public void keyTyped(KeyEvent e) {
+    e.consume();
+  }
 }

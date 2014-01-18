@@ -1,16 +1,18 @@
 package smw.entity;
 
 import java.awt.Image;
+import java.awt.event.KeyListener;
 
 import smw.gfx.Sprite;
+import smw.ui.PlayerControl;
 
 public class Player {
-	
 	Sprite  sprite;
-	Physics physics;
+	PlayerPhysics physics;
+	PlayerControl playerControl;
 		
-	public Player(){	
-		physics = new Physics();
+	public Player(PlayerControl playerControl){	
+		physics = new PlayerPhysics(playerControl);
 		sprite  = new Sprite();
 	}
 	
@@ -34,36 +36,16 @@ public class Player {
 
 	public void move(){
 		physics.update();
-		sprite.move(physics.getVelocityX(), physics.getVelocityY());
+		sprite.move(physics.getVelocityX(), physics.getVelocityY(), physics.isJumping, physics.isSkidding);
 		
 		//TODO this is to simulate ground...
 		if(sprite.getY() > 500){
+			sprite.setY(500);
 			physics.collideWithFloor();
 		}
 	}
-	
-	//###################################################################
-	// These methods are for the Input Handler. They are strictly actions
-	// commanded by the Input Handler and must be checked.
-	//###################################################################
-	public void jump(){
-		if(physics.canJump()){
-			physics.performJump();
-			sprite.setJumping();
-		}
-	}
 
-	public void moveLeft(){
-		physics.moveLeft();
-		sprite.movingLeft();
-	}
-	
-	public void moveRight(){
-		physics.moveRight();
-		sprite.movingRight();
-	}
-	
-	public void stopMoving(){
-		physics.stopMoving();
-	}
+	public final KeyListener getControls() {
+	  return physics.playerControl;
+  }
 }

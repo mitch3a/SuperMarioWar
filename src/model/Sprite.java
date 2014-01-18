@@ -1,4 +1,4 @@
-package smw.gfx;
+package model;
 
 import java.awt.Image;
 import java.awt.Point;
@@ -6,18 +6,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
-import java.awt.image.Raster;
-import java.awt.image.SinglePixelPackedSampleModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
-import model.Sprite.Action;
-import model.Sprite.Direction;
 
 public class Sprite {
 	public static enum Action {
@@ -33,7 +24,7 @@ public class Sprite {
 		RIGHT(0), LEFT(1);
 		
 		public static int NUM_DIRECTIONS = 2;
-	  public final int index;
+	  final int index;
 	  private Direction(int index) {
 	    this.index = index;
 	  }
@@ -59,39 +50,18 @@ public class Sprite {
 
   public void init(int x, int y, String image) {
     position.setLocation((double)x, (double)y);
+    
     initSpriteImage(image);
   }
   
   public void initSpriteImage(String image){
     try {
-      BufferedImage bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/" + image));
-      
-      // Change magenta to transparent.
-      // Start by converting buffered image to pixels.
-      final int width = bigImg.getWidth();
-      final int height = bigImg.getHeight();
-      int[] pixels = new int[width * height];
-      bigImg.getRGB(0, 0, width, height, pixels, 0, width);
-      
-      // Change each magenta pixel.
-      for (int i = 0; i < pixels.length; i++) {
-        if (pixels[i] == 0xffff00ff) {
-          pixels[i] = 0; // This might be -1 if we're using alpha channel, not sure.
-        }
-      }
-      
-      // Convert pixels back into buffered image.
-      int[] bitMasks = new int[]{0xFF0000, 0xFF00, 0xFF, 0xFF000000};
-      SinglePixelPackedSampleModel sm = new SinglePixelPackedSampleModel(
-      DataBuffer.TYPE_INT, width, height, bitMasks);
-      DataBufferInt db = new DataBufferInt(pixels, pixels.length);
-      WritableRaster wr = Raster.createWritableRaster(sm, db, new Point());
-      bigImg = new BufferedImage(ColorModel.getRGBdefault(), wr, false, null);
-      
-      //Create Transform to flip image for left facing versions
+    	//Create Transform to flip image for left facing versions
       AffineTransform result = AffineTransform.getScaleInstance(-1.0, 1.0);
       result.translate(-IMAGE_WIDTH, 0);
       AffineTransformOp op = new AffineTransformOp(result, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+
+      BufferedImage bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/" + image));
       
       for (int i = 0; i < NUM_IMAGES; i++) {
         sprites[Direction.RIGHT.index][i] = bigImg.getSubimage(i * IMAGE_WIDTH, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -115,7 +85,6 @@ public class Sprite {
     if( dx != 0){
       currentDirection = (dx < 0) ? Direction.LEFT : Direction.RIGHT;
     }
-    
     if(isJumping){
       currentAction = Action.JUMPING;
     }
@@ -167,24 +136,22 @@ public class Sprite {
     }
   }
 
+  private void checkForJumpComplete(float dx, float dy) {
+    if (dy == 0) {
+      if (dx != 0) {
+        currentAction = Action.RUNNING_STEP;
+        timeActionChange_ns = System.nanoTime();
+      } else {
+        currentAction = Action.NONE;
+      }
+    }
+  }
+
   public Image getImage() {
     return sprites[currentDirection.index][currentAction.index];
   }
 
   public void setJumping() {
     currentAction = Action.JUMPING;
-  }
-
-	public void movingLeft() {
-	  currentDirection = Direction.LEFT;
-  }
-	
-	public void movingRight() {
-	  currentDirection = Direction.RIGHT;
-  }
-
-	public void setY(int i) {
-	  //TODO this is just temp
-		position.setLocation(position.getX(), i);
   }
 }

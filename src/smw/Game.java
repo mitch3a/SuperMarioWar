@@ -1,13 +1,14 @@
 package smw;
 
+import java.awt.event.KeyEvent;
+
 import smw.entity.Player;
 import smw.ui.PlayerControl;
 import smw.ui.screen.GameFrame;
 
 public class Game implements Runnable {  
-  private GameFrame game_frame;
+  private GameFrame gameFrame;
   private Player[] players;
-  private PlayerControl[] player_controls;
   
   /** The desired frames per second. */
   public double FPS = 60.0;
@@ -17,18 +18,25 @@ public class Game implements Runnable {
   
   public Game(final int numPlayers) {
     players = new Player[numPlayers];
-    player_controls = new PlayerControl[numPlayers];
     for (int i = 0; i < numPlayers; ++i) {
-      players[i] = new Player();
+    	//TODO this is obviously for just 1 player
+      players[i] = new Player(new PlayerControl(KeyEvent.VK_LEFT,
+																			   	      KeyEvent.VK_RIGHT,
+																			   	      KeyEvent.VK_UP,
+																			   	      KeyEvent.VK_DOWN,
+																			   	      KeyEvent.VK_UP,
+																			   	      KeyEvent.VK_A));
       players[i].init(50, 50, "4matsy_BubbleBobble.bmp");
-      player_controls[i] = new PlayerControl(players[i]);
+      
     }
 
-    this.game_frame = new GameFrame(players);
+    this.gameFrame = new GameFrame(players);
 
     // TODO I think the player/control should be packaged together... but this
     // is good enough for now
-    game_frame.addKeyListener(player_controls[0]);    
+    for(Player p : players){
+    	gameFrame.addKeyListener(p.getControls());
+    }
   }
 
   public synchronized void start() {    
@@ -90,7 +98,7 @@ public class Game implements Runnable {
 
   private void render() {
     // TODO - this will probably change to render individual stuff
-    game_frame.repaint();
+    gameFrame.repaint();
   }
 
   private void updateGame() {
