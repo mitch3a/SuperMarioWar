@@ -16,9 +16,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import model.Sprite.Action;
-import model.Sprite.Direction;
-
 public class Sprite {
 	public static enum Action {
 		NONE(0), RUNNING_STEP(1), RUNNING_NO_STEP(0), JUMPING(2), SKIDDING(3), DYING(4), SQUASHED(5);
