@@ -1,5 +1,6 @@
 package model;
 
+import ui.PlayerControl;
 import model.Sprite.Direction;
 
 public class MarioPhysics {
@@ -22,40 +23,6 @@ public class MarioPhysics {
 	
 	//These values (actual Velocity/Acceleration) are courtesy of http://s276.photobucket.com/user/jdaster64/media-full//smb_playerphysics.png.html
 	//They are represented as (one hex value per the following): 0x (Blocks) (Pixels) (Subpixels) (Subsubpixels) (Subsubsubpixels) for 1/60 seconds per frame
-	
-	//These TEMP values are just for readability. Should not be used outside of static declaration
-	/*
-	 * public static final int WALKING_ACCELERATION_TEMP  = (int)(qC*0x0098);
-	public static final int RUNNING_ACCELERATION_TEMP  = (int)(qC*0x00E4);
-	public static final int RELEASE_DECELERATION_TEMP  = (int)(qC*0x00D0);
-	public static final int SKIDDING_DECELERATION_TEMP = (int)(qC*0x01A0);
-	
-	public static final int MIN_WALKING_VELOCITY_TEMP 		    = (int)(qC*0x0130);
-	public static final int MAX_WALKING_VELOCITY_TEMP 		    = (int)(qC*0x1900);
-	public static final int MAX_RUNNING_VELOCITY_TEMP 	  = (int)(qC*0X2900);
-	public static final int SKID_TURNAROUND_VELOCITY_TEMP = (int)(qC*0x0900);
-	
-	public static final int MAX_SLOW_JUMPING_SPEED   = (int)(qC*0x1000);
-	public static final int MAX_MEDIUM_JUMPING_SPEED = (int)(qC*0x24FF);
-	
-	public static final int[] WALKING_ACCELERATION  =  { WALKING_ACCELERATION_TEMP, -WALKING_ACCELERATION_TEMP};
-	public static final int[] RUNNING_ACCELERATION  =  { RUNNING_ACCELERATION_TEMP,	-RUNNING_ACCELERATION_TEMP};
-	public static final int[] RELEASE_DECELERATION  =  {-RELEASE_DECELERATION_TEMP,  RELEASE_DECELERATION_TEMP};
-	public static final int[] SKIDDING_DECELERATION =  {-SKIDDING_DECELERATION_TEMP, SKIDDING_DECELERATION_TEMP};
-	
-	public static final int[] MIN_WALKING_VELOCITY 		 =  {MIN_WALKING_VELOCITY_TEMP,			-MIN_WALKING_VELOCITY_TEMP};
-	public static final int[] MAX_WALKING_VELOCITY		 =  {MAX_WALKING_VELOCITY_TEMP, 		-MAX_WALKING_VELOCITY_TEMP};
-	public static final int[] MAX_RUNNING_VELOCITY 	   =  {MAX_RUNNING_VELOCITY_TEMP,     -MAX_RUNNING_VELOCITY_TEMP};
-	public static final int[] SKID_TURNAROUND_VELOCITY =  {SKID_TURNAROUND_VELOCITY_TEMP, -SKID_TURNAROUND_VELOCITY_TEMP};
-	
-	//AIR (not sure how to use this yet)
-	//public static final short AIR_ACCELERATION_FAST = 0x00098; //If moving faster than
-	//public static final short AIR_ACCELERATION_FAST = 0x00098;
-	
-	public static final int[] JUMPING_VELOCITY 			 =  {(int)(-qC*0x4000), (int)(-qC*0x4000), (int)(-qC*0x5000) };
-	public static final int[] JUMPING_WEAK_GRAVITY   =  {(int) (qC*0x0200), (int) (qC*0x01E0), (int) (qC*0x0280) }; //If you're not holding speed button
-	public static final int[] JUMPING_STRONG_GRAVITY =  {(int) (qC*0x0700), (int) (qC*0x0600), (int) (qC*0x0900) }; //If you're not holding speed button
-	 */
 	public static final float WALKING_ACCELERATION_TEMP  = qC*0x0098;
 	public static final float RUNNING_ACCELERATION_TEMP  = qC*0x00E4;
 	public static final float RELEASE_DECELERATION_TEMP  = qC*0x00D0;
@@ -99,12 +66,11 @@ public class MarioPhysics {
 	float velocityX,     velocityY, remainderX, remainderY;
 	float accelerationX, accelerationY;
 	
-	boolean activelyMovingX;
-	boolean runButtonOn;
-	boolean jumpSpeedSlow;
-	Direction direction;
+	PlayerControl playerControl;
+	boolean isJumping; 
+	boolean isSkidding;
 	
-	public MarioPhysics(){
+	public MarioPhysics(PlayerControl playerControl){
 		previousTime_ms = 0;
 		velocityX = 0;
 		velocityY = 0;
@@ -112,10 +78,9 @@ public class MarioPhysics {
 		remainderY = 0;
 		accelerationX = 0;
 		accelerationY = JUMPING_STRONG_GRAVITY[SpeedsForJumping.SLOW.index];
-		activelyMovingX = false;
-		runButtonOn = true;
-		direction = Direction.RIGHT;
-		jumpSpeedSlow = false;
+		isJumping = false;
+		isSkidding = false;
+		this.playerControl = playerControl;
 	}
 	
 	//////////////////////////////////////////////////////
@@ -133,115 +98,127 @@ public class MarioPhysics {
 		
 		return SpeedsForJumping.FAST.index;
 	}
+	
 
-	void updateVelocityX(float timeDif_ms){
-	  //TODO
-		timeDif_ms = 1.0f;
-		velocityX += accelerationX*timeDif_ms;
-		
-		System.out.println("Acceleration: " + accelerationX);
-		
-		if(activelyMovingX){
-			if(runButtonOn) {
-				velocityX = (direction == Direction.RIGHT) ? Math.min(MAX_RUNNING_VELOCITY[Direction.RIGHT.index], velocityX) : 
-					                                           Math.max(MAX_RUNNING_VELOCITY[Direction.LEFT.index ], velocityX);
-			}
-			else{
-				velocityX = (direction == Direction.RIGHT) ? Math.min(MAX_WALKING_VELOCITY[Direction.RIGHT.index], velocityX) : 
-          																					 Math.max(MAX_WALKING_VELOCITY[Direction.LEFT.index ], velocityX);
-			}
-		}
-		else{
-			velocityX = (direction == Direction.RIGHT) ? Math.max(velocityX, 0) : Math.min(velocityX, 0);
-		}
+  void updateX(float timeDif) {
+    timeDif = 1.0f;
+    int direction = playerControl.getDirection();
+    
+    if(velocityX < -MAX_RUNNING_VELOCITY_TEMP){
+      int i = 0;
+      int a = 2*i;
+    }
+    
+    if(velocityX > MAX_RUNNING_VELOCITY_TEMP){
+      int i = 0;
+      int a = 2*i;
+    }
+    
+    if( direction == 0){
+      if(isSkidding){
+        if(velocityX > 0){
+          velocityX -= SKIDDING_DECELERATION_TEMP*timeDif;
+          if(velocityX < 0){
+            velocityX = 0;
+            isSkidding = false;
+          }
+        }
+        else{
+          velocityX += SKIDDING_DECELERATION_TEMP*timeDif;
+          if(velocityX < 0){
+            velocityX = 0;
+            isSkidding = false;
+          }
+        }
+      }
+      //Player no longer moving so decelerate (but don't go passed 0!)
+      else if(velocityX > 0){
+        velocityX = Math.max(0, velocityX - (RELEASE_DECELERATION_TEMP*timeDif));
+      }
+      else if(velocityX < 0){
+        velocityX = Math.min(0, velocityX + (RELEASE_DECELERATION_TEMP*timeDif));
+      }
+    }
+    else if(direction > 0){
+      //Player wants to move right
+      if(velocityX > 0){
+        isSkidding = false;
+        //And currently moving right
+        if(playerControl.isRunning()){
+          velocityX = Math.min(MAX_RUNNING_VELOCITY_TEMP, velocityX + (RUNNING_ACCELERATION_TEMP*timeDif));
+        }
+        else{
+          velocityX = Math.min(MAX_WALKING_VELOCITY_TEMP, velocityX + (WALKING_ACCELERATION_TEMP*timeDif));
+        }
+      }
+      else if(velocityX < 0){
+        //And is currently moving left
+        if(velocityX > -SKID_TURNAROUND_SPEED){
+          velocityX = MIN_WALKING_VELOCITY_TEMP;
+        }
+        else{
+          velocityX += SKIDDING_DECELERATION_TEMP*timeDif;
+          isSkidding = true;
+        }        
+      }
+      else{
+        //And is currently not moving
+        velocityX = MIN_WALKING_VELOCITY_TEMP;
+      }
+    }
+    else{
+      //Player wants to move left
+      if(velocityX < 0){
+        //And currently moving left
+        isSkidding = false;
+        if(playerControl.isRunning()){
+          velocityX = Math.max(-MAX_RUNNING_VELOCITY_TEMP, velocityX - (RUNNING_ACCELERATION_TEMP*timeDif));
+        }
+        else{
+          velocityX = Math.max(-MAX_WALKING_VELOCITY_TEMP, velocityX - (WALKING_ACCELERATION_TEMP*timeDif));
+        }
+      }
+      else if(velocityX > 0){
+        //And is currently moving right
+        if(velocityX < SKID_TURNAROUND_SPEED){
+          velocityX = -MIN_WALKING_VELOCITY_TEMP;
+        }
+        else{
+          velocityX -= SKIDDING_DECELERATION_TEMP*timeDif;
+          isSkidding = true;
+        }        
+      }
+      else{
+        //And is currently not moving
+        velocityX = -MIN_WALKING_VELOCITY_TEMP;
+      }
+    }
+  }
+  
+  void updateY(float timeDif_ms){
+    timeDif_ms = 1.0f;
+    velocityY = velocityY + (accelerationY*timeDif_ms);
+  }
+  
+  public void collideWithFloor(){
+    accelerationY = 0;
+    velocityY = 0;
+  }
 
-		//Don't want to move passed zero if we stopped trying to move
-		if(!activelyMovingX){
-			if(direction == Direction.RIGHT){
-				velocityX = Math.max(0, velocityX);
-			}
-			else{
-				velocityX = Math.min(0, velocityX);
-			}
-		}
-	}
-	
-	void updateVelocityY(float timeDif_ms){
-		//TODO
-		timeDif_ms = 1.0f;
-		velocityY = velocityY + (accelerationY*timeDif_ms);
-	}
-	
-	//////////////////////////////////////////////////////
-	//PUBLIC METHODS
-	
-	public boolean canJump(){
-		return (accelerationY == 0);
-	}
-	
-	public void performJump(){
-		int speedIndex = getSpeedIndex();
-		accelerationY = (runButtonOn) ? JUMPING_WEAK_GRAVITY[speedIndex] : JUMPING_STRONG_GRAVITY[speedIndex];
-		velocityY = JUMPING_VELOCITY[speedIndex];
-	}
-	
-	public void collideWithFloor(){
-		accelerationY = 0;
-		velocityY = 0;
-	}
-	
-	public void freeFall(){
-		int speedIndex = getSpeedIndex();
-		accelerationY = (runButtonOn) ? JUMPING_WEAK_GRAVITY[speedIndex] : JUMPING_STRONG_GRAVITY[speedIndex];
-	}
-	
-	public void moveRight(){
-		if(!activelyMovingX && velocityX == 0){
-			velocityX = MIN_WALKING_VELOCITY[Direction.RIGHT.index];
-		}
-		else if(velocityX < 0){
-			
-		}
-		
-		activelyMovingX = true;
-		direction = Direction.RIGHT;
-		accelerationX = (runButtonOn) ? RUNNING_ACCELERATION[direction.index] : WALKING_ACCELERATION[direction.index];
-	}
-	
-	public void moveLeft(){
-		if(activelyMovingX && velocityX == 0){
-			velocityX = MIN_WALKING_VELOCITY[Direction.LEFT.index];
-		}
-		
-		activelyMovingX = true;
-		direction = Direction.LEFT;
-		accelerationX = (runButtonOn) ? RUNNING_ACCELERATION[direction.index] : WALKING_ACCELERATION[direction.index];
-	}
-	
-	public void stopMoving(){
-		activelyMovingX = false;
-		accelerationX = RELEASE_DECELERATION[direction.index];
-	}
-	
-	public void runButtonChanged(boolean on){
-		runButtonOn = on;
-	}
-	
-	
 	public void update(){
 		long currentTime_ms = System.currentTimeMillis();
 		float timeDif = (float) ((currentTime_ms - previousTime_ms)/1000.0);
 		
 		//For first "move" call, it's safe to assume we're not moving
 		if(previousTime_ms != 0){
-			updateVelocityX(timeDif);
-			updateVelocityY(timeDif);
+		  updateX(timeDif);
+		  updateY(timeDif);
 		}
 				
 		previousTime_ms = currentTime_ms;
 	}
 
-	public float getVelocityX() {
+  public float getVelocityX() {
 		return velocityX;
 	}
 	

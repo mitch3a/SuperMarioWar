@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 public class Sprite {
 	public static enum Action {
-		NONE(0), RUNNING_STEP(1), RUNNING_NO_STEP(0), JUMPING(2), TURNING(3), DYING(4), SQUASHED(5);
+		NONE(0), RUNNING_STEP(1), RUNNING_NO_STEP(0), JUMPING(2), SKIDDING(3), DYING(4), SQUASHED(5);
 
 	  private final int index;
 	  private Action(int index) {
@@ -81,27 +81,36 @@ public class Sprite {
   }
 
   // It is assumed this method is only called after collision detection passed
-  public void move(float dx, float dy) {
-    switch (currentAction) {
-	    case NONE:
-	      checkForRunning(dx);
-	      break;
-	    case RUNNING_STEP:
-	      checkForRunningStepChange(dx, Action.RUNNING_NO_STEP);
-	      break;
-	    case RUNNING_NO_STEP:
-	      checkForRunningStepChange(dx, Action.RUNNING_STEP);
-	      break;
-	    case JUMPING:
-	      checkForJumpComplete(dx, dy);
-	      break;
-	    case TURNING:
-	      checkForTurnComplete(dx);
-	      break;
-	    case SQUASHED: // TODO
-	      break;
-	    case DYING: // TODO
-	      break;
+  public void move(float dx, float dy, boolean isJumping, boolean isSkidding) {
+    if( dx != 0){
+      currentDirection = (dx < 0) ? Direction.LEFT : Direction.RIGHT;
+    }
+    if(isJumping){
+      currentAction = Action.JUMPING;
+    }
+    else if(isSkidding){
+      currentAction = Action.SKIDDING;
+    }
+    else{
+      switch (currentAction) {
+  	    case NONE:
+  	      checkForRunning(dx);
+  	      break;
+  	    case RUNNING_STEP:
+  	      checkForRunningStepChange(dx, Action.RUNNING_NO_STEP);
+  	      break;
+  	    case RUNNING_NO_STEP:
+  	      checkForRunningStepChange(dx, Action.RUNNING_STEP);
+  	      break;
+  	    case JUMPING:
+  	      currentAction = (dx == 0) ? Action.NONE : Action.RUNNING_STEP;
+  	    case SKIDDING:
+          currentAction = (dx == 0) ? Action.NONE : Action.RUNNING_STEP;
+  	    case SQUASHED: // TODO
+  	      break;
+  	    case DYING: // TODO
+  	      break;
+      }
     }
 
     position.setLocation(position.getX() + dx, position.getY() + dy);
@@ -110,18 +119,8 @@ public class Sprite {
   private void checkForRunningStepChange(float dx, Action nextRunningAction) {
     if (dx == 0) {
       currentAction = Action.NONE;
-    } else {
-      // Make sure we're not turning around
-      if (currentDirection == Direction.RIGHT) {
-        if (dx <= 0) {
-          currentAction = Action.TURNING;
-        }
-      } else {
-        if (dx >= 0) {
-          currentAction = Action.TURNING;
-        }
-      }
-
+    } 
+    else {
       long currentTime_ns = System.nanoTime();
       if (currentTime_ns - timeActionChange_ns > TIME_TO_HALF_STEP_NS) {
         currentAction = nextRunningAction;
@@ -148,33 +147,11 @@ public class Sprite {
     }
   }
 
-  private void checkForTurnComplete(float dx) {
-    if (currentDirection == Direction.RIGHT) {
-      if (dx >= 0) {
-        currentAction = Action.RUNNING_STEP;
-        timeActionChange_ns = System.nanoTime();
-      }
-    } else {
-      if (dx <= 0) {
-        currentAction = Action.RUNNING_STEP;
-        timeActionChange_ns = System.nanoTime();
-      }
-    }
-  }
-
   public Image getImage() {
     return sprites[currentDirection.index][currentAction.index];
   }
 
   public void setJumping() {
     currentAction = Action.JUMPING;
-  }
-
-	public void movingLeft() {
-	  currentDirection = Direction.LEFT;
-  }
-	
-	public void movingRight() {
-	  currentDirection = Direction.RIGHT;
   }
 }

@@ -2,13 +2,16 @@ package model;
 
 import java.awt.Image;
 
+import ui.PlayerControl;
+
 public class Player {
 	
 	Sprite  sprite;
 	MarioPhysics physics;
+	PlayerControl playerControl;
 		
-	public Player(){	
-		physics = new MarioPhysics();
+	public Player(PlayerControl playerControl){	
+		physics = new MarioPhysics(playerControl);
 		sprite  = new Sprite();
 	}
 	
@@ -32,37 +35,12 @@ public class Player {
 
 	public void move(){
 		physics.update();
-		sprite.move(physics.getVelocityX(), physics.getVelocityY());
+		sprite.move(physics.getVelocityX(), physics.getVelocityY(), physics.isJumping, physics.isSkidding);
 		
 		//TODO this is to simulate ground...
 		if(sprite.getY() > 500){
 			sprite.position.setLocation(sprite.position.getX(), 500);
 			physics.collideWithFloor();
 		}
-	}
-	
-	//###################################################################
-	// These methods are for the Input Handler. They are strictly actions
-	// commanded by the Input Handler and must be checked.
-	//###################################################################
-	public void jump(){
-		if(physics.canJump()){
-			physics.performJump();
-			sprite.setJumping();
-		}
-	}
-
-	public void moveLeft(){
-		physics.moveLeft();
-		sprite.movingLeft();
-	}
-	
-	public void moveRight(){
-		physics.moveRight();
-		sprite.movingRight();
-	}
-	
-	public void stopMoving(){
-		physics.stopMoving();
 	}
 }

@@ -2,6 +2,7 @@ package ui.screen;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.Timer;
 
@@ -19,9 +20,16 @@ public class Game implements ActionListener{
 		players = new Player[numPlayers];
 		player_controls = new PlayerControl[numPlayers];
 		for(int i = 0 ; i < numPlayers ; ++i){
-			players[i] = new Player();
-			players[i].init(50, 50, "4matsy_BubbleBobble.bmp");
-			player_controls[i] = new PlayerControl(players[i]);			
+			//TODO these are just the defaults for now
+			player_controls[i] = new PlayerControl(KeyEvent.VK_LEFT,
+                                      	     KeyEvent.VK_RIGHT,
+                                      	     KeyEvent.VK_UP,
+                                      	     KeyEvent.VK_DOWN,
+                                      	     KeyEvent.VK_UP,
+                                      	     KeyEvent.VK_A);	
+			
+			players[i] = new Player(player_controls[i]);
+      players[i].init(50, 50, "4matsy_BubbleBobble.bmp");
 		}
 	
 	    this.game_frame = new GameFrame(players);
