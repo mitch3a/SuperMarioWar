@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 import java.awt.image.ImageObserver;
 
+import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
 import smw.settings.Debug;
 import smw.ui.PlayerControl;
@@ -40,7 +41,7 @@ public class Player extends Rectangle{
 	
 	public void init(int newX, int newY, String image){
 		setBounds(newX, newY);
-		sprite.init(image);
+		sprite.init(image, ColorScheme.YELLOW);
 	}
 	
 	/*** This method is to get the state ready to move ***/

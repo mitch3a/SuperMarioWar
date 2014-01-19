@@ -1,20 +1,14 @@
 package smw.gfx;
 
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
-import java.awt.image.Raster;
-import java.awt.image.SinglePixelPackedSampleModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import smw.gfx.Palette.ColorScheme;
 
 public class Sprite {
 	public static enum Action {
@@ -50,38 +44,17 @@ public class Sprite {
   long timeActionChange_ns = 0;
 
   public Sprite() {
-    
+
   }
 
-  public void init(String image) {
-    initSpriteImage(image);
-  }
-  
-  public void initSpriteImage(String image){
+  public void init(String image, ColorScheme colorScheme){
     try {
       BufferedImage bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/" + image));
-      
-      // Change magenta to transparent.
-      // Start by converting buffered image to pixels.
-      final int width = bigImg.getWidth();
-      final int height = bigImg.getHeight();
-      int[] pixels = new int[width * height];
-      bigImg.getRGB(0, 0, width, height, pixels, 0, width);
-      
-      // Change each magenta pixel.
-      for (int i = 0; i < pixels.length; i++) {
-        if (pixels[i] == 0xffff00ff) {
-          pixels[i] = 0; // This might be -1 if we're using alpha channel, not sure.
-        }
-      }
-      
-      // Convert pixels back into buffered image.
-      int[] bitMasks = new int[]{0xFF0000, 0xFF00, 0xFF, 0xFF000000};
-      SinglePixelPackedSampleModel sm = new SinglePixelPackedSampleModel(
-      DataBuffer.TYPE_INT, width, height, bitMasks);
-      DataBufferInt db = new DataBufferInt(pixels, pixels.length);
-      WritableRaster wr = Raster.createWritableRaster(sm, db, new Point());
-      bigImg = new BufferedImage(ColorModel.getRGBdefault(), wr, false, null);
+
+      //Get the right color and make the magenta alpha 0
+      Palette p = Palette.getInstance();
+      p.loadPalette();
+      p.colorSprite(colorScheme, bigImg);
       
       //Create Transform to flip image for left facing versions
       AffineTransform result = AffineTransform.getScaleInstance(-1.0, 1.0);
@@ -96,7 +69,7 @@ public class Sprite {
       e.printStackTrace();  // TODO UH OH...error handling...
     }
   }
-
+  
   // It is assumed this method is only called after collision detection passed
   public void update(float dx, float dy, boolean isJumping, boolean isSkidding) {
     if( dx != 0){

@@ -23,7 +23,7 @@ public class Game implements Runnable {
     pc[0] = new PlayerControl(KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
     pc[1] = new PlayerControl(KeyEvent.VK_A,   KeyEvent.VK_D,     KeyEvent.VK_W,  KeyEvent.VK_S,    KeyEvent.VK_W, KeyEvent.VK_G);
     
-    String[] images = {"4matsy_BubbleBobble.bmp", "FTG_Yoshi2.png"};
+    String[] images = {"hazey_Lolo.bmp", "0smw.bmp"};
     
     for (int i = 0; i < numPlayers; ++i) {
     	//TODO this is obviously for just 1 player
