@@ -2,15 +2,12 @@ package smw.entity;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyListener;
-import java.awt.geom.Point2D;
 import java.awt.image.ImageObserver;
 
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
-import smw.settings.Debug;
 import smw.ui.PlayerControl;
 
 public class Player extends Rectangle{
