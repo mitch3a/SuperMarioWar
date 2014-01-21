@@ -41,7 +41,7 @@ public class Player extends Rectangle{
 	
 	public void init(int newX, int newY, String image){
 		setBounds(newX, newY);
-		sprite.init(image, ColorScheme.YELLOW);
+		sprite.init(image, ColorScheme.GREEN);
 	}
 	
 	/*** This method is to get the state ready to move ***/

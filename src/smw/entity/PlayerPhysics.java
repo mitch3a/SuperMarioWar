@@ -188,7 +188,7 @@ public class PlayerPhysics {
 	  if(isJumping){
 	  	return;
 	  }
-	  int direction = playerControl.getDirection();
+	  float direction = playerControl.getDirection();
 
 	  if( direction == 0){
 	  	passivelySlowDownX(timeDif);
@@ -206,7 +206,7 @@ public class PlayerPhysics {
 	
 	//TODO mk close but not quite there?
 	void setJumpingAccelerationX(){
-		int direction = playerControl.getDirection();
+		float direction = playerControl.getDirection();
 		if( direction == 0){
 			if(isSkidding){
 				jumpingAccelerationX = SKIDDING_DECELERATION[currentVelocityDirection.index];

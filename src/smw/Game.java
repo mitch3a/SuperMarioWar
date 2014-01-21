@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent;
 
 import smw.entity.Player;
 import smw.settings.Debug;
+import smw.ui.GamePad;
+import smw.ui.Keyboard;
 import smw.ui.PlayerControl;
 import smw.ui.screen.GameFrame;
 
@@ -20,9 +22,12 @@ public class Game implements Runnable {
   public Game(final int numPlayers) {
     players = new Player[numPlayers];
     PlayerControl[] pc = new PlayerControl[2]; //TODO mk made this 2 on purpose... only for testing (until real input configured);
-    pc[0] = new PlayerControl(KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
-    pc[1] = new PlayerControl(KeyEvent.VK_A,   KeyEvent.VK_D,     KeyEvent.VK_W,  KeyEvent.VK_S,    KeyEvent.VK_W, KeyEvent.VK_G);
-    
+    pc[0] = new Keyboard(KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+    pc[1] = new Keyboard(KeyEvent.VK_A,   KeyEvent.VK_D,     KeyEvent.VK_W,  KeyEvent.VK_S,    KeyEvent.VK_W, KeyEvent.VK_G);
+    //TODO The gamepad setup (as checked in) uses a hard coded value for which recognized controller
+    //it is. You MUST set that value before preceding. Only tested on MAC with my SNES usb gamepad
+    //pc[1] = new GamePad();
+    //pc[1].setup();
     String[] images = {"hazey_Lolo.bmp", "0smw.bmp"};
     
     for (int i = 0; i < numPlayers; ++i) {
@@ -63,7 +68,7 @@ public class Game implements Runnable {
     long secTimer = System.currentTimeMillis();
     int frames = 0;
     int updates = 0;
-    
+    GamePad gp = new GamePad();
     while (running) {
       final long currentTime_ns = System.nanoTime();
       neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
@@ -75,6 +80,7 @@ public class Game implements Runnable {
         updates++;
         neededUpdates -= 1.0;
         needRender = true;
+        gp.printState();
       }
       
       try {
