@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyListener;
 import java.awt.image.ImageObserver;
 
+import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
 import smw.ui.PlayerControl;
@@ -56,12 +57,14 @@ public class Player extends Rectangle{
 		newX = (int) (x + dx);
 		newY = (int) (y + dy);
 		
-		//TODO this is to simulate ground...
-		if(newY > 500){
-			newY = 500;
-			physics.collideWithFloor();
+		// TODO - RPG - this is awful, but at least we can detect the floor sort of	
+		// Need to add detection for X axis
+		// Probably need to check each tile around the players new point like Mitch did with "intersects"
+		if (Game.level.getTileType(newX, newY + 32) == 1) {
+		  newY = y;
+		  physics.collideWithFloor();
 		}
-		
+			
 		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){

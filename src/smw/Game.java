@@ -3,6 +3,7 @@ package smw;
 import java.awt.event.KeyEvent;
 
 import smw.entity.Player;
+import smw.level.Level;
 import smw.settings.Debug;
 import smw.ui.PlayerControl;
 import smw.ui.screen.GameFrame;
@@ -10,6 +11,7 @@ import smw.ui.screen.GameFrame;
 public class Game implements Runnable {  
   private GameFrame gameFrame;
   private Player[] players;
+  public static Level level = new Level();
   
   /** The desired frames per second. */
   public double FPS = 60.0;
@@ -32,7 +34,9 @@ public class Game implements Runnable {
       
     }
 
-    this.gameFrame = new GameFrame(players);
+    level.init();
+    
+    this.gameFrame = new GameFrame(players, level);
 
     // TODO I think the player/control should be packaged together... but this
     // is good enough for now
