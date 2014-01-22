@@ -27,7 +27,8 @@ public class Game implements Runnable {
   	
     PlayerControlBase[] pc = new PlayerControlBase[2]; //TODO mk made this 2 on purpose... only for testing (until real input configured);
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
-    pc[1] = new GamePad(GamePad.SavedControllerType.NONE);
+    pc[0] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    //pc[1] = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
 
     String[] images = {"hazey_Lolo.bmp", "0smw.bmp"};
     
