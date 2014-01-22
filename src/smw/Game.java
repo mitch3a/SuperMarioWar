@@ -60,7 +60,9 @@ public class Game implements Runnable {
     
     // Record keeping to determine FPS and UPS.
     long secTimer = System.currentTimeMillis();
+    @SuppressWarnings("unused")
     int frames = 0;
+    @SuppressWarnings("unused")
     int updates = 0;
     while (running) {
       final long currentTime_ns = System.nanoTime();

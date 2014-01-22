@@ -15,28 +15,27 @@ public class Tile {
    * Water - kicks in swimming physics / animation
    * Interactive - Question Blocks, Teleporters, etc.
    */
-    
-  public enum TileType {
-    NONSOLID(0), SOLID(1), SOLID_ON_TOP(2), ICE(3), DEATH(4), DEATH_ON_TOP(5), DEATH_ON_BOTTOM(6), DEATH_ON_LEFT(7),
-    DEATH_ON_RIGHT(8), ICE_ON_TOP(9), ICE_DEATH_ON_BOTTOM(10), ICE_DEATH_ON_LEFT(11), ICE_DEATH_ON_RIGHT(12),
-    SUPER_DEATH(13), SUPER_DEATH_TOP(14), SUPER_DEATH_BOTTOM(15), SUPER_DEATH_LEFT(16), SUPER_DEATH_RIGHT(17),
-    PLAYER_DEATH(18), GAP(19);
-    
-    private final int index;
-    
-    private TileType(int index) {
-      this.index = index;
-    }
-    
-    public final int getIndex() {
-      return index;
-    }
-    
-    public boolean solid() {
-      // TODO - not sure which ones are considered "solid" this will have to be a case statement.
-      return index == SOLID.getIndex();
-    }
-  }
+  // Tile types. 
+  public static final int NONSOLID = 0;
+  public static final int SOLID = 1;
+  public static final int SOLID_ON_TOP = 2;
+  public static final int ICE = 3;
+  public static final int DEATH = 4;
+  public static final int DEATH_ON_TOP = 5;
+  public static final int DEATH_ON_BOTTOM = 6;
+  public static final int DEATH_ON_LEFT = 7;
+  public static final int DEATH_ON_RIGHT = 8;
+  public static final int ICE_ON_TOP = 9;
+  public static final int ICE_DEATH_ON_BOTTOM = 10;
+  public static final int ICE_DEATH_ON_LEFT = 11;
+  public static final int ICE_DEATH_ON_RIGHT = 12;
+  public static final int SUPER_DEATH = 13;
+  public static final int SUPER_DEATH_TOP = 14;
+  public static final int SUPER_DEATH_BOTTOM = 15;
+  public static final int SUPER_DEATH_LEFT = 16;
+  public static final int SUPER_DEATH_RIGHT = 17;
+  public static final int PLAYER_DEATH = 18;
+  public static final int GAP = 19;
   
   private BufferedImage img;
   private int type;

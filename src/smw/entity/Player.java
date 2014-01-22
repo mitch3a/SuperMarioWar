@@ -9,6 +9,7 @@ import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
 import smw.level.Level;
+import smw.level.Tile;
 import smw.ui.PlayerControlBase;
 
 public class Player extends Rectangle{
@@ -74,34 +75,30 @@ public class Player extends Rectangle{
 		// Need to fix add detection for X axis
 		// Probably need to check each tile around the players new point like Mitch did with "intersects"
 		// physics will need to be updated to NOT update if we can't move in a certain x or y direction
-		boolean canX = true;
-		boolean canY = true;
-		if (Game.level.getTileTypeAtPx(newX + 32 + 2, newY) == 1) {
+		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE + 2, newY) == Tile.SOLID) {
       if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
         newX = x;
         System.out.println("X1");
-        canX = false;
         physics.collideWithWall();
       }
     } 
 		
-		if (Game.level.getTileTypeAtPx(newX - 3, newY) == 1) {
+		if (Game.level.getTileTypeAtPx(newX - 3, newY) == Tile.SOLID) {
       if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
         newX = x;
         System.out.println("X2");
-        canX = false;
         physics.collideWithWall();
       }
     }
 		
-		if (Game.level.getTileTypeAtPx(newX, newY + 32) == 1) {
+		if (Game.level.getTileTypeAtPx(newX, newY + Level.TILE_SIZE) == Tile.SOLID) {
 		  if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
   		  newY = y;
   		  physics.collideWithFloor();
 		  }
 		}
 		
-		if (Game.level.getTileTypeAtPx(newX + 32, newY + 32) == 1) {
+		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE, newY + Level.TILE_SIZE) == 1) {
       if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
         newY = y;
         physics.collideWithFloor();
