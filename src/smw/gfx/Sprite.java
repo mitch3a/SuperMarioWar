@@ -12,7 +12,7 @@ import smw.gfx.Palette.ColorScheme;
 
 public class Sprite {
 	public static enum Action {
-		NONE(0), RUNNING_STEP(1), RUNNING_NO_STEP(0), JUMPING(2), SKIDDING(3), DYING(4), SQUASHED(5);
+		NONE(0), RUNNING_STEP(1), RUNNING_NO_STEP(0), JUMPING(2), SKIDDING(3), DYING(4), CRUSHED(5);
 
 	  private final int index;
 	  private Action(int index) {
@@ -48,6 +48,9 @@ public class Sprite {
   }
 
   public void init(String image, ColorScheme colorScheme){
+  	currentAction    = Action.NONE;
+    currentDirection  = Direction.RIGHT;
+    
     try {
       BufferedImage bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/" + image));
       //Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR
@@ -100,7 +103,7 @@ public class Sprite {
   	      currentAction = (dx == 0) ? Action.NONE : Action.RUNNING_STEP;
   	    case SKIDDING:
           currentAction = (dx == 0) ? Action.NONE : Action.RUNNING_STEP;
-  	    case SQUASHED: // TODO
+  	    case CRUSHED: // do nothing
   	      break;
   	    case DYING: // TODO
   	      break;
@@ -143,4 +146,8 @@ public class Sprite {
 	public void movingRight() {
 	  currentDirection = Direction.RIGHT;
   }
+	
+	public void crush(){
+		currentAction = Action.CRUSHED;
+	}
 }
