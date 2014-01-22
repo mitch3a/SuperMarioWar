@@ -1,10 +1,17 @@
 package smw.gfx;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+
+/******************************************************
+ * This class is used to process Sprites. This entails 
+ * implementing the team color and replacing "magenta" 
+ * with transparency.
+ *****************************************************/
 
 //This class is a singleton because you only need one.
 public class Palette {
@@ -52,7 +59,7 @@ public class Palette {
 	}
 	
 	public void loadPalette(){
-	  int[] alphaInt = {0, 0, 0, 0};
+	  int[] alphaInt = {0x00000000, Color.TRANSLUCENT, 0x00000000, 0x00000000};
 	  colorMap.put(0xffff00ff, alphaInt);
 		try{
 			BufferedImage imageBuffer = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/palette.bmp"));

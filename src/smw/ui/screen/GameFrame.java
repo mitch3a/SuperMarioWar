@@ -34,7 +34,7 @@ public class GameFrame extends JFrame{
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 	    setResizable(false);
-	    
+
 	    createBufferStrategy(3);
 	    
 	    this.players = players;

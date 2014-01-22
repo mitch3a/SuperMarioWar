@@ -1,11 +1,14 @@
 package smw;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import smw.entity.Player;
 import smw.level.Level;
 import smw.settings.Debug;
-import smw.ui.PlayerControl;
+import smw.ui.GamePad;
+import smw.ui.Keyboard;
+import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
 
 public class Game implements Runnable {  
@@ -20,26 +23,22 @@ public class Game implements Runnable {
   private boolean running = false;
   
   public Game(final int numPlayers) {
+  	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
+  	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];
-    PlayerControl[] pc = new PlayerControl[2]; //TODO mk made this 2 on purpose... only for testing (until real input configured);
-    pc[0] = new PlayerControl(KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
-    pc[1] = new PlayerControl(KeyEvent.VK_A,   KeyEvent.VK_D,     KeyEvent.VK_W,  KeyEvent.VK_S,    KeyEvent.VK_W, KeyEvent.VK_G);
-    
+    level.init();
+  	this.gameFrame = new GameFrame(players, level);
+  	
+    PlayerControlBase[] pc = new PlayerControlBase[2]; //TODO mk made this 2 on purpose... only for testing (until real input configured);
+    pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+    pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    //pc[1] = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
+
     String[] images = {"hazey_Lolo.bmp", "0smw.bmp"};
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);
       players[i].init(50*(i + 2), 50, images[i]);
-    }
-
-    level.init();
-    
-    this.gameFrame = new GameFrame(players, level);
-
-    // TODO I think the player/control should be packaged together... but this
-    // is good enough for now
-    for(Player p : players){
-    	gameFrame.addKeyListener(p.getControls());
     }
   }
 
@@ -63,7 +62,6 @@ public class Game implements Runnable {
     long secTimer = System.currentTimeMillis();
     int frames = 0;
     int updates = 0;
-    
     while (running) {
       final long currentTime_ns = System.nanoTime();
       neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
@@ -71,7 +69,7 @@ public class Game implements Runnable {
       boolean needRender = true; // TODO - render as much as possible for now, may want to adjust this later...
 
       while (neededUpdates >= 1.0) {
-        updateGame();
+      	updateGame();
         updates++;
         neededUpdates -= 1.0;
         needRender = true;
@@ -104,7 +102,6 @@ public class Game implements Runnable {
   }
 
   private void updateGame() {
-    // TODO - poll input update    
     // Poll player update (movement, etc.)
     // Way later poll level update and all that other junk...
   	
@@ -114,6 +111,7 @@ public class Game implements Runnable {
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
   	for(Player p : players){
+  		p.poll();
   		p.prepareToMove();
   	}
   	

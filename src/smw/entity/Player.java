@@ -3,14 +3,13 @@ package smw.entity;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.KeyListener;
 import java.awt.image.ImageObserver;
 
 import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
 import smw.level.Level;
-import smw.ui.PlayerControl;
+import smw.ui.PlayerControlBase;
 
 public class Player extends Rectangle{
 	/**
@@ -20,10 +19,9 @@ public class Player extends Rectangle{
 	
 	Sprite  sprite;
 	PlayerPhysics physics;
-	PlayerControl playerControl;
 	final int playerIndex;
 	
-	public Player(PlayerControl playerControl, int playerIndex){	
+	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
 		sprite  = new Sprite();
 		this.playerIndex = playerIndex;
@@ -40,7 +38,7 @@ public class Player extends Rectangle{
 	
 	public void init(int newX, int newY, String image){
 		setBounds(newX, newY);
-		sprite.init(image, ColorScheme.YELLOW);
+		sprite.init(image, ColorScheme.GREEN);
 	}
 	
 	/*** This method is to get the state ready to move ***/
@@ -98,7 +96,6 @@ public class Player extends Rectangle{
 
 		physics.update();
 		
-			
 		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){
@@ -122,11 +119,11 @@ public class Player extends Rectangle{
 		setBounds(newX, newY);					
 	}
 	
+	public void poll(){
+		physics.poll();
+	}
+	
 	public void draw(Graphics2D graphics, ImageObserver observer){
 		graphics.drawImage(sprite.getImage(), x, y, observer);
 	}
-
-	public final KeyListener getControls() {
-	  return physics.playerControl;
-  }
 }

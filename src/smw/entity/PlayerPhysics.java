@@ -1,7 +1,7 @@
 package smw.entity;
 
 import smw.gfx.Sprite.Direction;
-import smw.ui.PlayerControl;
+import smw.ui.PlayerControlBase;
 
 public class PlayerPhysics {
 //Jumping/Vertical
@@ -76,7 +76,7 @@ public class PlayerPhysics {
 	float velocityX,     velocityY, remainderX, remainderY;
 	float jumpingAccelerationX, accelerationY;
 	
-	PlayerControl playerControl;
+	PlayerControlBase playerControl;
 	boolean isJumping; 
 	boolean isSkidding;
 	
@@ -84,7 +84,7 @@ public class PlayerPhysics {
 	// for now becuase it's easier to read and speed might not be an issue
 	Direction currentVelocityDirection;
 	
-	public PlayerPhysics(PlayerControl playerControl){
+	public PlayerPhysics(PlayerControlBase playerControl){
 		previousTime_ms = 0;
 		velocityX = 0;
 		velocityY = 0;
@@ -275,7 +275,11 @@ public class PlayerPhysics {
     this.isSkidding = false;
   }
 
-	public void update(){
+  public void poll(){
+  	playerControl.poll();
+  }
+  
+	public void update(){		
 		long currentTime_ms = System.currentTimeMillis();
 		float timeDif = (float) ((currentTime_ms - previousTime_ms)/1000.0);
 		
