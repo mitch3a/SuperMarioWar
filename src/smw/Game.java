@@ -1,12 +1,9 @@
 package smw;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import smw.entity.Player;
 import smw.level.Level;
 import smw.settings.Debug;
-import smw.ui.GamePad;
 import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
