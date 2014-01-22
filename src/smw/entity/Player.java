@@ -2,16 +2,13 @@ package smw.entity;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyListener;
-import java.awt.geom.Point2D;
 import java.awt.image.ImageObserver;
 
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
-import smw.settings.Debug;
-import smw.ui.PlayerControl;
+import smw.ui.PlayerControlBase;
 
 public class Player extends Rectangle{
 	/**
@@ -21,10 +18,9 @@ public class Player extends Rectangle{
 	
 	Sprite  sprite;
 	PlayerPhysics physics;
-	PlayerControl playerControl;
 	final int playerIndex;
 	
-	public Player(PlayerControl playerControl, int playerIndex){	
+	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
 		sprite  = new Sprite();
 		this.playerIndex = playerIndex;
@@ -88,11 +84,11 @@ public class Player extends Rectangle{
 		setBounds(newX, newY);					
 	}
 	
+	public void poll(){
+		physics.poll();
+	}
+	
 	public void draw(Graphics2D graphics, ImageObserver observer){
 		graphics.drawImage(sprite.getImage(), x, y, observer);
 	}
-
-	public final KeyListener getControls() {
-	  return physics.playerControl;
-  }
 }

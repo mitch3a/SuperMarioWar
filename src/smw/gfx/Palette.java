@@ -6,6 +6,12 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+/******************************************************
+ * This class is used to process Sprites. This entails 
+ * implementing the team color and replacing "magenta" 
+ * with transparency.
+ *****************************************************/
+
 //This class is a singleton because you only need one.
 public class Palette {
   private static Palette instance;
