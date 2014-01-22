@@ -28,10 +28,8 @@ public class Game implements Runnable {
     String[] images = {"hazey_Lolo.bmp", "0smw.bmp"};
     
     for (int i = 0; i < numPlayers; ++i) {
-    	//TODO this is obviously for just 1 player
       players[i] = new Player(pc[i], i);
       players[i].init(50*(i + 2), 50, images[i]);
-      
     }
 
     level.init();
@@ -46,14 +44,12 @@ public class Game implements Runnable {
   }
 
   public synchronized void start() {    
-    // TODO start new stuff here
     running = true;
     new Thread(this).start();
   }
   
   public synchronized void stop() {
     running = false;
-    // TODO - is there anything else we need to do with the thread when stopping?
   }
   
   /** Main game loop method. */
@@ -72,7 +68,7 @@ public class Game implements Runnable {
       final long currentTime_ns = System.nanoTime();
       neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
       lastUpdateTime_ns = currentTime_ns;
-      boolean needRender = false;
+      boolean needRender = true; // TODO - render as much as possible for now, may want to adjust this later...
 
       while (neededUpdates >= 1.0) {
         updateGame();

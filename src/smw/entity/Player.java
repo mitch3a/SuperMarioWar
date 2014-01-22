@@ -9,6 +9,7 @@ import java.awt.image.ImageObserver;
 import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
+import smw.level.Level;
 import smw.ui.PlayerControl;
 
 public class Player extends Rectangle{
@@ -44,7 +45,7 @@ public class Player extends Rectangle{
 	
 	/*** This method is to get the state ready to move ***/
 	public void prepareToMove(){
-		physics.update();
+		//physics.update();
 	}
 	
 	public void move(Player[] players){	
@@ -58,12 +59,45 @@ public class Player extends Rectangle{
 		newY = (int) (y + dy);
 		
 		// TODO - RPG - this is awful, but at least we can detect the floor sort of	
-		// Need to add detection for X axis
+		// Need to fix add detection for X axis
 		// Probably need to check each tile around the players new point like Mitch did with "intersects"
-		if (Game.level.getTileType(newX, newY + 32) == 1) {
-		  newY = y;
-		  physics.collideWithFloor();
+		// physics will need to be updated to NOT update if we can't move in a certain x or y direction
+		boolean canX = true;
+		boolean canY = true;
+		if (Game.level.getTileTypeAtPx(newX + 32 + 2, newY) == 1) {
+      if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
+        newX = x;
+        System.out.println("X1");
+        canX = false;
+        physics.collideWithWall();
+      }
+    } 
+		
+		if (Game.level.getTileTypeAtPx(newX - 3, newY) == 1) {
+      if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
+        newX = x;
+        System.out.println("X2");
+        canX = false;
+        physics.collideWithWall();
+      }
+    }
+		
+		if (Game.level.getTileTypeAtPx(newX, newY + 32) == 1) {
+		  if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
+  		  newY = y;
+  		  physics.collideWithFloor();
+		  }
 		}
+		
+		if (Game.level.getTileTypeAtPx(newX + 32, newY + 32) == 1) {
+      if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
+        newY = y;
+        physics.collideWithFloor();
+      }
+    }
+
+		physics.update();
+		
 			
 		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){

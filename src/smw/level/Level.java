@@ -19,7 +19,7 @@ public class Level {
    * the game would check what type of tile the player is touching
    */
   
-  public final int TILE_SIZE = 32;
+  public static final int TILE_SIZE = 32;
   public final int WIDTH = GameFrame.res_width / TILE_SIZE;
   public final int HEIGHT = GameFrame.res_height / TILE_SIZE;
   
@@ -51,8 +51,13 @@ public class Level {
   }
   
   /** Gets tile type at provided pixel coordinates. */
-  public int getTileType(int x, int y) {
+  public int getTileTypeAtPx(int x, int y) {
     return tiles[x / TILE_SIZE][y / TILE_SIZE].getTileType();
+  }
+  
+  /** Gets tile type at provided tile coordinates. */
+  public int getTileTypeAtTile(int x, int y) {
+    return tiles[x][y].getTileType();
   }
   
   public void update() {

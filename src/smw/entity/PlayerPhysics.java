@@ -269,6 +269,11 @@ public class PlayerPhysics {
     velocityY = 0;
     isJumping = false;
   }
+  
+  public void collideWithWall() {
+    this.velocityX = 0;
+    this.isSkidding = false;
+  }
 
 	public void update(){
 		long currentTime_ms = System.currentTimeMillis();
@@ -276,8 +281,10 @@ public class PlayerPhysics {
 		
 		//For first "move" call, it's safe to assume we're not moving
 		if(previousTime_ms != 0){
-		  updateX(timeDif);
-		  updateY(timeDif);
+		  //if (canX)
+		    updateX(timeDif);
+		  //if (canY)
+		    updateY(timeDif);
 		}
 				
 		previousTime_ms = currentTime_ms;
