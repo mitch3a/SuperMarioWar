@@ -93,7 +93,7 @@ public class TileSet {
   
   int getTileType(int x, int y)
   {
-          return tiletypes[x + y * width];
+    return tiletypes[x + y * width];
   }
 
   // TODO - RPG - may want to get rid of some of these setters
