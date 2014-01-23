@@ -1,8 +1,10 @@
 package smw;
 
 import java.awt.event.KeyEvent;
+
 import smw.entity.Player;
 import smw.level.Level;
+import smw.level.TileSet;
 import smw.settings.Debug;
 import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
@@ -20,6 +22,10 @@ public class Game implements Runnable {
   private boolean running = false;
   
   public Game(final int numPlayers) {
+    
+    // TODO - RPG - TEMP - testing my TileSet stuff...
+    TileSet t = new TileSet("SMB1");
+    
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];

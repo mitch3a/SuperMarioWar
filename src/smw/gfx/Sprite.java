@@ -53,16 +53,16 @@ public class Sprite {
     
     try {
       BufferedImage bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/" + image));
-      //Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR
+      // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
       BufferedImage convertedImg = new BufferedImage(bigImg.getWidth(), bigImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
       convertedImg.getGraphics().drawImage(bigImg, 0, 0, null);
 
-      //Get the right color and make the magenta alpha 0
+      // Get the right color and make the magenta alpha 0.
       Palette p = Palette.getInstance();
       p.loadPalette();
       p.colorSprite(colorScheme, convertedImg);
       
-      //Create Transform to flip image for left facing versions
+      // Create Transform to flip image for left facing versions.
       AffineTransform result = AffineTransform.getScaleInstance(-1.0, 1.0);
       result.translate(-IMAGE_WIDTH, 0);
       AffineTransformOp op = new AffineTransformOp(result, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -72,7 +72,7 @@ public class Sprite {
         sprites[Direction.LEFT.index ][i] = op.filter(sprites[Direction.RIGHT.index][i], null);
       }
     } catch (IOException e) {
-      e.printStackTrace();  // TODO UH OH...error handling...
+      e.printStackTrace();
     }
   }
   
