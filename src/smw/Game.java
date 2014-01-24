@@ -32,12 +32,14 @@ public class Game implements Runnable {
     level.init();
   	this.gameFrame = new GameFrame(players, level);
   	
-    PlayerControlBase[] pc = new PlayerControlBase[2]; //TODO mk made this 2 on purpose... only for testing (until real input configured);
+    PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
     pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[1] = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
 
-    String[] images = {"hazey_Lolo.bmp", "0smw.bmp"};
+    String[] images = {"hazey_Lolo.bmp", "0smw.bmp", "ftg_Train.bmp", "BlackMage.bmp"};
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);

@@ -41,7 +41,7 @@ public class GameFrame extends JFrame{
 	    
 	    this.players = players;
 	    this.level = level;
-	    sB = new Scoreboard(this.players, 50);
+	    sB = new Scoreboard(this.players);
 	}
 
     @Override
