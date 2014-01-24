@@ -20,6 +20,7 @@ public class Player extends Rectangle{
 	private static final long RESPAWN_WAIT_MS = 2000;
 	Sprite  sprite;
 	PlayerPhysics physics;
+	Score score;
 	final int playerIndex;
 	boolean crushed = false;
 	long respawnTime;
@@ -27,6 +28,7 @@ public class Player extends Rectangle{
 	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
 		sprite  = new Sprite();
+		score   = new Score();
 		this.playerIndex = playerIndex;
 	}
 	
@@ -41,7 +43,21 @@ public class Player extends Rectangle{
 	
 	public void init(int newX, int newY, String image){
 		setBounds(newX, newY);
-		sprite.init(image, ColorScheme.GREEN);
+		
+		//TODO this is obviously not staying in
+		int i = (int)(4*Math.random());
+		ColorScheme color = ColorScheme.YELLOW;
+		if(i == 0){
+		  color = ColorScheme.RED;
+		}
+		else if(i == 1){
+      color = ColorScheme.GREEN;
+    }
+		else if(i == 2){
+      color = ColorScheme.BLUE;
+    }
+		
+		sprite.init(image, color);
 	}
 	
 	/*** This method is to get the state ready to move ***/
@@ -124,9 +140,11 @@ public class Player extends Rectangle{
 				if(!p.crushed && p.intersects(x, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
 					if(!xCollide){
 						if(p.getY() < newY){
+						  p.score.increaseScore();
 							crush();
 						}
 						else{
+						  score.increaseScore();
 							p.crush();
 						}
 					}
@@ -155,6 +173,6 @@ public class Player extends Rectangle{
 	}
 	
 	public int getScore(){
-		return 1001; //TODO
+		return score.getScore();
 	}
 }
