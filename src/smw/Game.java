@@ -26,11 +26,15 @@ public class Game implements Runnable {
     // TODO - RPG - TEMP - testing my TileSet stuff...
     TileSet t = new TileSet("SMB1");
     
+    
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];
     level.init();
   	this.gameFrame = new GameFrame(players, level);
+  	
+  	// TODO - RPG - TEMP testing my map stuff...
+  	level.loadMap("NMcCoy_1-3.map");
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
