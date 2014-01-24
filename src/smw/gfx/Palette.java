@@ -79,7 +79,8 @@ public class Palette {
       e.printStackTrace();  // TODO UH OH...error handling...
     }
 	}
-	
+
+
 	/** This also removes megenta (into alpha zero) **/
 	public void colorSprite(ColorScheme color, BufferedImage image){
 	  int colorIndex = color.index;
@@ -93,4 +94,14 @@ public class Palette {
 	    }
 	  }
 	}
+
+	public void implementTransparent(BufferedImage image) {
+	  for(int w = 0 ; w < image.getWidth() ; ++w){
+	    for(int h = 0 ; h < image.getHeight(); ++h){
+	      if(image.getRGB(w, h) == 0xffff00ff){
+	        image.setRGB(w, h, Color.TRANSLUCENT);
+	      }
+	    }
+	  } 
+  }
 }

@@ -8,6 +8,8 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 import smw.entity.Player;
+import smw.gfx.Font;
+import smw.gfx.Scoreboard;
 import smw.level.Level;
 
 public class GameFrame extends JFrame{
@@ -23,7 +25,7 @@ public class GameFrame extends JFrame{
 	
 	//TODO this is REALLY hacky but i just wanted to get the stupid thing to work
 	Player[] players;
-	
+	Scoreboard sB;
 	Level level;
 	
 	public GameFrame(Player[] players, Level level){
@@ -39,6 +41,7 @@ public class GameFrame extends JFrame{
 	    
 	    this.players = players;
 	    this.level = level;
+	    sB = new Scoreboard(this.players, 50);
 	}
 
     @Override
@@ -58,6 +61,7 @@ public class GameFrame extends JFrame{
             p.draw(g2d, this);
           }
         }
+        sB.draw(g2d, this);
       } finally {
         // Free up graphics.
         g.dispose();

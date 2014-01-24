@@ -151,6 +151,10 @@ public class Player extends Rectangle{
 	}
 	
 	public void draw(Graphics2D graphics, ImageObserver observer){
-    graphics.drawImage(sprite.getImage(), x, y, observer);
+	  graphics.drawImage(sprite.getImage(), x, y, observer);
+	}
+	
+	public int getScore(){
+		return 1001; //TODO
 	}
 }
