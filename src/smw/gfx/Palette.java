@@ -2,7 +2,9 @@ package smw.gfx;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -62,7 +64,7 @@ public class Palette {
 	  int[] alphaInt = {0x00000000, Color.TRANSLUCENT, 0x00000000, 0x00000000};
 	  colorMap.put(0xffff00ff, alphaInt);
 		try{
-			BufferedImage imageBuffer = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/palette.bmp"));
+			BufferedImage imageBuffer = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/palette.png"));
 			
 			final int width = imageBuffer.getWidth();
 
@@ -104,4 +106,32 @@ public class Palette {
 	    }
 	  } 
   }
+	
+	public void convertAllFilesToPNG(){
+	  URL url = this.getClass().getClassLoader().getResource("sprites/");
+	  File folder = new File(url.getFile());
+	  File[] listOfFiles = folder.listFiles();
+	  for(File f : listOfFiles){
+	    convertBitmapToPNG(f.getName());
+	  }
+	}
+	
+	//This outputs to bin... might want to just hard code the output directory...
+	public void convertBitmapToPNG(String fileName){
+	  try{
+	    URL url = this.getClass().getClassLoader().getResource("sprites/" + fileName);
+	    String[] newFileName = fileName.split("\\.");
+	    BufferedImage imageBuffer = ImageIO.read(url);
+	    URL newUrl = this.getClass().getClassLoader().getResource("sprites/");
+	    String newFilePath = newUrl.getFile();
+	    File outputfile = new File(newFilePath + newFileName[0] + ".png");
+	    if(!outputfile.exists()){
+	      outputfile.mkdirs();
+	      ImageIO.write(imageBuffer, "png", outputfile);
+	    }
+    } catch (IOException e) {
+      e.printStackTrace();  // TODO UH OH...error handling...
+    }
+	}
+	
 }

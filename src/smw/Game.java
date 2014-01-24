@@ -35,11 +35,11 @@ public class Game implements Runnable {
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
     pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
-    pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
-    pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    //pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[1] = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
 
-    String[] images = {"hazey_Lolo.bmp", "0smw.bmp", "ftg_Train.bmp", "BlackMage.bmp"};
+    String[] images = {"hazey_Lolo.png", "0smw.png", "ftg_Train.png", "BlackMage.png"};
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);
@@ -65,18 +65,16 @@ public class Game implements Runnable {
     
     // Record keeping to determine FPS and UPS.
     long secTimer = System.currentTimeMillis();
-    @SuppressWarnings("unused")
     int frames = 0;
-    @SuppressWarnings("unused")
     int updates = 0;
     while (running) {
       final long currentTime_ns = System.nanoTime();
       neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
       lastUpdateTime_ns = currentTime_ns;
-      boolean needRender = true; // TODO - render as much as possible for now, may want to adjust this later...
+      boolean needRender = false; // TODO - render as much as possible for now, may want to adjust this later...
 
       while (neededUpdates >= 1.0) {
-      	updateGame();
+      	//updateGame();
         updates++;
         neededUpdates -= 1.0;
         needRender = true;
@@ -89,6 +87,7 @@ public class Game implements Runnable {
       }
       
       if (needRender) {
+        updateGame();
         render();
         frames++;
       }
