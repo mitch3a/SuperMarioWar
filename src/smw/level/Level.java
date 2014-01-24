@@ -76,4 +76,9 @@ public class Level {
     }
   }
   
+  // TODO - work in progress loading existing SMW map files (using their formats)
+  public void loadMap(String name) {
+    
+  }
+  
 }
