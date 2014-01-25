@@ -13,13 +13,17 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+
 import javax.imageio.ImageIO;
+
+import smw.gfx.Sprite.Direction;
 
 // TODO - RPG - this will store the tile set of a given style
 public class TileSet {
   
   private String name;
   private BufferedImage tileSet;
+  private BufferedImage[][] tiles;
   private int tileTypeSize;
   private int width;
   private int height;
@@ -55,6 +59,18 @@ public class TileSet {
       WritableRaster wr = Raster.createWritableRaster(sm, db, new Point());
       tileSet = new BufferedImage(ColorModel.getRGBdefault(), wr, false, null);
       
+      // TODO - not sure if we need this or if this works
+      /*
+      tiles = new BufferedImage[width][height];
+      for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+          tiles[x][y] = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+          tiles[x][y] = tileSet.getSubimage(x * 32, y * 32, 32, 32);
+        }
+      }
+      */
+        
+            
       readTileTypeFile(name);
     } catch (IOException e) {
       System.out.println("Could not read spritesheet for: " + name);
@@ -91,8 +107,7 @@ public class TileSet {
     }
   }
   
-  int getTileType(int x, int y)
-  {
+  int getTileType(int x, int y) {
     return tiletypes[x + y * width];
   }
 

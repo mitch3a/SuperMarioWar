@@ -11,6 +11,7 @@ import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 
+import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 import smw.level.MapBlock;
 import smw.level.TileSetTile;
@@ -41,7 +42,7 @@ public class Level {
   private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
   private MapBlock[][] objectData = new MapBlock[MAP_WIDTH][MAP_HEIGHT];
   
-  private String backgroundFile;
+  private String backgroundFile = new String();
   
   private boolean[] autoFilter = new boolean[MAX_AUTO_FILTERS];
   private int tileAnimationTimer;
@@ -96,6 +97,15 @@ public class Level {
         }
       }
     }
+    
+    /* TODO - perform draw using real map file data
+    for (int i = 0; i < MAP_WIDTH; i++) {
+      for (int j = 0; j < MAP_HEIGHT; j++) {
+        
+      }
+    }
+    */
+    
   }
   
   // TODO - work in progress loading existing SMW map files (using their formats)
@@ -118,33 +128,30 @@ public class Level {
         version[i] = buffer.getInt();
       }
       
-      // TODO - debug output
-      System.out.println(version[0] + " " + version[1] + " " + version[2] + " " + version[3]);
+      if (Debug.LOG_MAP_INFO) {
+        System.out.println(version[0] + " " + version[1] + " " + version[2] + " " + version[3]);
+      }
       
-      // TODO - for now just make sure we have version 1.8 or greater
+      // For now only support latest map files (1.8+)
       if (version[0] >= 1 && version[1] >= 8) {
         
         for (int i = 0; i < MAX_AUTO_FILTERS; i++) {
           autoFilter[i] = buffer.getInt() > 0;
         }
-                
+        buffer.getInt(); // unused 32 bits after auto filter section
+        
         clearPlatforms();
-        
-        int waste = buffer.getInt(); // seems like they burn an int after 'auto filter' section ???
-        
+                
         // Load tile set information.
         final int tileSetCount = buffer.getInt();
-        
-        // TODO cant find my class for some reason...
-        //TileSetTranslation[] translation = new TileSetTranslation[tileSetCount];
-        
-        
-        String tileSetName = new String();
+        TileSetTranslation[] translation = new TileSetTranslation[tileSetCount];
         int maxTileSetId = 0;
         int tileSetId = 0;
+        
         for (int i = 0; i < tileSetCount; i++) {
+          translation[i] = new TileSetTranslation();
           tileSetId = buffer.getInt();
-          //translation[i].ID = tileSetId;
+          translation[i].ID = tileSetId;
           
           if (tileSetId > maxTileSetId) {
             maxTileSetId = tileSetId;
@@ -152,22 +159,27 @@ public class Level {
           
           final int ID_LENGTH = buffer.getInt();
           for (int j = 0; j < ID_LENGTH; j++) {
-           //translation[i].name += buffer.getChar();
-            tileSetName += (char)(buffer.get());
+            translation[i].name += (char)(buffer.get());
+          }
+          if (Debug.LOG_MAP_INFO) {
+            System.out.println("tileset: " + translation[i].name);
           }
         }
         
         // TODO - translate tile set to get from tile set manager... this is all very dir / naming dependent.
-        System.out.println(tileSetName);
+        // For now we're only using this one map, that uses the 'classic' tileset, so we shouldn't need to
+        // do anything extra... yet!
         
         // Load map data.
         for (int j = 0; j < MAP_HEIGHT; j++) {
           for (int i = 0; i < MAP_WIDTH; i++) {
             for (int k = 0; k < MAX_MAP_LAYERS; k++) {
+              mapData[i][j][k] = new TileSetTile();
               mapData[i][j][k].ID = (int)(buffer.get());
               mapData[i][j][k].col = (int)(buffer.get());
               mapData[i][j][k].row = (int)(buffer.get());
             }
+            objectData[i][j] = new MapBlock();
             objectData[i][j].type = (int)(buffer.get());
             objectData[i][j].hidden = buffer.get() != 0;
           }
@@ -176,17 +188,13 @@ public class Level {
         // Background to use.
         final int backgroundNameLen = buffer.getInt();
         for (int bgi = 0; bgi < backgroundNameLen; bgi++) {
-          backgroundFile += (char)(buffer.get());
+          char toWrite = (char)(buffer.get());
+          if (toWrite != 0)
+          backgroundFile += toWrite;
         }
-        
-        System.out.println(backgroundFile);
-        
-        /*
-        for (int i = 0; i < buffer.limit() / 4; i++)
-          System.out.println(buffer.getInt());
-        */
-        
-        
+        if (Debug.LOG_MAP_INFO) {
+          System.out.println("background: " + backgroundFile);
+        }
       }
       
       // Close out file.
