@@ -145,15 +145,17 @@ public class Level {
           final int ID_LENGTH = buffer.getInt();
           for (int j = 0; j < ID_LENGTH; j++) {
            //translation[i].name += buffer.getChar();
-            tileSetName += buffer.getChar();
+            tileSetName += (char)(buffer.get());
           }
         }
+        
+        
         System.out.println(tileSetName);
         
-        /*
+        
         for (int i = 0; i < buffer.limit() / 4; i++)
           System.out.println(buffer.getInt());
-        */
+        
         
         
       }
