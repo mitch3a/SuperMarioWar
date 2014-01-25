@@ -12,6 +12,8 @@ import java.nio.channels.FileChannel;
 import javax.imageio.ImageIO;
 
 import smw.ui.screen.GameFrame;
+import smw.level.MapBlock;
+import smw.level.TileSetTile;
 
 public class Level {
     
@@ -34,7 +36,13 @@ public class Level {
   public final int WIDTH = GameFrame.res_width / TILE_SIZE; // TODO - replace these with the above MAP_WITH, HEIGHT consts? 
   public final int HEIGHT = GameFrame.res_height / TILE_SIZE;
   
+  // TODO - pick one or the other... tiles or mapdata
+  private TileSetTile[][][] mapData = new TileSetTile[MAP_WIDTH][MAP_HEIGHT][MAX_MAP_LAYERS];
   private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
+  private MapBlock[][] objectData = new MapBlock[MAP_WIDTH][MAP_HEIGHT];
+  
+  private String backgroundFile;
+  
   private boolean[] autoFilter = new boolean[MAX_AUTO_FILTERS];
   private int tileAnimationTimer;
   private int tileAnimationFrame; // TODO - not sure if we will keep this
@@ -149,13 +157,34 @@ public class Level {
           }
         }
         
-        
+        // TODO - translate tile set to get from tile set manager... this is all very dir / naming dependent.
         System.out.println(tileSetName);
         
+        // Load map data.
+        for (int j = 0; j < MAP_HEIGHT; j++) {
+          for (int i = 0; i < MAP_WIDTH; i++) {
+            for (int k = 0; k < MAX_MAP_LAYERS; k++) {
+              mapData[i][j][k].ID = (int)(buffer.get());
+              mapData[i][j][k].col = (int)(buffer.get());
+              mapData[i][j][k].row = (int)(buffer.get());
+            }
+            objectData[i][j].type = (int)(buffer.get());
+            objectData[i][j].hidden = buffer.get() != 0;
+          }
+        }
         
+        // Background to use.
+        final int backgroundNameLen = buffer.getInt();
+        for (int bgi = 0; bgi < backgroundNameLen; bgi++) {
+          backgroundFile += (char)(buffer.get());
+        }
+        
+        System.out.println(backgroundFile);
+        
+        /*
         for (int i = 0; i < buffer.limit() / 4; i++)
           System.out.println(buffer.getInt());
-        
+        */
         
         
       }

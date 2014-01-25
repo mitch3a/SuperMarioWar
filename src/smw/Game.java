@@ -24,7 +24,7 @@ public class Game implements Runnable {
   public Game(final int numPlayers) {
     
     // TODO - RPG - TEMP - testing my TileSet stuff...
-    TileSet t = new TileSet("SMB1");
+    TileSet t = new TileSet("Classic");
     
     
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
