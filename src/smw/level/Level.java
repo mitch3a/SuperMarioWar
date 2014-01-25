@@ -41,12 +41,17 @@ public class Level {
   private TileSetTile[][][] mapData = new TileSetTile[MAP_WIDTH][MAP_HEIGHT][MAX_MAP_LAYERS];
   private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
   private MapBlock[][] objectData = new MapBlock[MAP_WIDTH][MAP_HEIGHT];
+  private int topTileType[][] = new int[MAP_WIDTH][MAP_HEIGHT];
   
   private String backgroundFile = new String();
+  private BufferedImage backgroundImg;
   
   private boolean[] autoFilter = new boolean[MAX_AUTO_FILTERS];
   private int tileAnimationTimer;
   private int tileAnimationFrame; // TODO - not sure if we will keep this
+  
+  // TODO - RPG - TEMP - testing my TileSet stuff...
+  private TileSet tileSet = new TileSet("Classic");
   
   // TODO - this will eventually be init by a map file
   public void init() {    
@@ -57,8 +62,8 @@ public class Level {
       e.printStackTrace();
     } 
     
-    // My cheese ball statically populated "map"
-    // It has a floor and a block placed near the middle, oh boy!
+    // TODO - delete this when collision detection based on map data works!
+    // My cheese ball statically populated "map" makes a solid floor.
     for (int i = 0; i < WIDTH; i++) {
       for (int j = 0; j < HEIGHT; j++) {
           tiles[i][j] = new Tile(i * WIDTH, i * HEIGHT);
@@ -69,13 +74,25 @@ public class Level {
           }
       }
     }
-    tiles[WIDTH/2][HEIGHT - 2].setImg(testTileImg);
-    tiles[WIDTH/2][HEIGHT - 2].setTileType(1);    
   }
   
   /** Gets tile type at provided pixel coordinates. */
   public int getTileTypeAtPx(int x, int y) {
-    return tiles[x / TILE_SIZE][y / TILE_SIZE].getTileType();
+    int col = x / TILE_SIZE;
+    int row = y / TILE_SIZE;
+    if (col >= MAP_WIDTH)
+      col = MAP_WIDTH -1;
+    if (col < 0)
+      col = 0;
+    if (row < 0)
+      row = 0;
+    if (row >= MAP_HEIGHT)
+      row = MAP_HEIGHT - 1;    
+    
+    //TODO - this should work, not sure why it isn't!
+    //return topTileType[col][row];
+    
+    return tiles[col][row].getTileType();
   }
   
   /** Gets tile type at provided tile coordinates. */
@@ -88,7 +105,7 @@ public class Level {
   }
   
   public void draw(Graphics2D g, ImageObserver io) {
-    
+    /* TODO - this was my old hard coded tile array, can delete eventually
     for (int i = 0; i < WIDTH; i++) {
       for (int j = 0; j < HEIGHT; j++) {
         BufferedImage img = tiles[i][j].getImg();
@@ -97,14 +114,23 @@ public class Level {
         }
       }
     }
+    */
     
-    /* TODO - perform draw using real map file data
+    // Draw the background.
+    g.drawImage(backgroundImg, 0, 0, io);
+
+    // TODO - perform draw using real map file data
+    final int layer = 0; // TODO - only using one layer for now...
     for (int i = 0; i < MAP_WIDTH; i++) {
       for (int j = 0; j < MAP_HEIGHT; j++) {
-        
+        TileSetTile tileData = mapData[i][j][layer];
+        if (tileData.ID >= 0) {
+          // TODO - how to get image to draw from our tile set?
+          g.drawImage(tileSet.getTileImg(tileData.col, tileData.row), i * TILE_SIZE, j * TILE_SIZE, io);
+        }
       }
     }
-    */
+    
     
   }
   
@@ -182,10 +208,13 @@ public class Level {
             objectData[i][j] = new MapBlock();
             objectData[i][j].type = (int)(buffer.get());
             objectData[i][j].hidden = buffer.get() != 0;
+            
+            topTileType[i][j] = this.tileSet.getTileType(mapData[i][j][0].col, mapData[i][j][0].row); // TODO - I think this will work...
+            System.out.println(topTileType[i][j]);
           }
         }
         
-        // Background to use.
+        // Load background image.
         final int backgroundNameLen = buffer.getInt();
         for (int bgi = 0; bgi < backgroundNameLen; bgi++) {
           char toWrite = (char)(buffer.get());
@@ -195,6 +224,7 @@ public class Level {
         if (Debug.LOG_MAP_INFO) {
           System.out.println("background: " + backgroundFile);
         }
+        backgroundImg = ImageIO.read(this.getClass().getClassLoader().getResource("map/backgrounds/" + backgroundFile)); 
       }
       
       // Close out file.
