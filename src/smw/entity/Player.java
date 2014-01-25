@@ -64,7 +64,7 @@ public class Player extends Rectangle{
 	public void prepareToMove(){
 		//physics.update();
 	}
-	
+		
 	public void move(Player[] players){	
 		if(crushed){
 			//TODO this is messy and should be a method called at the beginning
@@ -77,7 +77,6 @@ public class Player extends Rectangle{
 			return; //Do not want to do anything with someone who is crushed
 		}
 			
-		
 		float dx = physics.getVelocityX();
 		float dy = physics.getVelocityY();
 		
@@ -91,7 +90,7 @@ public class Player extends Rectangle{
 		// Need to fix add detection for X axis
 		// Probably need to check each tile around the players new point like Mitch did with "intersects"
 		// physics will need to be updated to NOT update if we can't move in a certain x or y direction
-		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE + 2, newY) == Tile.SOLID) {
+		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE + 2, newY) != Tile.NONSOLID) {
       if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
         newX = x;
         System.out.println("X1");
@@ -99,7 +98,7 @@ public class Player extends Rectangle{
       }
     } 
 		
-		if (Game.level.getTileTypeAtPx(newX - 3, newY) == Tile.SOLID) {
+		if (Game.level.getTileTypeAtPx(newX - 3, newY) != Tile.NONSOLID) {
       if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
         newX = x;
         System.out.println("X2");
@@ -107,14 +106,14 @@ public class Player extends Rectangle{
       }
     }
 		
-		if (Game.level.getTileTypeAtPx(newX, newY + Level.TILE_SIZE) == Tile.SOLID) {
+		if (Game.level.getTileTypeAtPx(newX, newY + Level.TILE_SIZE) != Tile.NONSOLID) {
 		  if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
   		  newY = y;
   		  physics.collideWithFloor();
 		  }
 		}
 		
-		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE, newY + Level.TILE_SIZE) == 1) {
+		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE, newY + Level.TILE_SIZE) != Tile.NONSOLID) {
       if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
         newY = y;
         physics.collideWithFloor();

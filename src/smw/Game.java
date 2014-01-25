@@ -22,11 +22,7 @@ public class Game implements Runnable {
   private boolean running = false;
   
   public Game(final int numPlayers) {
-    
-    // TODO - RPG - TEMP - testing my TileSet stuff...
-    TileSet t = new TileSet("Classic");
-    
-    
+        
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];
