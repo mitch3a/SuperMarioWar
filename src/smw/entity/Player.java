@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
 import smw.Game;
+import smw.games.templates.Score;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
 import smw.level.Level;
@@ -25,11 +26,13 @@ public class Player extends Rectangle{
 	boolean crushed = false;
 	long respawnTime;
 	
-	public Player(PlayerControlBase playerControl, int playerIndex){	
-		physics = new PlayerPhysics(playerControl);
+	public Player(int playerIndex){	
 		sprite  = new Sprite();
-		score   = new Score();
 		this.playerIndex = playerIndex;
+	}
+	
+	public void setScoreType(Score score){
+	  this.score = score;
 	}
 	
 	void setBounds(int newX, int newY){
@@ -41,7 +44,8 @@ public class Player extends Rectangle{
 		return sprite.getImage();
 	}
 	
-	public void init(int newX, int newY, String image){
+	public void init(PlayerControlBase playerControl, int newX, int newY, String image){
+	  physics = new PlayerPhysics(playerControl);
 		setBounds(newX, newY);
 		
 		//TODO this is obviously not staying in

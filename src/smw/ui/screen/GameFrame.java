@@ -8,8 +8,10 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 import smw.entity.Player;
+import smw.games.FreeForAll;
+import smw.games.templates.GameType;
+import smw.games.templates.Scoreboard;
 import smw.gfx.Font;
-import smw.gfx.Scoreboard;
 import smw.level.Level;
 
 public class GameFrame extends JFrame{
@@ -25,7 +27,7 @@ public class GameFrame extends JFrame{
 	
 	//TODO this is REALLY hacky but i just wanted to get the stupid thing to work
 	Player[] players;
-	Scoreboard sB;
+	GameType gameType;
 	Level level;
 	
 	public GameFrame(Player[] players, Level level){
@@ -41,11 +43,12 @@ public class GameFrame extends JFrame{
 	    
 	    this.players = players;
 	    this.level = level;
-	    sB = new Scoreboard(this.players);
+	    gameType = new FreeForAll(this.players, 10);
 	}
-
-    @Override
-    public void paint(Graphics g) {
+	
+	/*
+  @Override
+  public void paint(Graphics g) {
     // Get buffer strategy and loop to protect against lost frames.
     BufferStrategy bs = getBufferStrategy();
     do {
@@ -61,7 +64,7 @@ public class GameFrame extends JFrame{
             p.draw(g2d, this);
           }
         }
-        sB.draw(g2d, this);
+        gameType.scoreboard.draw(g2d, this);
       } finally {
         // Free up graphics.
         g.dispose();
@@ -69,5 +72,27 @@ public class GameFrame extends JFrame{
       // Display contents of buffer.
       bs.show();
     } while (bs.contentsLost());   
+  }
+	 */
+	
+  @Override
+  public void paint(Graphics g) {
+    try {
+      g.setColor(Color.blue);
+      g.fillRect(0, 0, getWidth(), getHeight());
+      
+      Graphics2D g2d = (Graphics2D)g;
+      level.draw(g2d, this);
+      if (players != null && players.length > 0) {
+        for(Player p : players){
+          p.draw(g2d, this);
+        }
+      }
+      gameType.scoreboard.draw(g2d, this);
+    } finally {
+      // Free up graphics.
+      g.dispose();
+    }
+    super.paint(g);
   }
 }
