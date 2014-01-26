@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 
 import smw.entity.Player;
 import smw.level.Level;
-import smw.level.TileSet;
 import smw.settings.Debug;
 import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
@@ -35,10 +34,10 @@ public class Game implements Runnable {
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
-    //pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
+    pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
-    pc[1] = new GamePad(GamePad.SavedControllerType.LOGITECH_TIM);
+    //pc[1] = new GamePad(GamePad.SavedControllerType.LOGITECH_TIM);
 
     String[] images = {"hazey_Lolo.png", "0smw.png", "ftg_Train.png", "BlackMage.png"};
     
