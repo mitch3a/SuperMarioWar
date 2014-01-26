@@ -14,7 +14,7 @@ public class GamePad  extends PlayerControlBase{
 	//     the controller settings file but without having to
 	//     re-setup for the same controller on every run. mk.
 	public enum SavedControllerType{
-		NONE, SNES_MAC_MK, SNES_WIN_MK
+		NONE, SNES_MAC_MK, SNES_WIN_MK, LOGITECH_TIM
 	}
 	
 	/***************************************************
@@ -34,6 +34,15 @@ public class GamePad  extends PlayerControlBase{
 												pressedValues[PlayerButton.JUMP.index]  =  1.0f;
 												pressedValues[PlayerButton.RUN.index]   =  1.0f;
 												break;
+			case LOGITECH_TIM: buttonToComponentMap[PlayerButton.LEFT.index]  = 16;
+                         buttonToComponentMap[PlayerButton.RIGHT.index] = 16;
+                         buttonToComponentMap[PlayerButton.JUMP.index]  = 1;
+                         buttonToComponentMap[PlayerButton.RUN.index]   = 0;
+                         pressedValues[PlayerButton.LEFT.index]  =  1.0f;
+                         pressedValues[PlayerButton.RIGHT.index] =  0.5f;
+                         pressedValues[PlayerButton.JUMP.index]  =  1.0f;
+                         pressedValues[PlayerButton.RUN.index]   =  1.0f;
+                         break;
 			case SNES_MAC_MK: //mk if you want this, set it next time you're on your macbook
 			case NONE:        
 			default:          setup();             
@@ -72,7 +81,7 @@ public class GamePad  extends PlayerControlBase{
    * the values that a button will be set at when 
    * it is pressed down.
    ***********************************************/
-  final float[] pressedValues;
+  final float[] pressedValues = new float[PlayerButton.NUM_BUTTONS_USED];
   
   //TODO again, the input is for debugging until settings are stored off
   public GamePad(SavedControllerType type){
@@ -98,7 +107,6 @@ public class GamePad  extends PlayerControlBase{
     components = controller.getComponents();
     NUM_BUTTONS = components.length;
     defaultValues = new float[NUM_BUTTONS];
-    pressedValues = new float[NUM_BUTTONS];
     
     for(int i = 0 ; i < components.length; ++i){
     	defaultValues[i] = components[i].getPollData();
@@ -154,7 +162,8 @@ public class GamePad  extends PlayerControlBase{
   ************************************************/
   void setNextButton(PlayerButton buttonToSet){
   	int index = buttonToSet.index;
-    while(true){
+  	boolean buttonSet = false;
+    while(!buttonSet){
       controller.poll();
       Component[] comps = controller.getComponents();
       
@@ -164,6 +173,7 @@ public class GamePad  extends PlayerControlBase{
         	//Button Pressed so store component and value when pressed
         	pressedValues[index] = value;
         	buttonToComponentMap[index] = i;
+        	buttonSet = true;
         	
           //wait until they release the button
           while(comps[i].getPollData() == value){ 
