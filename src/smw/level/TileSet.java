@@ -18,6 +18,7 @@ import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 
+import smw.gfx.Palette;
 import smw.gfx.Sprite.Direction;
 
 // TODO - RPG - this will store the tile set of a given style
@@ -40,6 +41,9 @@ public class TileSet {
       // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
       tileSet = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
       tileSet.getGraphics().drawImage(img, 0, 0, null);
+      
+      Palette p = Palette.getInstance();
+      p.implementTransparent(tileSet);      
       
       width = tileSet.getWidth() / 32; // TODO - this should be tile size, not a magic number
       height = tileSet.getHeight() / 32;
