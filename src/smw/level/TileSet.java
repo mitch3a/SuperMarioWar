@@ -1,15 +1,6 @@
 package smw.level;
 
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
-import java.awt.image.ImageObserver;
-import java.awt.image.Raster;
-import java.awt.image.SinglePixelPackedSampleModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
@@ -19,24 +10,27 @@ import java.nio.channels.FileChannel;
 import javax.imageio.ImageIO;
 
 import smw.gfx.Palette;
-import smw.gfx.Sprite.Direction;
+import smw.settings.Debug;
 
-// TODO - RPG - this will store the tile set of a given style
+/**
+ *  Stores the tile set of a given style.
+ */
 public class TileSet {
   
   private String name;
   private BufferedImage tileSet;
-  private BufferedImage[][] tiles;
   private int tileTypeSize;
   private int width;
   private int height;
   int[] tiletypes;
   
-  // TODO - RPG - currently the "name" is the folder of the tile set, not sure if this is what we really want
+  /** 
+   * TileSet constructor.
+   * @param name
+   * Currently the folder of the tile set, this could change in the future.
+   */
   public TileSet(String name) {
     try {
-      // TODO - RPG - this image converting junk should probably be in a util somewhere, there is also probably a better,
-      // more correct, more efficient way to do it...
       BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("map/tilesets/" + name + "/large.png"));
       // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
       tileSet = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -45,28 +39,9 @@ public class TileSet {
       Palette p = Palette.getInstance();
       p.implementTransparent(tileSet);      
       
-      width = tileSet.getWidth() / 32; // TODO - this should be tile size, not a magic number
-      height = tileSet.getHeight() / 32;
-      
-      /* TODO - need to remove magenta pixels, but this way doesn't work!
-      // Change magenta to transparent, start by converting buffered image to pixels, then change each magenta pixel.
-      int[] pixels = new int[width * height];
-      tileSet.getRGB(0, 0, width, height, pixels, 0, width);
-      for (int i = 0; i < pixels.length; i++) {
-        if (pixels[i] == 0xffff00ff) {
-          pixels[i] = -1;
-        }
-      }
-       
-      // Convert pixels back into buffered image.
-      int[] bitMasks = new int[]{0xFF0000, 0xFF00, 0xFF, 0xFF000000};
-      SinglePixelPackedSampleModel sm = new SinglePixelPackedSampleModel(
-      DataBuffer.TYPE_INT, width, height, bitMasks);
-      DataBufferInt db = new DataBufferInt(pixels, pixels.length);
-      WritableRaster wr = Raster.createWritableRaster(sm, db, new Point());
-      tileSet = new BufferedImage(ColorModel.getRGBdefault(), wr, false, null);
-      */
-      
+      width = tileSet.getWidth() / Level.TILE_SIZE;
+      height = tileSet.getHeight() / Level.TILE_SIZE;
+            
       readTileTypeFile(name);
     } catch (IOException e) {
       System.out.println("Could not read spritesheet for: " + name);
@@ -91,12 +66,18 @@ public class TileSet {
       buffer.order(ByteOrder.LITTLE_ENDIAN); // Java defaults to BIG_ENDIAN, but TLS files were probably made on a x86 PC.
       buffer.load();
       
+      if (Debug.LOG_TILE_TYPE_INFO) {
+        System.out.println("Tile types for set " + name);
+      }
+      
       // First entry is number of tiles.
-      int tileDataCount = buffer.getInt();
-      tiletypes = new int[tileDataCount];
-      for (int i = 0; i < tileDataCount; i++) {
+      tileTypeSize = buffer.getInt();
+      tiletypes = new int[tileTypeSize];
+      for (int i = 0; i < tileTypeSize; i++) {
         tiletypes[i] = buffer.getInt();
-        System.out.println(tiletypes[i]);
+        if (Debug.LOG_TILE_TYPE_INFO) {
+          System.out.println(tiletypes[i]);
+        }
       }
       
       buffer.clear();
@@ -107,54 +88,28 @@ public class TileSet {
     }
   }
   
+  /**
+   * Returns the tile type at the provided x and y.
+   * @param x col of the tile sheet
+   * @param y row of the tile sheet
+   * @return tile type
+   */
   int getTileType(int x, int y) {
-    return tiletypes[x + y * 32];
+    final int index = x + y * 32;
+    if (index > tileTypeSize || index < 0) {
+      return 0;
+    } else {
+      return tiletypes[index];
+    }
   }
   
-  // TODO - draw the specified tile... not sure if this is how we want to do it.
+  /**
+   * Gets the image of a tile from the set at the provided row and col.
+   * @param col col of the tile sheet
+   * @param row row of the tile sheet
+   * @return tile image
+   */
   public BufferedImage getTileImg(int col, int row) {
-    return tileSet.getSubimage(col * 32, row * 32, 32, 32);
-  }
-
-  // TODO - RPG - may want to get rid of some of these setters
-  public String getName() {
-    return name;
-  }
-  
-  public void setName(String name) {
-    this.name = name;
-  }
-  
-  public BufferedImage getTileSet() {
-    return tileSet;
-  }
-  
-  public void setTileSet(BufferedImage tileSet) {
-    this.tileSet = tileSet;
-  }
-  
-  public int getTileTypeSize() {
-    return tileTypeSize;
-  }
-  
-  public void setTileTypeSize(short tileTypeSize) {
-    this.tileTypeSize = tileTypeSize;
-  }
-  public int getWidth() {
-    return width;
-  }
-  
-  public void setWidth(short width) {
-    this.width = width;
-  }
-  
-  public int getHeight() {
-    return height;
-  }
-  
-  public void setHeight(short height) {
-    this.height = height;
-  }
-  
-  
+    return tileSet.getSubimage(col * Level.TILE_SIZE, row * Level.TILE_SIZE, Level.TILE_SIZE, Level.TILE_SIZE);
+  }  
 }

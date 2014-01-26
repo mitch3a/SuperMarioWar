@@ -36,38 +36,40 @@ public class GameFrame extends JFrame{
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 	    setResizable(false);
-
-	    createBufferStrategy(3);
 	    
 	    this.players = players;
 	    this.level = level;
 	    sB = new Scoreboard(this.players);
 	}
 
-    @Override
-    public void paint(Graphics g) {
-    // Get buffer strategy and loop to protect against lost frames.
+  @Override
+  public void paint(Graphics g) {
     BufferStrategy bs = getBufferStrategy();
-    do {
-      try {
-        g = bs.getDrawGraphics();
-        g.setColor(Color.blue);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        
-        Graphics2D g2d = (Graphics2D)g;
-        level.draw(g2d, this);
-        if (players != null && players.length > 0) {
-          for(Player p : players){
+    if (bs == null) {
+      createBufferStrategy(3);
+      requestFocus();
+      return;
+    }
+
+    try {
+      g = bs.getDrawGraphics();
+      g.fillRect(0, 0, getWidth(), getHeight());
+      
+      Graphics2D g2d = (Graphics2D)g;
+      level.draw(g2d, this);
+      if (players != null && players.length > 0) {
+        for(Player p : players){
+          if (p != null) {
             p.draw(g2d, this);
           }
         }
-        sB.draw(g2d, this);
-      } finally {
-        // Free up graphics.
-        g.dispose();
       }
-      // Display contents of buffer.
-      bs.show();
-    } while (bs.contentsLost());   
+      sB.draw(g2d, this);
+    } finally {
+      // Free up graphics.
+      g.dispose();
+    }
+    // Display contents of buffer.
+    bs.show();   
   }
 }

@@ -1,7 +1,8 @@
 package smw.settings;
 
+/** Provides flags to indicate whether a given function/area of code is being debugged for logging purposes. */
 public class Debug {
-	//TODO... this is not the best way to do this, but its a start :)
- public static final boolean LOG_FRAMERATE = false;
- public static final boolean LOG_MAP_INFO = true;
+  public static final boolean LOG_FRAMERATE = false;
+  public static final boolean LOG_MAP_INFO = true;
+  public static final boolean LOG_TILE_TYPE_INFO = false;
 }

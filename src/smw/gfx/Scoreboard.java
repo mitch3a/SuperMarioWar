@@ -60,9 +60,11 @@ public class Scoreboard {
 		graphics.setColor(shadeColor);
 		for(int i = 0 ; i < players.length ; ++i){
 		  Player p = players[i];
-		  graphics.fill(shadeRects[i]);
-	    graphics.drawImage(p.getImage(), spriteStart[i].x, spriteStart[i].y, observer);
-	    font.drawScore(graphics, p.getScore(), scoreStart[i].x, scoreStart[i].y, observer);
+		  if (p != null) {
+  		  graphics.fill(shadeRects[i]);
+  	    graphics.drawImage(p.getImage(), spriteStart[i].x, spriteStart[i].y, observer);
+  	    font.drawScore(graphics, p.getScore(), scoreStart[i].x, scoreStart[i].y, observer);
+		  }
 		}
 	}
 }

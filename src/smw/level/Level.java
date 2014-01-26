@@ -16,17 +16,13 @@ import smw.ui.screen.GameFrame;
 import smw.level.MapBlock;
 import smw.level.TileSetTile;
 
+/**
+ * A level is made up of a 2D grid of tiles. There could be "layers" like in SNES for graphics
+ * This could be accomplished by having an array of 2D tile arrays. Tiles are drawn based on 
+ * a tile set that provides the sprite sheet of tile art. There is also a tile data file that
+ * indicates the type of a given tile (solid, non-solid, etc.) for collision detection.
+ */
 public class Level {
-    
-  /*
-   * TODO - a level will be made up of tiles In the simplest sense this could
-   * be a 2D array of tiles There could be "layers" like in SNES for graphics
-   * This could be accomplished by having an array of 2D tile arrays
-   * 
-   * Need to provide a way to get tile at x,y coord. - During the game logic,
-   * the game would check what type of tile the player is touching
-   */
-
   // TODO - keep these constants here or move them to "global" constants area?
   public static final int MAP_WIDTH = 20;
   public static final int MAP_HEIGHT = 15;
@@ -46,11 +42,12 @@ public class Level {
   private String backgroundFile = new String();
   private BufferedImage backgroundImg;
   
+  // TODO - this stuff isn't used yet
   private boolean[] autoFilter = new boolean[MAX_AUTO_FILTERS];
   private int tileAnimationTimer;
-  private int tileAnimationFrame; // TODO - not sure if we will keep this
+  private int tileAnimationFrame;
   
-  // TODO - RPG - TEMP - testing my TileSet stuff...
+  // TODO - RPG - Testing my TileSet stuff. We will eventually need a "tile set manager" to handle multiple sets.
   private TileSet tileSet = new TileSet("Classic");
   
   // TODO - this will eventually be init by a map file
@@ -79,15 +76,18 @@ public class Level {
   /** Gets tile type at provided pixel coordinates. */
   public int getTileTypeAtPx(int x, int y) {
     int col = x / TILE_SIZE;
-    int row = y / TILE_SIZE;
-    if (col >= MAP_WIDTH)
+    if (col >= MAP_WIDTH) {
       col = MAP_WIDTH -1;
-    if (col < 0)
+    } else if (col < 0) {
       col = 0;
-    if (row < 0)
+    }
+    
+    int row = y / TILE_SIZE;
+    if (row < 0) {
       row = 0;
-    if (row >= MAP_HEIGHT)
+    } else if (row >= MAP_HEIGHT) {
       row = MAP_HEIGHT - 1;    
+    }
     
     //TODO - this should work, not sure why it isn't!
     //return topTileType[col][row];
@@ -100,8 +100,9 @@ public class Level {
     return tiles[x][y].getTileType();
   }
   
+  // TODO - This will eventually update interactive and animated stuff in the level.
   public void update() {
-    // TODO - not sure what would get updated here, interactive junk in the level I guess?
+    
   }
   
   public void draw(Graphics2D g, ImageObserver io) {
@@ -119,22 +120,22 @@ public class Level {
     // Draw the background.
     g.drawImage(backgroundImg, 0, 0, io);
 
-    // TODO - perform draw using real map file data
-    final int layer = 0; // TODO - only using one layer for now...
+    // Draw the foreground using real map file data.
+    final int layer = 0; // TODO - Only using one layer for now (wanted to get simplest case working first).
     for (int i = 0; i < MAP_WIDTH; i++) {
       for (int j = 0; j < MAP_HEIGHT; j++) {
         TileSetTile tileData = mapData[i][j][layer];
         if (tileData.ID >= 0) {
-          // TODO - how to get image to draw from our tile set?
           g.drawImage(tileSet.getTileImg(tileData.col, tileData.row), i * TILE_SIZE, j * TILE_SIZE, io);
         }
       }
-    }
-    
-    
+    } 
   }
   
   // TODO - work in progress loading existing SMW map files (using their formats)
+  // Currently we only use the latest map versions 1.8+
+  // Limitations - only support 1 layer, classic tile set, and only support drawing basic tiles (no animated, moving stuff,
+  // etc.)
   public void loadMap(String name) {
     try {
       RandomAccessFile f = new RandomAccessFile(this.getClass().getClassLoader().getResource("map/" + name).getPath(), "r");
@@ -155,7 +156,7 @@ public class Level {
       }
       
       if (Debug.LOG_MAP_INFO) {
-        System.out.println(version[0] + " " + version[1] + " " + version[2] + " " + version[3]);
+        System.out.println("map v" + version[0] + "." + version[1] + "." + version[2] + "." + version[3]);
       }
       
       // For now only support latest map files (1.8+)
@@ -210,7 +211,9 @@ public class Level {
             objectData[i][j].hidden = buffer.get() != 0;
             
             topTileType[i][j] = this.tileSet.getTileType(mapData[i][j][0].col, mapData[i][j][0].row); // TODO - I think this will work...
-            System.out.println(topTileType[i][j]);
+            if (Debug.LOG_TILE_TYPE_INFO) {
+              System.out.println(topTileType[i][j]);
+            }
           }
         }
         
@@ -236,12 +239,12 @@ public class Level {
     }
   }
   
-  // TODO - not sure if we will keep this
+  // TODO - We don't support animated tiles yet (question blocks, etc.).
   private void clearAnimatedTiles() {
     
   }
   
-//TODO - not sure if we will keep this
+  //TODO - I think this is for moving platforms, which we don't support yet.
   private void clearPlatforms() {
     
   }
