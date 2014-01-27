@@ -127,7 +127,13 @@ public class Player extends Rectangle{
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){
 				if(!p.crushed && p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-					newX = x;
+				  if(p.x > newX){
+				    newX = p.x - Sprite.IMAGE_WIDTH - 1;
+				  }
+				  else{
+				    newX = p.x + Sprite.IMAGE_HEIGHT + 1;
+				  }
+				  
 					xCollide = true;
 					break;
 				}
