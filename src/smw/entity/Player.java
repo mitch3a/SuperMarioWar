@@ -181,6 +181,8 @@ public class Player extends Rectangle{
 		
 	protected void crush(){
 		crushed = true;
+		//TODO mk didn't like this but if you want to play with it, make gameFrame static and this works 
+		//Game.gameFrame.bump();
 		respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
 		sprite.crush();
 	}

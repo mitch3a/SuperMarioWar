@@ -24,6 +24,9 @@ public class GameFrame extends JFrame{
 	public static int res_height = 480;
 	public static double scaleFactorWidth = 2;
 	public static double scaleFactorHeight = 2;
+	public static int bumpFactor = 0;
+	boolean bumpUp = false;
+	boolean bumpDown = false;
 	
 	//TODO this is REALLY hacky but i just wanted to get the stupid thing to work
 	Player[] players;
@@ -58,12 +61,15 @@ public class GameFrame extends JFrame{
       return;
     }
 
+    updateBumpFactor();
+
     try {
       g = bs.getDrawGraphics();
       g.fillRect(0, 0, getWidth(), getHeight());
       
       Graphics2D g2d = (Graphics2D)g;
       g2d.scale(scaleFactorWidth, scaleFactorHeight);
+      g2d.translate(0, bumpFactor);
       level.draw(g2d, this);
       if (players != null && players.length > 0) {
         for(Player p : players){
@@ -84,5 +90,32 @@ public class GameFrame extends JFrame{
   void resetScalingFactors(){
     scaleFactorWidth = (double)(getWidth())/res_width;
     scaleFactorHeight = (double)(getHeight())/res_height;
+  }
+  
+  /********************************************
+   * This bump factor stuff is to make the screen
+   * bump when a player gets stomped.
+   ********************************************/
+  public void bump(){
+    if(!bumpUp && !bumpDown){
+      bumpUp = true;
+    }
+  }
+  
+  void updateBumpFactor(){
+    if(bumpDown){
+      bumpFactor--;
+      if(bumpFactor == 0){
+        bumpDown = false;
+      }
+    }
+    
+    if(bumpUp){
+      bumpFactor++;
+      if(bumpFactor == 5){
+        bumpDown = true;
+        bumpUp = false;
+      }
+    }
   }
 }
