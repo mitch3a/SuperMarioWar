@@ -160,6 +160,22 @@ public class Player extends Rectangle{
 			}
 		}
 
+	/*****************************************************
+	 *TODO this is not complete but good enough for now
+	 *
+	 *THIS WILL WRAP THE SCREEN AROUND CHA CHING mk
+	 ******************************************************/
+		newX = newX % 640;
+		newY = newY % 480;
+		
+		if(newX < 0){
+		  newX += 640;
+		}
+		
+		if(newY < 0){
+		  newY += 480;
+		}
+		
 		setBounds(newX, newY);					
 	}
 		

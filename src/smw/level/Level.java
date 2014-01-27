@@ -58,19 +58,6 @@ public class Level {
     } catch (IOException e) {
       e.printStackTrace();
     } 
-    
-    // TODO - delete this when collision detection based on map data works!
-    // My cheese ball statically populated "map" makes a solid floor.
-    for (int i = 0; i < WIDTH; i++) {
-      for (int j = 0; j < HEIGHT; j++) {
-          tiles[i][j] = new Tile(i * WIDTH, i * HEIGHT);
-          if (j == HEIGHT - 1)
-          {
-            tiles[i][j].setImg(testTileImg);
-            tiles[i][j].setTileType(1);
-          }
-      }
-    }
   }
   
   /** Gets tile type at provided pixel coordinates. */
@@ -90,14 +77,9 @@ public class Level {
     }
     
     //TODO - this should work, not sure why it isn't!
-    //return topTileType[col][row];
+    return topTileType[col][row];
     
-    return tiles[col][row].getTileType();
-  }
-  
-  /** Gets tile type at provided tile coordinates. */
-  public int getTileTypeAtTile(int x, int y) {
-    return tiles[x][y].getTileType();
+    //return tiles[col][row].getTileType();
   }
   
   // TODO - This will eventually update interactive and animated stuff in the level.
@@ -200,17 +182,26 @@ public class Level {
         // Load map data.
         for (int j = 0; j < MAP_HEIGHT; j++) {
           for (int i = 0; i < MAP_WIDTH; i++) {
+        	//TODO mk part of hacky solution
+            topTileType[i][j] = 0;
             for (int k = 0; k < MAX_MAP_LAYERS; k++) {
               mapData[i][j][k] = new TileSetTile();
               mapData[i][j][k].ID = (int)(buffer.get());
               mapData[i][j][k].col = (int)(buffer.get());
               mapData[i][j][k].row = (int)(buffer.get());
+              //TODO mk this is VERY Hacky, but it def does ok and it gets us closer
+              if(mapData[i][j][k].ID != -2){
+                topTileType[i][j] = mapData[i][j][k].ID + 2;
+              }
+              if(mapData[i][j][k].ID != -2) System.out.println("ID: " + mapData[i][j][k].ID + "(" + j + ", " + i + ", " + k + ")");
             }
             objectData[i][j] = new MapBlock();
             objectData[i][j].type = (int)(buffer.get());
             objectData[i][j].hidden = buffer.get() != 0;
             
-            topTileType[i][j] = this.tileSet.getTileType(mapData[i][j][0].col, mapData[i][j][0].row); // TODO - I think this will work...
+            //TODO mk the hacky solution above made this moot
+            //topTileType[i][j] = this.tileSet.getTileType(mapData[i][j][0].col, mapData[i][j][0].row); // TODO - I think this will work...
+
             if (Debug.LOG_TILE_TYPE_INFO) {
               System.out.println(topTileType[i][j]);
             }
