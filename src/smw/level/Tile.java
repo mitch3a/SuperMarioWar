@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 public class Tile {
+  //TODO mk another case where level/map are both referenced. We need to stick to one.
+  //TODO mk is a tile a set size? or is it a full object (a mario block or a mario vine ladder, etc)
+  
   /* TODO - Each tile has an image the is drawn for it
    * Tiles make up the level (map)
    * They indicate whether or not the player can pass through them
@@ -37,11 +40,11 @@ public class Tile {
   public static final int PLAYER_DEATH = 18;
   public static final int GAP = 19;
   
-  private BufferedImage img;
-  private int type;
+  private BufferedImage img; //TODO mk - maybe just use full word
+  private int type; //TODO mk - this is where i think using an enum instead of int would be more clear.
   private int x;
   private int y;
-  private int size;
+  private int size; //TODO mk - is it square?
   
   public Tile(int x, int y) {
     this.x = x;
@@ -100,5 +103,4 @@ public class Tile {
   public int getSize() {
     return size;
   }
-  
 }

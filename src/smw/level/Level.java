@@ -24,16 +24,19 @@ import smw.level.TileSetTile;
  */
 public class Level {
   // TODO - keep these constants here or move them to "global" constants area?
+  // mk - I think this is fine here. It's where I'd expect it. 
   public static final int MAP_WIDTH = 20;
   public static final int MAP_HEIGHT = 15;
   public static final int MAX_MAP_LAYERS = 4;
   public static final int MAX_AUTO_FILTERS = 12;
   
   public static final int TILE_SIZE = 32;
-  public final int WIDTH = GameFrame.res_width / TILE_SIZE; // TODO - replace these with the above MAP_WITH, HEIGHT consts? 
+  public final int WIDTH = GameFrame.res_width / TILE_SIZE; // TODO - replace these with the above MAP_WIDTH, HEIGHT consts? 
   public final int HEIGHT = GameFrame.res_height / TILE_SIZE;
   
   // TODO - pick one or the other... tiles or mapdata
+  // mk -  I prefer tiles. I would also prefer if the first index was the map layers. Just more
+  //       intuitive to me and for debugging or if we ever wanted to break it, etc. 
   private TileSetTile[][][] mapData = new TileSetTile[MAP_WIDTH][MAP_HEIGHT][MAX_MAP_LAYERS];
   private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
   private MapBlock[][] objectData = new MapBlock[MAP_WIDTH][MAP_HEIGHT];
@@ -74,7 +77,21 @@ public class Level {
   }
   
   /** Gets tile type at provided pixel coordinates. */
+  
+  //TODO mk - do you really want to be returning an ENUM?
   public int getTileTypeAtPx(int x, int y) {
+    //TODO mk - guessing you throw this in to stop crashes... and not sure 
+    //          where it is used, but would it make sense to pass back an
+    //          invalid value for bad bounds? Like -1?
+    /*
+    
+    if(x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT){
+      return -1
+    }
+    
+    return tiles[col][row].getTileType();
+    
+     */
     int col = x / TILE_SIZE;
     if (col >= MAP_WIDTH) {
       col = MAP_WIDTH -1;
@@ -95,6 +112,7 @@ public class Level {
     return tiles[col][row].getTileType();
   }
   
+  //TODO mk I don't think this is used anywhere (same as method above)
   /** Gets tile type at provided tile coordinates. */
   public int getTileTypeAtTile(int x, int y) {
     return tiles[x][y].getTileType();
@@ -119,11 +137,12 @@ public class Level {
     
     // Draw the background.
     g.drawImage(backgroundImg, 0, 0, io);
-
+    
     // Draw the foreground using real map file data.
     final int layer = 0; // TODO - Only using one layer for now (wanted to get simplest case working first).
-    for (int i = 0; i < MAP_WIDTH; i++) {
+    for (int i = 0; i < MAP_WIDTH; i++) { //TODO mk prefer x/y or w/h. i think i've been using w/h
       for (int j = 0; j < MAP_HEIGHT; j++) {
+        //TODO mk - the naming convention is kind of confusing. Altho i think i put this above.
         TileSetTile tileData = mapData[i][j][layer];
         if (tileData.ID >= 0) {
           g.drawImage(tileSet.getTileImg(tileData.col, tileData.row), i * TILE_SIZE, j * TILE_SIZE, io);
@@ -136,6 +155,14 @@ public class Level {
   // Currently we only use the latest map versions 1.8+
   // Limitations - only support 1 layer, classic tile set, and only support drawing basic tiles (no animated, moving stuff,
   // etc.)
+  // TODO mk maybe we should insert a list of how to approach this... my guess is:
+  // 1. Finish with NMcCoy_1-3.map
+  //  a. Rest of layers (w/e that means haha)
+  //  b. Anything else?
+  // 2. Do another 1.8 map (suggestions?)
+  // 3. Cover us for all tile sets?
+  // 4. Convert all older versions to 1.8 (KEEPING THE CODE IN SOURCE!!)
+  // ORRRRRRR we could just put that on the wiki
   public void loadMap(String name) {
     try {
       RandomAccessFile f = new RandomAccessFile(this.getClass().getClassLoader().getResource("map/" + name).getPath(), "r");
@@ -221,23 +248,26 @@ public class Level {
         final int backgroundNameLen = buffer.getInt();
         for (int bgi = 0; bgi < backgroundNameLen; bgi++) {
           char toWrite = (char)(buffer.get());
-          if (toWrite != 0)
+          if (toWrite != 0)//TODO mk i kinda like brackets.
           backgroundFile += toWrite;
         }
-        if (Debug.LOG_MAP_INFO) {
+        if (Debug.LOG_MAP_INFO) { //TODO mk AAANNNNDDD i think when i started the Debug class, i didn't use the brackets <- hypocrite
           System.out.println("background: " + backgroundFile);
         }
         backgroundImg = ImageIO.read(this.getClass().getClassLoader().getResource("map/backgrounds/" + backgroundFile)); 
       }
       
       // Close out file.
-      buffer.clear();
+      buffer.clear(); //TODO mk I don't know much about this class, but if you're not reusing it... do you need to clear it?
       fc.close();
       f.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
+  
+  //TODO mk do we call these in the right spots yet? JW
+  //     ALSO... would it make sense to group these methods?
   
   // TODO - We don't support animated tiles yet (question blocks, etc.).
   private void clearAnimatedTiles() {

@@ -18,11 +18,11 @@ import smw.settings.Debug;
 public class TileSet {
   
   private String name;
-  private BufferedImage tileSet;
+  private BufferedImage tileSet; //TODO mk same name as the class? maybe tileSheet or tilesImage
   private int tileTypeSize;
   private int width;
   private int height;
-  int[] tiletypes;
+  int[] tiletypes; //TODO mk would it make sense to store this as [][]
   
   /** 
    * TileSet constructor.
