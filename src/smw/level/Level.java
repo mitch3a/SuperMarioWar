@@ -107,6 +107,11 @@ public class Level {
         if (tileData.ID >= 0) {
           g.drawImage(tileSet.getTileImg(tileData.col, tileData.row), i * TILE_SIZE, j * TILE_SIZE, io);
         }
+        
+        MapBlock mapBlock = objectData[i][j];
+        if(mapBlock.type != -1){ //TODO mk probably just make sure its within bounds...
+          g.drawImage(tileSet.getTileImg(27, 15), i * TILE_SIZE, j * TILE_SIZE, io); //TODO mk yes i cheated. Not sure where the row/col is supposed to come from
+        }
       }
     } 
   }
@@ -187,7 +192,7 @@ public class Level {
               mapData[w][h][k].row = (int)(buffer.get());
               
               if(mapData[w][h][k].ID >= 0){
-            	//TODO mk what if there are multiple per k?
+            	  //TODO mk what if there are multiple per k?
                 topTileType[w][h] = tileSet.getTileType(mapData[w][h][k].col, mapData[w][h][k].row);
               }
             }
@@ -208,6 +213,8 @@ public class Level {
           System.out.println("background: " + backgroundFile);
         }
         backgroundImg = ImageIO.read(this.getClass().getClassLoader().getResource("map/backgrounds/" + backgroundFile)); 
+        
+        //begin LoadPlatforms code
       }
       
       // Close out file.
