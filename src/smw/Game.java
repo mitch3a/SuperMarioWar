@@ -2,6 +2,8 @@ package smw;
 
 import java.awt.event.KeyEvent;
 
+import smw.Games.ClassicGameRules;
+import smw.Games.GameRules;
 import smw.entity.Player;
 import smw.level.Level;
 import smw.settings.Debug;
@@ -13,7 +15,8 @@ import smw.ui.*;
 public class Game implements Runnable {  
   private GameFrame gameFrame;
   private Player[] players;
-  public static Level level = new Level();
+  private Level level = new Level();
+  private GameRules rules;
   
   /** The desired frames per second. */
   public double FPS = 60.0;
@@ -31,6 +34,7 @@ public class Game implements Runnable {
   	
   	// TODO - RPG - TEMP testing my map stuff...
   	level.loadMap("NMcCoy_1-3.map");
+  	rules = new ClassicGameRules(10, numPlayers);
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
@@ -43,7 +47,7 @@ public class Game implements Runnable {
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);
-      players[i].init(50*(i + 2), 50, images[i]);
+      players[i].init(175*(i + 2), 50, images[i]);
     }
   }
 
@@ -110,19 +114,25 @@ public class Game implements Runnable {
   private void updateGame() {
     // Poll player update (movement, etc.)
     // Way later poll level update and all that other junk...
-  	
-  	// Mitch - I set this up to just do the collision and if no collision, then allow the player in.
-  	// not only is this unfair (ie if 2 players are running at each other, player 1 will see the spot
-  	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
-  	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
-  	// closer than 2 pixels to him. But this is good enough for now. 
+    
+    //TODO should maybe randomize players for all these? just to keep things "fair"
   	for(Player p : players){
   		p.poll();
-  		p.prepareToMove();
+  		p.updateValuesToPrepareForMove();
   	}
   	
   	for(Player p : players){
-  		p.move(players);
+      rules.collide(level, p);
+    }
+  	
+  	for(int p1 = 0 ; p1 < players.length - 1 ; ++p1){
+  	  for(int p2 = p1 + 1 ; p2 < players.length ; ++p2){
+  	    rules.collidePlayers(players[p1], players[p2]);
+  	  }
+  	}
+  	
+  	for(Player p : players){
+  		p.move();
   	}
   }
 }

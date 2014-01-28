@@ -2,6 +2,7 @@ package smw.entity;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
@@ -19,11 +20,13 @@ public class Player extends Rectangle{
 	private static final long serialVersionUID = -4197702383138211374L;
 	private static final long RESPAWN_WAIT_MS = 2000;
 	Sprite  sprite;
-	PlayerPhysics physics;
+	public PlayerPhysics physics;
 	Score score;
-	final int playerIndex;
-	boolean crushed = false;
+	final public int playerIndex;
+	public boolean crushed = false;
 	long respawnTime;
+	//This is used to track how far a player really can move
+	public int dx, dy;
 	
 	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
@@ -60,126 +63,27 @@ public class Player extends Rectangle{
 		sprite.init(image, color);
 	}
 	
-	/*** This method is to get the state ready to move ***/
-	public void prepareToMove(){
-		//physics.update();
-	}
-		
-	public void move(Player[] players){	
-		if(crushed){
-			//TODO this is messy and should be a method called at the beginning
-			if(respawnTime < System.currentTimeMillis()){
-				crushed = false;
-				setBounds(300, 100);
-				sprite.setJumping();
-			}
-			
-			return; //Do not want to do anything with someone who is crushed
-		}
-			
-		float dx = physics.getVelocityX();
-		float dy = physics.getVelocityY();
-		
-		sprite.update(dx, dy, physics.isJumping, physics.isSkidding);
-		int newX, newY = 0;
-		
-		newX = (int) (x + dx);
-		newY = (int) (y + dy);
-		
-		// TODO - RPG - this is awful, but at least we can detect the floor sort of	
-		// Need to fix add detection for X axis
-		// Probably need to check each tile around the players new point like Mitch did with "intersects"
-		// physics will need to be updated to NOT update if we can't move in a certain x or y direction
-		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE + 2, newY) != Tile.NONSOLID) {
-      if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-        newX = x;
-        System.out.println("X1");
-        physics.collideWithWall();
-      }
-    } 
-		
-		if (Game.level.getTileTypeAtPx(newX - 3, newY) != Tile.NONSOLID) {
-      if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-        newX = x;
-        System.out.println("X2");
-        physics.collideWithWall();
+	public void updateValuesToPrepareForMove(){  
+   if(crushed){
+      //TODO this is messy and should be a method called at the beginning
+      if(respawnTime < System.currentTimeMillis()){
+        crushed = false;
+        setBounds(300, 100);
+        sprite.setJumping();
       }
     }
-		
-		if (Game.level.getTileTypeAtPx(newX, newY + Level.TILE_SIZE) != Tile.NONSOLID) {
-		  if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-  		  newY = y;
-  		  physics.collideWithFloor();
-		  }
-		}
-		
-		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE, newY + Level.TILE_SIZE) != Tile.NONSOLID) {
-      if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-        newY = y;
-        physics.collideWithFloor();
-      }
-    }
-
-		physics.update();
-		
-		boolean xCollide = false;
-		//This is definitely not right... but its kinda cool that it sort of works
-		for(Player p : players){
-			if(p.playerIndex != playerIndex){
-				if(!p.crushed && p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-				  if(p.x > newX){
-				    newX = p.x - Sprite.IMAGE_WIDTH - 1;
-				  }
-				  else{
-				    newX = p.x + Sprite.IMAGE_HEIGHT + 1;
-				  }
-				  
-					xCollide = true;
-					break;
-				}
-			}
-		}
-		
-		for(Player p : players){
-			if(p.playerIndex != playerIndex){
-				if(!p.crushed && p.intersects(x, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-					if(!xCollide){
-						if(p.getY() < newY){
-						  p.score.increaseScore();
-							crush();
-						}
-						else{
-						  score.increaseScore();
-							p.crush();
-						}
-					}
-					physics.collideWithFloor();
-					newY = y;
-					break;
-				}
-			}
-		}
-
-	/*****************************************************
-	 *TODO this is not complete but good enough for now
-	 *
-	 *THIS WILL WRAP THE SCREEN AROUND CHA CHING mk
-	 ******************************************************/
-		newX = newX % 640;
-		newY = newY % 480;
-		
-		if(newX < 0){
-		  newX += 640;
-		}
-		
-		if(newY < 0){
-		  newY += 480;
-		}
-		
-		setBounds(newX, newY);					
+   
+   physics.update();
+   dx = (int)physics.getVelocityX();
+   dy = (int)physics.getVelocityY();
+   sprite.update(dx, dy, physics.isJumping, physics.isSkidding);  
 	}
 		
-	protected void crush(){
+	public void move(){			
+	  setBounds(x + dx, y + dy);
+	}
+		
+	public void crush(){
 		crushed = true;
 		//TODO mk didn't like this but if you want to play with it, make gameFrame static and this works 
 		//Game.gameFrame.bump();

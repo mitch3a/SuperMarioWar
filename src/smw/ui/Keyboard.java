@@ -93,7 +93,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     run = mostRecentlyPushed;
   }
   
-  @Override
   public void keyPressed(KeyEvent e){
           int code = e.getKeyCode();
           e.consume();
@@ -101,7 +100,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
           keyMap.put(code, true);
   }
   
-  @Override
   public void keyReleased(KeyEvent e){
           int code = e.getKeyCode();
           e.consume();
@@ -109,7 +107,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
           keyMap.put(code, false);
   }
 
-  @Override
   public void keyTyped(KeyEvent e) {
     e.consume();
   }

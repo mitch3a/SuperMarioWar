@@ -73,7 +73,7 @@ public class PlayerPhysics {
 	
 	long previousTime_ms;
 	
-	float velocityX,     velocityY, remainderX, remainderY;
+	public float velocityX,     velocityY, remainderX, remainderY;
 	float jumpingAccelerationX, accelerationY;
 	
 	PlayerControlBase playerControl;
