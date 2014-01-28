@@ -10,6 +10,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   //TODO this should probably tie into the PlayerControlBase
 	int left;
   int right;
+  int down;
   int jump;
   int run;
   
@@ -24,16 +25,19 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   public Keyboard(Component component,
   								int left,
                   int right,
+                  int down,
                   int jump,
                   int run){
     this.left  = left;
     this.right = right;
+    this.down  = down;
     this.jump  = jump;
     this.run   = run;
     
     component.addKeyListener(this);
     keyMap.put(this.left, false);
     keyMap.put(this.right, false);
+    keyMap.put(this.down, false);
     keyMap.put(this.jump, false);
     keyMap.put(this.run, false); 
   }
@@ -62,6 +66,11 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     return keyMap.get(run);
   }
   
+  @Override
+  public boolean isDown(){
+    return keyMap.get(down);
+  }
+  
   /*******************************************
    * This method waits until an unused key is 
    * pressed. That key is stored in mostRecentlyPushed
@@ -82,6 +91,11 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     waitForNextKey();
     right = mostRecentlyPushed;
   }
+  
+  public void setDownButton() {
+    waitForNextKey();
+    right = mostRecentlyPushed;
+  }
 
   public void setJumpButton() {
     waitForNextKey();
@@ -93,7 +107,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     run = mostRecentlyPushed;
   }
   
-  @Override
   public void keyPressed(KeyEvent e){
           int code = e.getKeyCode();
           e.consume();
@@ -101,7 +114,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
           keyMap.put(code, true);
   }
   
-  @Override
   public void keyReleased(KeyEvent e){
           int code = e.getKeyCode();
           e.consume();
@@ -109,7 +121,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
           keyMap.put(code, false);
   }
 
-  @Override
   public void keyTyped(KeyEvent e) {
     e.consume();
   }

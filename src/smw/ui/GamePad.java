@@ -27,19 +27,23 @@ public class GamePad  extends PlayerControlBase{
 		switch(type){
 			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.index]  = 1;
 												buttonToComponentMap[PlayerButton.RIGHT.index] = 1;
+												buttonToComponentMap[PlayerButton.DOWN.index]  = 0;
 												buttonToComponentMap[PlayerButton.JUMP.index]  = 8;
 												buttonToComponentMap[PlayerButton.RUN.index]   = 9;
 												pressedValues[PlayerButton.LEFT.index]  = -1.0f;
 												pressedValues[PlayerButton.RIGHT.index] =  1.0f;
+												pressedValues[PlayerButton.DOWN.index]  =  1.0f;
 												pressedValues[PlayerButton.JUMP.index]  =  1.0f;
 												pressedValues[PlayerButton.RUN.index]   =  1.0f;
 												break;
 			case LOGITECH_TIM: buttonToComponentMap[PlayerButton.LEFT.index]  = 16;
                          buttonToComponentMap[PlayerButton.RIGHT.index] = 16;
+                         //TODO buttonToComponentMap[PlayerButton.DOWN.index] = 2;
                          buttonToComponentMap[PlayerButton.JUMP.index]  = 1;
                          buttonToComponentMap[PlayerButton.RUN.index]   = 0;
                          pressedValues[PlayerButton.LEFT.index]  =  1.0f;
                          pressedValues[PlayerButton.RIGHT.index] =  0.5f;
+                         //TODO pressedValues[PlayerButton.DOWN.index] =  0.5f;
                          pressedValues[PlayerButton.JUMP.index]  =  1.0f;
                          pressedValues[PlayerButton.RUN.index]   =  1.0f;
                          break;
@@ -200,6 +204,11 @@ public class GamePad  extends PlayerControlBase{
   }
 
   @Override
+  public void setDownButton() {
+    setNextButton(PlayerButton.DOWN);
+  }
+
+  @Override
   public void setJumpButton() {
   	setNextButton(PlayerButton.JUMP);
   }
@@ -227,6 +236,11 @@ public class GamePad  extends PlayerControlBase{
     else{
       return (isPressed(PlayerButton.LEFT)) ? -1 : 0;
     }
+  }
+
+  @Override
+  public boolean isDown() {
+    return isPressed(PlayerButton.DOWN);
   }
 
   @Override

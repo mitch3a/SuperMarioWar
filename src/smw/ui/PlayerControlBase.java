@@ -15,9 +15,9 @@ public abstract class PlayerControlBase{
 	 *       the component index itself
 	 ***************************************************/
 	public enum PlayerButton{
-		LEFT(0), RIGHT(1), JUMP(2), RUN(3);
+		LEFT(0), RIGHT(1), DOWN(2), JUMP(3), RUN(4);
 		
-		final static int NUM_BUTTONS_USED = 4;
+		final static int NUM_BUTTONS_USED = 5;
 		final int index;
 		PlayerButton(int i){
 			index = i;
@@ -35,6 +35,8 @@ public abstract class PlayerControlBase{
     setLeftButton();
     System.out.println("Set your right button");
     setRightButton();  
+    System.out.println("Set your down button");
+    setDownButton();  
     System.out.println("Set your jump button");
     setJumpButton();
     System.out.println("Set your run button");
@@ -59,6 +61,12 @@ public abstract class PlayerControlBase{
    * Store it as the right button
    ****************************************************/
   abstract public void setRightButton();
+  
+  /****************************************************
+   * This method will wait for a button to be pressed and
+   * Store it as the down button
+   ****************************************************/
+  abstract public void setDownButton();
   
   /****************************************************
    * This method will wait for a button to be pressed and
@@ -89,4 +97,10 @@ public abstract class PlayerControlBase{
    * run button
    ****************************************************/
   abstract public boolean isRunning();
+
+  /****************************************************
+   * This method is used to grab the state of the
+   * run button
+   ****************************************************/
+  abstract public boolean isDown();
 }

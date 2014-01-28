@@ -76,10 +76,7 @@ public class Level {
       row = MAP_HEIGHT - 1;    
     }
     
-    //TODO - this should work, not sure why it isn't!
     return topTileType[col][row];
-    
-    //return tiles[col][row].getTileType();
   }
   
   // TODO - This will eventually update interactive and animated stuff in the level.
@@ -180,31 +177,23 @@ public class Level {
         // do anything extra... yet!
         
         // Load map data.
-        for (int j = 0; j < MAP_HEIGHT; j++) {
-          for (int i = 0; i < MAP_WIDTH; i++) {
-        	//TODO mk part of hacky solution
-            topTileType[i][j] = 0;
+        for (int h = 0; h < MAP_HEIGHT; ++h) {
+          for (int w = 0; w < MAP_WIDTH; w++) {
+            topTileType[w][h] = 0;
             for (int k = 0; k < MAX_MAP_LAYERS; k++) {
-              mapData[i][j][k] = new TileSetTile();
-              mapData[i][j][k].ID = (int)(buffer.get());
-              mapData[i][j][k].col = (int)(buffer.get());
-              mapData[i][j][k].row = (int)(buffer.get());
-              //TODO mk this is VERY Hacky, but it def does ok and it gets us closer
-              if(mapData[i][j][k].ID != -2){
-                topTileType[i][j] = mapData[i][j][k].ID + 2;
+              mapData[w][h][k] = new TileSetTile();
+              mapData[w][h][k].ID = (int)(buffer.get());
+              mapData[w][h][k].col = (int)(buffer.get());
+              mapData[w][h][k].row = (int)(buffer.get());
+              
+              if(mapData[w][h][k].ID >= 0){
+            	//TODO mk what if there are multiple per k?
+                topTileType[w][h] = tileSet.getTileType(mapData[w][h][k].col, mapData[w][h][k].row);
               }
-              if(mapData[i][j][k].ID != -2) System.out.println("ID: " + mapData[i][j][k].ID + "(" + j + ", " + i + ", " + k + ")");
             }
-            objectData[i][j] = new MapBlock();
-            objectData[i][j].type = (int)(buffer.get());
-            objectData[i][j].hidden = buffer.get() != 0;
-            
-            //TODO mk the hacky solution above made this moot
-            //topTileType[i][j] = this.tileSet.getTileType(mapData[i][j][0].col, mapData[i][j][0].row); // TODO - I think this will work...
-
-            if (Debug.LOG_TILE_TYPE_INFO) {
-              System.out.println(topTileType[i][j]);
-            }
+            objectData[w][h] = new MapBlock();
+            objectData[w][h].type = (int)(buffer.get());
+            objectData[w][h].hidden = buffer.get() != 0;
           }
         }
         
