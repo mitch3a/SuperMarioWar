@@ -47,6 +47,11 @@ public class Level {
   private int tileAnimationTimer;
   private int tileAnimationFrame;
   
+  //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful
+  //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
+  short[] g_iTileTypeConversion = {0, 1, 2, 5, 121, 9, 17, 33, 65, 6, 21, 37, 69, 3961, 265, 529, 1057, 2113, 4096};
+
+  
   // TODO - RPG - Testing my TileSet stuff. We will eventually need a "tile set manager" to handle multiple sets.
   private TileSet tileSet = new TileSet("Classic");
   
@@ -85,17 +90,6 @@ public class Level {
   }
   
   public void draw(Graphics2D g, ImageObserver io) {
-    /* TODO - this was my old hard coded tile array, can delete eventually
-    for (int i = 0; i < WIDTH; i++) {
-      for (int j = 0; j < HEIGHT; j++) {
-        BufferedImage img = tiles[i][j].getImg();
-        if (img != null) {
-          g.drawImage(img, i * TILE_SIZE, j * TILE_SIZE, io);
-        }
-      }
-    }
-    */
-    
     // Draw the background.
     g.drawImage(backgroundImg, 0, 0, io);
 
@@ -134,21 +128,22 @@ public class Level {
       clearAnimatedTiles();
       
       // Read the map version.
-      int[] version = new int[4];
-      for (int i = 0; i < version.length; i++) {
-        version[i] = buffer.getInt();
+      int version = 0;
+      for (int i = 0; i < 4; i++) {
+        version = 10*version + buffer.getInt();
       }
       
       if (Debug.LOG_MAP_INFO) {
-        System.out.println("map v" + version[0] + "." + version[1] + "." + version[2] + "." + version[3]);
+        System.out.println("map v" + version);
       }
       
       // For now only support latest map files (1.8+)
-      if (version[0] >= 1 && version[1] >= 8) {
-        
+      if (version >= 1800) {
+
         for (int i = 0; i < MAX_AUTO_FILTERS; i++) {
           autoFilter[i] = buffer.getInt() > 0;
         }
+        
         buffer.getInt(); // unused 32 bits after auto filter section
         
         clearPlatforms();
@@ -186,10 +181,7 @@ public class Level {
           for (int w = 0; w < MAP_WIDTH; w++) {
             topTileType[w][h] = 0;
             for (int k = 0; k < MAX_MAP_LAYERS; k++) {
-              mapData[w][h][k] = new TileSetTile();
-              mapData[w][h][k].ID = (int)(buffer.get());
-              mapData[w][h][k].col = (int)(buffer.get());
-              mapData[w][h][k].row = (int)(buffer.get());
+              mapData[w][h][k] = readTile(buffer);
               
               if(mapData[w][h][k].ID >= 0){
             	  //TODO mk what if there are multiple per k?
@@ -214,7 +206,52 @@ public class Level {
         }
         backgroundImg = ImageIO.read(this.getClass().getClassLoader().getResource("map/backgrounds/" + backgroundFile)); 
         
-        //begin LoadPlatforms code
+        //TODO mk not using this so not storing it for now...
+        int[] switches = new int[4];
+        for(int switchIndex = 0 ; switchIndex < switches.length ; ++switchIndex){
+          switches[switchIndex] = buffer.getInt();
+        }
+        
+        loadPlatforms(buffer, false, version, maxTileSetId);//TODO got rid of the other params... they were for error checking...hm.....
+        
+        //Load map items (like carryable spikes and springs)
+        int numMapItems = buffer.getInt();
+        MapItem[] mapItems = new MapItem[numMapItems];
+        
+        for(int i = 0; i < numMapItems; ++i)
+        {
+          mapItems[i].type = buffer.getInt();
+          mapItems[i].x    = buffer.getInt();
+          mapItems[i].y    = buffer.getInt();
+        }
+
+        //Load map hazards (like fireball strings, rotodiscs, pirhana plants)
+        int numMapHazards = buffer.getInt();
+        MapHazard[] mapHazards = new MapHazard[numMapHazards];
+
+        for(short i = 0; i < numMapHazards; ++i)
+        {
+          mapHazards[i].type = (short)buffer.getInt();
+          mapHazards[i].x    = (short)buffer.getInt();
+          mapHazards[i].y    = (short)buffer.getInt();
+
+          for(short j = 0; j < MapHazard.NUMMAPHAZARDPARAMS; j++)
+            mapHazards[i].iparam[j] = (short)buffer.getInt();
+          
+          for(short j = 0; j < MapHazard.NUMMAPHAZARDPARAMS; j++)
+            mapHazards[i].dparam[j] = buffer.getFloat();
+        }
+
+        short[] eyeCandy = new short[3];
+        
+        if(version > 1802){
+          eyeCandy[0] = (short)buffer.getInt();
+          eyeCandy[1] = (short)buffer.getInt();
+        }
+        
+        eyeCandy[2] = (short)buffer.getInt();
+        
+        int musicCategoryID = buffer.getInt();
       }
       
       // Close out file.
@@ -226,6 +263,102 @@ public class Level {
     }
   }
   
+  TileSetTile readTile(MappedByteBuffer buffer){
+    TileSetTile tile = new TileSetTile();
+    
+    tile.ID = (int)(buffer.get());
+    tile.col = (int)(buffer.get());
+    tile.row = (int)(buffer.get());
+    tile.type = tileSet.getTileType(tile.col, tile.row); //TODO mk this replaced the ID I believe but didnt feel right for now
+    
+    return tile;
+  }
+  
+  private void loadPlatforms(MappedByteBuffer buffer, boolean fPreview, int version, int maxTileSetId){
+    int numPlatforms = buffer.getInt();
+    MovingPlatform[] platforms = new MovingPlatform[numPlatforms];
+    
+    for(int platformIndex = 0 ; platformIndex < numPlatforms ; ++platformIndex){
+      int width = buffer.getInt();
+      int height = buffer.getInt();
+      
+      TileSetTile[][] tiles = new TileSetTile[width][height];
+      TileType[][] types = new TileType[width][height]; 
+      
+      //Setup the tiles and their types
+      for(int col = 0 ; col < width  ; ++col){
+        for(int row = 0  ; row < height ; ++row){
+          
+          if(version >= 1800){
+            //TODO mk this is just for version 1800
+            tiles[col][row] = readTile(buffer);
+            short type =  (short)buffer.getInt();
+            
+            //TODO mk this code is verbatum(ish) and is terrible
+            TileType tileType = new TileType();
+            if(type >= 0 && type < g_iTileTypeConversion.length){
+              tileType.type = type;
+              tileType.typeConversion = g_iTileTypeConversion[type];
+            }
+            else{
+              tileType.type = 0;
+              tileType.typeConversion = g_iTileTypeConversion[0];
+            }
+            types[col][row] = tileType;
+          }
+          else{
+            //TODO other version code
+          }
+        }
+      }
+      
+      short drawLayer = getDrawLayer(version, buffer);
+      int pathType = getPathType(version, buffer);
+      
+      //TODO MovingPlatformPath * path = NULL;
+      if(pathType == 0) //segment path
+      {
+        float fStartX = buffer.getFloat();
+        float fStartY = buffer.getFloat();
+        float fEndX = buffer.getFloat();
+        float fEndY = buffer.getFloat();
+        float fVelocity = buffer.getFloat();
+
+        //TODO path = new StraightPath(fVelocity, fStartX, fStartY, fEndX, fEndY, fPreview);
+      }
+      else if(pathType == 1) //continuous path
+      {
+        float fStartX = buffer.getFloat();
+        float fStartY = buffer.getFloat();
+        float fAngle = buffer.getFloat();
+        float fVelocity = buffer.getFloat();
+
+        //TODO path = new StraightPathContinuous(fVelocity, fStartX, fStartY, fAngle, fPreview);
+      }
+      else if(pathType == 2) //elliptical path
+      {
+        float fRadiusX = buffer.getFloat();
+        float fRadiusY = buffer.getFloat();
+        float fCenterX = buffer.getFloat();
+        float fCenterY = buffer.getFloat();
+        float fAngle   = buffer.getFloat();
+        float fVelocity = buffer.getFloat();
+
+        //TODO path = new EllipsePath(fVelocity, fAngle, fRadiusX, fRadiusY, fCenterX, fCenterY, fPreview);
+      }
+
+      //TODO platforms[platformIndex] = new MovingPlatform(tiles, types, iWidth, iHeight, drawLayer, path, fPreview);;
+    }
+  }  
+  
+  short getDrawLayer(int version, MappedByteBuffer buffer){
+    return (version >= 1801) ? (short)buffer.getInt() : 2;
+  }
+  
+  int getPathType(int version, MappedByteBuffer buffer){
+    return (version >= 1800) ? buffer.getInt() : 0;
+  }
+ 
   // TODO - We don't support animated tiles yet (question blocks, etc.).
   private void clearAnimatedTiles() {
     
