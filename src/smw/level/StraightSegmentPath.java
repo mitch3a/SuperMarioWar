@@ -6,16 +6,16 @@ class StraightSegmentPath implements Path{
   float[] currentPos = new float[2];
   float[] velocity   = new float[2];
   
-  int[] startPos = new int[2];
-  int[] endPos   = new int[2];
-  
-  public StraightSegmentPath(float velocity, int startX, int endX, int startY, int endY){
-    this.currentPos[X] = (float) startX;
-    this.currentPos[Y] = (float) startY;
+  float[] startPos = new int[2];
+  float[] endPos   = new int[2];
+
+  public StraightSegmentPath(float velocity, float startX, float startY, float endX, float endY){
+    this.currentPos[X] = startX;
+    this.currentPos[Y] = startY;
     
     //Calculate velocities for X/Y
-    int xLength = endX - startX;
-    int yLength = endY - startY;
+    float xLength = endX - startX;
+    float yLength = endY - startY;
     
     float velocityLength = Math.sqrt(xLength*xLength - (yLength*yLength));
     double angle = Math.tan(((float)yLength)/xLength);
