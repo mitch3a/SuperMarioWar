@@ -3,6 +3,7 @@ package smw.level;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
@@ -108,6 +109,39 @@ public class Level {
         }
       }
     } 
+  }
+  
+  public static void printAllMapsAndVersions(){
+    File folder = new File(Level.class.getClassLoader().getResource("map/").getFile());
+    File[] listOfFiles = folder.listFiles();
+    for(File f : listOfFiles){
+      String name = f.getName();
+      if(name.endsWith(".map")){
+        System.out.println(name + ": " + getMapVersion(name));
+      }
+    }
+  }
+  
+  public static int getMapVersion(String name){
+    int version = 0;
+    try {
+      RandomAccessFile f = new RandomAccessFile(Level.class.getClassLoader().getResource("map/" + name).getPath().replaceAll("%20", " "), "r");
+      FileChannel fc = f.getChannel();
+      MappedByteBuffer buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+      buffer.order(ByteOrder.LITTLE_ENDIAN); // Java defaults to BIG_ENDIAN, but MAP files were probably made on a x86 PC.
+      buffer.load();
+      
+      // Read the map version.
+      for (int i = 0; i < 4; i++) {
+        version = 10*version + buffer.getInt();
+      }
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+      version = -1;
+    }
+    
+    return version;
   }
   
   // TODO - work in progress loading existing SMW map files (using their formats)
