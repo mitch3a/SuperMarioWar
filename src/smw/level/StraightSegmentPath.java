@@ -1,7 +1,7 @@
-class StraightSegmentPath{
+class StraightSegmentPath implements Path{
   
-  int X = 0;
-  int Y = 1;
+  static final int X = 0;
+  static final int Y = 1;
   
   float[] currentPos = new float[2];
   float[] velocity   = new float[2];
