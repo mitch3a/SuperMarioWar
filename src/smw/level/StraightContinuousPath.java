@@ -1,4 +1,4 @@
-class StraightSegmentPath{
+class StraightSegmentPath implements Path{
   
   static final int X = 0;
   static final int Y = 1;
