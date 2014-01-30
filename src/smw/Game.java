@@ -116,6 +116,9 @@ public class Game implements Runnable {
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
+    
+    level.update();
+    
   	for(Player p : players){
   		p.poll();
   		p.prepareToMove();

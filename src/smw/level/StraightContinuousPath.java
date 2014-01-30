@@ -1,4 +1,6 @@
-class StraightSegmentPath implements Path{
+package smw.level;
+
+class StraightContinuousPath implements Path{
   
   static final int X = 0;
   static final int Y = 1;
@@ -6,15 +8,22 @@ class StraightSegmentPath implements Path{
   float[] currentPos = new float[2];
   float[] velocity = new float[2];
   
-  public StraightSegmentPath(float velocity, float startX, int float, float angle){
+  public StraightContinuousPath(float velocity, float startX, float startY, float angle){
     this.currentPos[X] = startX;
     this.currentPos[Y] = startY;
     
-    velocity[X] = velocityLength*Math.acos(angle);
-    velocity[Y] = velocityLength*Math.asin(angle);
+    float temp = (float) (3*Math.PI/2);
+    if(angle == temp){
+      this.velocity[X] = 0;
+      this.velocity[Y] = velocity;
+    }
+    else{
+      this.velocity[X] = (float) (velocity*Math.acos(angle));
+      this.velocity[Y] = (float) (velocity*Math.asin(angle));
+    }
   }
   
-  public void move(long timeDif){
+  public void move(float timeDif){
     move(X, timeDif);
     move(Y, timeDif);
   }
@@ -28,20 +37,20 @@ class StraightSegmentPath implements Path{
   }
   
   int get(int i){
-    return (int) current[i];
+    return (int) currentPos[i];
   }
   
-  void move(int i, timeDif){
-    current[i] += velocity[i]*timeDif;
+  void move(int i, float timeDif){
+    currentPos[i] += velocity[i]*timeDif;
     
     //TODO mk better way to do the wrapping....
     int max = (i == X) ? 640 : 480; //TODO mk at LEAST use the constants
     
-    if(current[i] < 0){
-      current[i] += max;
+    if(currentPos[i] < 0){
+      currentPos[i] += max;
     }
     else{
-      current[i] = current[i] % max;
+      currentPos[i] = currentPos[i] % max;
     }
   }
 }

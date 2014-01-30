@@ -52,9 +52,10 @@ public class Level {
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
   short[] g_iTileTypeConversion = {0, 1, 2, 5, 121, 9, 17, 33, 65, 6, 21, 37, 69, 3961, 265, 529, 1057, 2113, 4096};
 
+  MovingPlatform[] platforms;
   
   // TODO - RPG - Testing my TileSet stuff. We will eventually need a "tile set manager" to handle multiple sets.
-  private TileSet tileSet = new TileSet("Classic");
+  public static TileSet tileSet = new TileSet("Classic");
   
   // TODO - this will eventually be init by a map file
   public void init() {    
@@ -87,7 +88,9 @@ public class Level {
   
   // TODO - This will eventually update interactive and animated stuff in the level.
   public void update() {
-    
+    for(int i = 0 ; i < platforms.length ; ++i){
+      platforms[i].move(1);
+    }
   }
   
   public void draw(Graphics2D g, ImageObserver io) {
@@ -108,7 +111,11 @@ public class Level {
           g.drawImage(tileSet.getTileImg(27, 15), i * TILE_SIZE, j * TILE_SIZE, io); //TODO mk yes i cheated. Not sure where the row/col is supposed to come from
         }
       }
-    } 
+    }
+    
+    for(int i = 0 ; i < platforms.length ; ++i){
+      platforms[i].draw(g, io);
+    }
   }
   
   public static void printAllMapsAndVersions(){
@@ -310,7 +317,7 @@ public class Level {
   
   private void loadPlatforms(MappedByteBuffer buffer, boolean fPreview, int version, int maxTileSetId){
     int numPlatforms = buffer.getInt();
-    MovingPlatform[] platforms = new MovingPlatform[numPlatforms];
+    platforms = new MovingPlatform[numPlatforms];
     
     for(int platformIndex = 0 ; platformIndex < numPlatforms ; ++platformIndex){
       int width = buffer.getInt();
@@ -349,7 +356,8 @@ public class Level {
       short drawLayer = getDrawLayer(version, buffer);
       int pathType = getPathType(version, buffer);
       
-      //TODO MovingPlatformPath * path = NULL;
+      Path path = null;
+      
       if(pathType == 0) //segment path
       {
         float fStartX = buffer.getFloat();
@@ -358,7 +366,7 @@ public class Level {
         float fEndY = buffer.getFloat();
         float fVelocity = buffer.getFloat();
 
-        //TODO path = new StraightPath(fVelocity, fStartX, fStartY, fEndX, fEndY, fPreview);
+        path = new StraightSegmentPath(fVelocity, fStartX, fStartY, fEndX, fEndY);
       }
       else if(pathType == 1) //continuous path
       {
@@ -367,7 +375,7 @@ public class Level {
         float fAngle = buffer.getFloat();
         float fVelocity = buffer.getFloat();
 
-        //TODO path = new StraightPathContinuous(fVelocity, fStartX, fStartY, fAngle, fPreview);
+        path = new StraightContinuousPath(fVelocity, fStartX, fStartY, fAngle);
       }
       else if(pathType == 2) //elliptical path
       {
@@ -381,7 +389,8 @@ public class Level {
         //TODO path = new EllipsePath(fVelocity, fAngle, fRadiusX, fRadiusY, fCenterX, fCenterY, fPreview);
       }
 
-      //TODO platforms[platformIndex] = new MovingPlatform(tiles, types, iWidth, iHeight, drawLayer, path, fPreview);;
+      platforms[platformIndex] = new MovingPlatform(tiles, path);
+      //platforms[platformIndex] = new MovingPlatform(tiles, types, width, height, drawLayer, path, fPreview);
     }
   }  
   
