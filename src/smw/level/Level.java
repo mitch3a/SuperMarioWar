@@ -180,6 +180,9 @@ public class Level {
           result += translation[i].name + ", ";
         }
       }
+      buffer.clear();
+      fc.close();
+      f.close();
     }
     catch (IOException e) {
       e.printStackTrace();
