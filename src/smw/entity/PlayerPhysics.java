@@ -1,5 +1,6 @@
 package smw.entity;
 
+import smw.Game;
 import smw.gfx.Sprite.Direction;
 import smw.ui.PlayerControlBase;
 
@@ -249,6 +250,7 @@ public class PlayerPhysics {
     	velocityY = JUMPING_VELOCITY[speedIndex];
     	setJumpingAccelerationX();
     	isJumping = true;
+    	Game.soundPlayer.playSfx("jump.wav");
     }
     
     if(isJumping){

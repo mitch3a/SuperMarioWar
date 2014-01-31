@@ -49,7 +49,7 @@ public class SoundPlayer {
     }
     
     // Set SFX path (by default SoundSystem will look in a packaged named "Sounds").
-    SoundSystemConfig.setSoundFilesPackage(new File("/res/sfx/packs/Classic").toURI().toString());
+    SoundSystemConfig.setSoundFilesPackage(new File("res/sfx/packs/Classic").toURI().toString());
     
     // TODO - Setup volume to MAX for testing.
     soundSystem.setMasterVolume(1.0f);
@@ -73,12 +73,18 @@ public class SoundPlayer {
     }
   }
   
-  // TODO - this doesn't work either! NULL POINTER IN LIBRARY when passing file
+  /** Plays the specified sound effect.
+   * @param name File name of sound effect. 
+   */
   public void playSfx(String name) {
-    soundSystem.quickPlay(false, name, false, 0, 0, 0, SoundSystemConfig.ATTENUATION_NONE, 0);
+    try {
+      soundSystem.quickPlay(false, new File("res/sfx/packs/Classic/" + name).toURI().toURL(), name, false, 0, 0, 0,
+        SoundSystemConfig.ATTENUATION_NONE, SoundSystemConfig.getDefaultRolloff());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
   }
   
-  // TODO - not sure if we actually need this, but the user manual says to call cleanup at some point!
   /** This should be called when exiting the game. */
   public void shutDown() {
     soundSystem.cleanup();
