@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import smw.entity.Player;
 import smw.level.Level;
 import smw.settings.Debug;
+import smw.sound.SoundPlayer;
 import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
@@ -14,6 +15,7 @@ public class Game implements Runnable {
   private GameFrame gameFrame;
   private Player[] players;
   public static Level level = new Level();
+  public static SoundPlayer soundPlayer = new SoundPlayer();
   
   /** The desired frames per second. */
   public double FPS = 60.0;
@@ -35,6 +37,8 @@ public class Game implements Runnable {
   	//level.loadMap("two52_Up In The Hills.map");
   	//TODO level.loadMap("tubesteak_coolnights.map");
   	level.loadMap("Pikablu_Mushroom Kingdom.map");
+  	
+  	soundPlayer.playBGM("M2_Level1.ogg");
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);

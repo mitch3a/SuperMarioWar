@@ -20,5 +20,18 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SuperMarioWar/lib/Windows"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/CodecJOrbis.jar"/>
+	<classpathentry kind="lib" path="lib/CodecWav.jar"/>
+	<classpathentry kind="lib" path="lib/LibraryJavaSound.jar"/>
+	<classpathentry kind="lib" path="lib/LibraryLWJGLOpenAL.jar"/>
+	<classpathentry kind="lib" path="lib/SoundSystem.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="lib/asm-debug-all.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl_test.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl_util_applet.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-debug.jar"/>
+	<classpathentry kind="lib" path="lib/lzma.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
