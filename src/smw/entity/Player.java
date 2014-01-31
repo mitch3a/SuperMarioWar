@@ -90,14 +90,14 @@ public class Player extends Rectangle{
       if (x > newX) {
         //Moving left
         if(Game.level.getTileTypeAtPx(newX, y) == Tile.SOLID){
-          newX = newX + (newX % Level.TILE_SIZE) + 1;
+          newX = newX +  Level.TILE_SIZE - (newX % Level.TILE_SIZE);
           physics.collideWithWall();
         }
       }
       else{
         //Moving right
         if(Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH, y) == Tile.SOLID){
-          newX = newX - (newX % Level.TILE_SIZE) - 1;
+          newX = newX - (newX % Level.TILE_SIZE);
           physics.collideWithWall();
         }
       }
@@ -128,8 +128,7 @@ public class Player extends Rectangle{
         //Moving up
         if(Game.level.getTileTypeAtPx(newX, newY) == Tile.SOLID ||
            Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.SOLID){
-          //For now, this is ok because up velocity isn't fast enough to get a pixel up,
-          //but probably want to make sure 
+          newY += Level.TILE_SIZE - newY % Level.TILE_SIZE;
           physics.collideWithCeiling();
         }
       }
