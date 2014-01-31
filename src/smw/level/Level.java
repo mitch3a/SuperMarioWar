@@ -55,7 +55,8 @@ public class Level {
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
   short[] g_iTileTypeConversion = {0, 1, 2, 5, 121, 9, 17, 33, 65, 6, 21, 37, 69, 3961, 265, 529, 1057, 2113, 4096};
 
-  MovingPlatform[] platforms;
+  //TODO mk this is only public for now
+  public MovingPlatform[] platforms;
   
   // TODO - RPG - Testing my TileSet stuff. We will eventually need a "tile set manager" to handle multiple sets.
   public static TileSet tileSet = new TileSet("Classic");
