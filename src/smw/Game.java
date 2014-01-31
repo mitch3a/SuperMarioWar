@@ -1,6 +1,8 @@
 package smw;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import smw.entity.Player;
 import smw.level.Level;
@@ -30,6 +32,15 @@ public class Game implements Runnable {
     players = new Player[numPlayers];
     level.init();
   	this.gameFrame = new GameFrame(players, level);
+  	
+  	// When the window is closed do any needed cleanup.
+  	gameFrame.addWindowListener(new WindowAdapter() {
+  	  @Override
+  	  public void windowClosing(WindowEvent we) { 
+  	    soundPlayer.shutDown();
+  	    System.exit(0);
+  	  }
+  	});
   	
   	// TODO - RPG - TEMP testing my map stuff...
   	//level.loadMap("NMcCoy_1-3.map");

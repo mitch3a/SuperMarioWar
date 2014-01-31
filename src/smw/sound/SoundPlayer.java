@@ -38,7 +38,7 @@ public class SoundPlayer {
     boolean jSCompatible = SoundSystem.libraryCompatible( LibraryJavaSound.class );
     
     try {
-      soundSystem = new SoundSystem(LibraryJavaSound.class);
+      soundSystem = new SoundSystem(LibraryLWJGLOpenAL.class);
       
       SoundSystemConfig.addLibrary(LibraryJavaSound.class);
       SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
