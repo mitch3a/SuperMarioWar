@@ -39,8 +39,7 @@ public class SoundPlayer {
     
     try {
       soundSystem = new SoundSystem(LibraryLWJGLOpenAL.class);
-      
-      SoundSystemConfig.addLibrary(LibraryJavaSound.class);
+
       SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
       SoundSystemConfig.setCodec("wav", CodecWav.class);
     }
