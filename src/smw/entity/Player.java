@@ -62,7 +62,7 @@ public class Player extends Rectangle{
 	
 	/*** This method is to get the state ready to move ***/
 	public void prepareToMove(){
-		//physics.update();
+		physics.update();
 	}
 		
 	public void move(Player[] players){	
@@ -86,41 +86,56 @@ public class Player extends Rectangle{
 		newX = (int) (x + dx);
 		newY = (int) (y + dy);
 		
-		// TODO - RPG - this is awful, but at least we can detect the floor sort of	
-		// Need to fix add detection for X axis
-		// Probably need to check each tile around the players new point like Mitch did with "intersects"
-		// physics will need to be updated to NOT update if we can't move in a certain x or y direction
-		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE + 2, newY) != Tile.NONSOLID) {
-      if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-        newX = x;
-        System.out.println("X1");
-        physics.collideWithWall();
+		if (x != newX) {
+      if (x > newX) {
+        //Moving left
+        if(Game.level.getTileTypeAtPx(newX, y) == Tile.SOLID){
+          newX = newX + (newX % Level.TILE_SIZE) + 1;
+          physics.collideWithWall();
+        }
+      }
+      else{
+        //Moving right
+        if(Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH, y) == Tile.SOLID){
+          newX = newX - (newX % Level.TILE_SIZE) - 1;
+          physics.collideWithWall();
+        }
       }
     } 
-		
-		if (Game.level.getTileTypeAtPx(newX - 3, newY) != Tile.NONSOLID) {
-      if (this.intersects(newX, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-        newX = x;
-        System.out.println("X2");
-        physics.collideWithWall();
+
+    if (y != newY){
+      if (y < newY) {
+        //Moving down. We want to check every block that is under the sprite. This is from the first 
+        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+        int tile1 = Game.level.getTileTypeAtPx(newX, newY + Sprite.IMAGE_HEIGHT);
+        int tile2 = Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
+        
+        if(tile1 != Tile.NONSOLID || tile2 != Tile.NONSOLID){
+          //TODO this might need some work once others are introduced, but making sure 
+          //     it isn't a situation where the player is pressing down to sink through
+          if((tile1 == Tile.SOLID_ON_TOP || tile1 == Tile.NONSOLID) &&
+             (tile2 == Tile.SOLID_ON_TOP || tile2 == Tile.NONSOLID) &&
+             (physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+            
+          }
+          else{ 
+            newY = newY - (newY % Level.TILE_SIZE); //Just above the floor
+            physics.collideWithFloor();
+          }
+        }
       }
-    }
-		
-		if (Game.level.getTileTypeAtPx(newX, newY + Level.TILE_SIZE) != Tile.NONSOLID) {
-		  if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-  		  newY = y;
-  		  physics.collideWithFloor();
-		  }
-		}
-		
-		if (Game.level.getTileTypeAtPx(newX + Level.TILE_SIZE, newY + Level.TILE_SIZE) != Tile.NONSOLID) {
-      if (this.intersects(x, newY, Level.TILE_SIZE, Level.TILE_SIZE)) {
-        newY = y;
-        physics.collideWithFloor();
+      else {
+        //Moving up
+        if(Game.level.getTileTypeAtPx(newX, newY) == Tile.SOLID ||
+           Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.SOLID){
+          //For now, this is ok because up velocity isn't fast enough to get a pixel up,
+          //but probably want to make sure 
+          physics.collideWithCeiling();
+        }
       }
     }
 
-		physics.update();
+		//physics.update();
 		
 		boolean xCollide = false;
 		//This is definitely not right... but its kinda cool that it sort of works

@@ -264,6 +264,11 @@ public class PlayerPhysics {
     velocityY = velocityY + (accelerationY*timeDif_ms);
   }
   
+  public void collideWithCeiling(){
+    //TODO not sure if we even need to do anything here
+    velocityY = 0;
+  }
+  
   public void collideWithFloor(){
   	jumpingAccelerationX = 0;
     velocityY = 0;

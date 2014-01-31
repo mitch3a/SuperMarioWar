@@ -31,14 +31,14 @@ public class Game implements Runnable {
   	
   	// TODO - RPG - TEMP testing my map stuff...
   	//level.loadMap("NMcCoy_1-3.map");
-  	level.loadMap("ym7_world1-2.map");
-  	//level.loadMap("two52_Up In The Hills.map");
+  	//level.loadMap("ym7_world1-2.map");
+  	level.loadMap("two52_Up In The Hills.map");
   	//level.loadMap("tubesteak_coolnights.map");
   	//level.loadMap("Pikablu_Mushroom Kingdom.map");
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
-    pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_G);
+    //pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[1] = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
