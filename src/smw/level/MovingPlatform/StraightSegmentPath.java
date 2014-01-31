@@ -1,6 +1,8 @@
-package smw.level;
+package smw.level.MovingPlatform;
 
-class StraightSegmentPath implements Path{
+import smw.level.Path;
+
+public class StraightSegmentPath implements Path{
   
   static final int X = 0;
   static final int Y = 1;
@@ -19,10 +21,28 @@ class StraightSegmentPath implements Path{
     float xLength = endX - startX;
     float yLength = endY - startY;
     
-    double angle = Math.tan(((float)yLength)/xLength);
+    double angle =(xLength != 0) ? Math.tan(((float)yLength)/xLength) : (float) (Math.PI/2);
     
-    this.velocity[X] = (float) (velocity*Math.acos(angle));
-    this.velocity[Y] = (float) (velocity*Math.asin(angle));
+    if(angle == (float) (Math.PI/2)){
+      this.velocity[X] = 0;
+      this.velocity[Y] = velocity;
+    }
+    else if(angle == (float) (3*Math.PI/2)){
+      this.velocity[X] = 0;
+      this.velocity[Y] = (-1)*velocity;
+    }
+    else if(angle == (float) 0){
+      this.velocity[X] = velocity;
+      this.velocity[Y] = 0;
+    }
+    else if(angle == (float) (Math.PI)){
+      this.velocity[X] = (-1)*velocity;
+      this.velocity[Y] = 0;
+    }
+    else{
+      this.velocity[X] = (float) (velocity*Math.acos(angle));
+      this.velocity[Y] = (float) (velocity*Math.asin(angle));
+    }
     
     //Make the "start" the "lesser" one
     if(startX < endX){

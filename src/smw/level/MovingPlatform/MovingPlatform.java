@@ -1,7 +1,11 @@
-package smw.level;
+package smw.level.MovingPlatform;
 
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
+
+import smw.level.Level;
+import smw.level.Path;
+import smw.level.TileSetTile;
 
 public class MovingPlatform {
   Path path;
@@ -24,7 +28,11 @@ public class MovingPlatform {
      int y = startY;
     
      for(int j = 0 ; j < tiles[i].length ; ++j){
-       graphics.drawImage(Level.tileSet.getTileImg(tiles[i][j].col, tiles[i][j].row), x, y, observer);
+       TileSetTile tile = tiles[i][j];
+       //Sometimes there is a gap in the middle
+       if(tile.ID >= 0){
+         graphics.drawImage(Level.tileSet.getTileImg(tile.col, tile.row), x, y, observer);
+       }
        y += Level.TILE_SIZE;
      }
      

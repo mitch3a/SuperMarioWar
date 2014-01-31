@@ -30,7 +30,11 @@ public class Game implements Runnable {
   	this.gameFrame = new GameFrame(players, level);
   	
   	// TODO - RPG - TEMP testing my map stuff...
-  	level.loadMap("NMcCoy_1-3.map");
+  	//level.loadMap("NMcCoy_1-3.map");
+  	level.loadMap("ym7_world1-2.map");
+  	//level.loadMap("two52_Up In The Hills.map");
+  	//level.loadMap("tubesteak_coolnights.map");
+  	//level.loadMap("Pikablu_Mushroom Kingdom.map");
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);

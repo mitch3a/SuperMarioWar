@@ -1,6 +1,8 @@
-package smw.level;
+package smw.level.MovingPlatform;
 
-class StraightContinuousPath implements Path{
+import smw.level.Path;
+
+public class StraightContinuousPath implements Path{
   
   static final int X = 0;
   static final int Y = 1;
@@ -11,11 +13,22 @@ class StraightContinuousPath implements Path{
   public StraightContinuousPath(float velocity, float startX, float startY, float angle){
     this.currentPos[X] = startX;
     this.currentPos[Y] = startY;
-    
-    float temp = (float) (3*Math.PI/2);
-    if(angle == temp){
+
+    if(angle == (float) (Math.PI/2)){
       this.velocity[X] = 0;
       this.velocity[Y] = velocity;
+    }
+    else if(angle == (float) (3*Math.PI/2)){
+      this.velocity[X] = 0;
+      this.velocity[Y] = (-1)*velocity;
+    }
+    else if(angle == (float) 0){
+      this.velocity[X] = velocity;
+      this.velocity[Y] = 0;
+    }
+    else if(angle == (float) (Math.PI)){
+      this.velocity[X] = (-1)*velocity;
+      this.velocity[Y] = 0;
     }
     else{
       this.velocity[X] = (float) (velocity*Math.acos(angle));

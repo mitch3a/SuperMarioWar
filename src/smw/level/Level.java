@@ -16,6 +16,9 @@ import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 import smw.level.MapBlock;
 import smw.level.TileSetTile;
+import smw.level.MovingPlatform.MovingPlatform;
+import smw.level.MovingPlatform.StraightContinuousPath;
+import smw.level.MovingPlatform.StraightSegmentPath;
 
 /**
  * A level is made up of a 2D grid of tiles. There could be "layers" like in SNES for graphics
@@ -88,8 +91,10 @@ public class Level {
   
   // TODO - This will eventually update interactive and animated stuff in the level.
   public void update() {
-    for(int i = 0 ; i < platforms.length ; ++i){
-      platforms[i].move(1);
+    if(platforms != null){
+      for(int i = 0 ; i < platforms.length ; ++i){
+        platforms[i].move(1);
+      }
     }
   }
   
@@ -113,8 +118,10 @@ public class Level {
       }
     }
     
-    for(int i = 0 ; i < platforms.length ; ++i){
-      platforms[i].draw(g, io);
+    if(platforms != null){
+      for(int i = 0 ; i < platforms.length ; ++i){
+        platforms[i].draw(g, io);
+      }
     }
   }
   
@@ -129,9 +136,10 @@ public class Level {
     }
   }
   
-  public static int getMapVersion(String name){
-    int version = 0;
+  public static String getMapVersion(String name){
+    String result = "";
     try {
+      int version = 0;
       RandomAccessFile f = new RandomAccessFile(Level.class.getClassLoader().getResource("map/" + name).getPath().replaceAll("%20", " "), "r");
       FileChannel fc = f.getChannel();
       MappedByteBuffer buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
@@ -142,13 +150,42 @@ public class Level {
       for (int i = 0; i < 4; i++) {
         version = 10*version + buffer.getInt();
       }
+      
+      result += "Version: " + version;
+
+      // For now only support latest map files (1.8+)
+      if (version >= 1800) {
+
+        for (int i = 0; i < MAX_AUTO_FILTERS; i++) {
+          buffer.getInt();
+        }
+        
+        buffer.getInt(); // unused 32 bits after auto filter section
+                
+        // Load tile set information.
+        final int tileSetCount = buffer.getInt();
+        TileSetTranslation[] translation = new TileSetTranslation[tileSetCount];
+        
+        result += " with tilesets: ";
+        for (int i = 0; i < tileSetCount; i++) {
+          translation[i] = new TileSetTranslation();
+          buffer.getInt(); //Not used
+
+          
+          final int ID_LENGTH = buffer.getInt();
+          for (int j = 0; j < ID_LENGTH; j++) {
+            translation[i].name += (char)(buffer.get());
+          }
+          
+          result += translation[i].name + ", ";
+        }
+      }
     }
     catch (IOException e) {
       e.printStackTrace();
-      version = -1;
     }
     
-    return version;
+    return result;
   }
   
   // TODO - work in progress loading existing SMW map files (using their formats)
@@ -157,7 +194,7 @@ public class Level {
   // etc.)
   public void loadMap(String name) {
     try {
-      RandomAccessFile f = new RandomAccessFile(this.getClass().getClassLoader().getResource("map/" + name).getPath(), "r");
+      RandomAccessFile f = new RandomAccessFile(this.getClass().getClassLoader().getResource("map/" + name).getPath().replaceAll("%20", " "), "r");
       FileChannel fc = f.getChannel();
       MappedByteBuffer buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
       buffer.order(ByteOrder.LITTLE_ENDIAN); // Java defaults to BIG_ENDIAN, but MAP files were probably made on a x86 PC.
@@ -261,9 +298,12 @@ public class Level {
         
         for(int i = 0; i < numMapItems; ++i)
         {
-          mapItems[i].type = buffer.getInt();
-          mapItems[i].x    = buffer.getInt();
-          mapItems[i].y    = buffer.getInt();
+          MapItem item = new MapItem();
+          item.type = buffer.getInt();
+          item.x    = buffer.getInt();
+          item.y    = buffer.getInt();
+          
+          mapItems[i] = item;
         }
 
         //Load map hazards (like fireball strings, rotodiscs, pirhana plants)
@@ -272,15 +312,18 @@ public class Level {
 
         for(short i = 0; i < numMapHazards; ++i)
         {
-          mapHazards[i].type = (short)buffer.getInt();
-          mapHazards[i].x    = (short)buffer.getInt();
-          mapHazards[i].y    = (short)buffer.getInt();
+          MapHazard hazard = new MapHazard();
+          hazard.type = (short)buffer.getInt();
+          hazard.x    = (short)buffer.getInt();
+          hazard.y    = (short)buffer.getInt();
 
           for(short j = 0; j < MapHazard.NUMMAPHAZARDPARAMS; j++)
-            mapHazards[i].iparam[j] = (short)buffer.getInt();
+            hazard.iparam[j] = (short)buffer.getInt();
           
           for(short j = 0; j < MapHazard.NUMMAPHAZARDPARAMS; j++)
-            mapHazards[i].dparam[j] = buffer.getFloat();
+            hazard.dparam[j] = buffer.getFloat();
+          
+          mapHazards[i] = hazard;
         }
 
         short[] eyeCandy = new short[3];
@@ -365,8 +408,14 @@ public class Level {
         float fEndX = buffer.getFloat();
         float fEndY = buffer.getFloat();
         float fVelocity = buffer.getFloat();
+        
+        ////////////////////////////////////////////////////////////////////////////////////
+        //For some reason, original maps use a start/end based on the center of the object.
+        //In the case of a straight path, it makes no sense so correcting it here
+        int xOffset = (int)(width*Level.TILE_SIZE)/2;
+        int yOffset = (int)(height*Level.TILE_SIZE)/2;
 
-        path = new StraightSegmentPath(fVelocity, fStartX, fStartY, fEndX, fEndY);
+        path = new StraightSegmentPath(fVelocity, fStartX - xOffset, fStartY - yOffset, fEndX - xOffset, fEndY - yOffset);
       }
       else if(pathType == 1) //continuous path
       {
@@ -375,7 +424,12 @@ public class Level {
         float fAngle = buffer.getFloat();
         float fVelocity = buffer.getFloat();
 
-        path = new StraightContinuousPath(fVelocity, fStartX, fStartY, fAngle);
+        ////////////////////////////////////////////////////////////////////////////////////
+        //For some reason, original maps use a start/end based on the center of the object.
+        //In the case of a straight path, it makes no sense so correcting it here
+        int xOffset = (int)(width*Level.TILE_SIZE)/2;
+        int yOffset = (int)(height*Level.TILE_SIZE)/2;
+        path = new StraightContinuousPath(fVelocity, fStartX - xOffset, fStartY - yOffset, fAngle);
       }
       else if(pathType == 2) //elliptical path
       {
@@ -386,6 +440,8 @@ public class Level {
         float fAngle   = buffer.getFloat();
         float fVelocity = buffer.getFloat();
 
+        //NOTE: from above, straight paths keep an X, Y according to top right corner. For this, might be
+        //      better off doing it by center
         //TODO path = new EllipsePath(fVelocity, fAngle, fRadiusX, fRadiusY, fCenterX, fCenterY, fPreview);
       }
 
