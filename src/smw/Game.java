@@ -48,7 +48,7 @@ public class Game implements Runnable {
   	  }
   	});
   	  	
-  	soundPlayer.playBGM("M2_Level1.ogg");
+  	soundPlayer.playBGM();
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
     pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
