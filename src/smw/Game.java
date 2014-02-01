@@ -5,18 +5,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import smw.entity.Player;
-import smw.level.Level;
 import smw.settings.Debug;
 import smw.sound.SoundPlayer;
 import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
 import smw.ui.*;
+import smw.world.World;
 
 public class Game implements Runnable {  
   private GameFrame gameFrame;
   private Player[] players;
-  public static Level level = new Level();
+  public static World world;
   public static SoundPlayer soundPlayer = new SoundPlayer();
   
   /** The desired frames per second. */
@@ -26,12 +26,18 @@ public class Game implements Runnable {
   private boolean running = false;
   
   public Game(final int numPlayers) {
+    
+    // TODO - RPG - TEMP testing my map stuff...
+    //level.loadMap("NMcCoy_1-3.map");
+    //level.loadMap("ym7_world1-2.map");
+    //level.loadMap("two52_Up In The Hills.map");
+    //TODO level.loadMap("tubesteak_coolnights.map");
+    world = new World("Pikablu_Mushroom Kingdom.map");
         
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];
-    level.init();
-  	this.gameFrame = new GameFrame(players, level);
+  	this.gameFrame = new GameFrame(players, world);
   	
   	// When the window is closed do any needed cleanup.
   	gameFrame.addWindowListener(new WindowAdapter() {
@@ -41,14 +47,7 @@ public class Game implements Runnable {
   	    System.exit(0);
   	  }
   	});
-  	
-  	// TODO - RPG - TEMP testing my map stuff...
-  	//level.loadMap("NMcCoy_1-3.map");
-  	//level.loadMap("ym7_world1-2.map");
-  	//level.loadMap("two52_Up In The Hills.map");
-  	//TODO level.loadMap("tubesteak_coolnights.map");
-  	level.loadMap("Pikablu_Mushroom Kingdom.map");
-  	
+  	  	
   	soundPlayer.playBGM("M2_Level1.ogg");
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
@@ -136,7 +135,7 @@ public class Game implements Runnable {
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
     
-    level.update();
+    world.update();
     
   	for(Player p : players){
   		p.poll();

@@ -1,4 +1,4 @@
-package smw.level;
+package smw.world.MovingPlatform;
 
 public interface Path{
   public abstract void move(float timeDif);

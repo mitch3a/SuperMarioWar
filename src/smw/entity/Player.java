@@ -8,9 +8,8 @@ import java.awt.image.ImageObserver;
 import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
-import smw.level.Level;
-import smw.level.Tile;
 import smw.ui.PlayerControlBase;
+import smw.world.Tile;
 
 public class Player extends Rectangle{
 	/**
@@ -89,15 +88,15 @@ public class Player extends Rectangle{
 		if (x != newX) {
       if (x > newX) {
         //Moving left
-        if(Game.level.getTileTypeAtPx(newX, y) == Tile.SOLID){
-          newX = newX +  Level.TILE_SIZE - (newX % Level.TILE_SIZE);
+        if(Game.world.getTileType(newX, y) == Tile.TileType.SOLID){
+          newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
           physics.collideWithWall();
         }
       }
       else{
         //Moving right
-        if(Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH, y) == Tile.SOLID){
-          newX = newX - (newX % Level.TILE_SIZE);
+        if(Game.world.getTileType(newX + Sprite.IMAGE_WIDTH, y) == Tile.TileType.SOLID){
+          newX = newX - (newX % Tile.SIZE);
           physics.collideWithWall();
         }
       }
@@ -107,28 +106,28 @@ public class Player extends Rectangle{
       if (y < newY) {
         //Moving down. We want to check every block that is under the sprite. This is from the first 
         //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-        int tile1 = Game.level.getTileTypeAtPx(newX, newY + Sprite.IMAGE_HEIGHT);
-        int tile2 = Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
+        Tile.TileType tile1 = Game.world.getTileType(newX, newY + Sprite.IMAGE_HEIGHT);
+        Tile.TileType tile2 = Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
         
-        if(tile1 != Tile.NONSOLID || tile2 != Tile.NONSOLID){
+        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
           //TODO this might need some work once others are introduced, but making sure 
           //     it isn't a situation where the player is pressing down to sink through
-          if((tile1 == Tile.SOLID_ON_TOP || tile1 == Tile.NONSOLID) &&
-             (tile2 == Tile.SOLID_ON_TOP || tile2 == Tile.NONSOLID) &&
+          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
              (physics.playerControl.isDown())) {//either pushing down or already did and working through the block
             
           }
           else{ 
-            newY = newY - (newY % Level.TILE_SIZE); //Just above the floor
+            newY = newY - (newY % Tile.SIZE); //Just above the floor
             physics.collideWithFloor();
           }
         }
       }
       else {
         //Moving up
-        if(Game.level.getTileTypeAtPx(newX, newY) == Tile.SOLID ||
-           Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.SOLID){
-          newY += Level.TILE_SIZE - newY % Level.TILE_SIZE;
+        if(Game.world.getTileType(newX, newY) == Tile.TileType.SOLID ||
+           Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
+          newY += Tile.SIZE - newY % Tile.SIZE;
           physics.collideWithCeiling();
         }
       }

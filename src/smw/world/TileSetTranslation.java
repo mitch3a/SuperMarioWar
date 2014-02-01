@@ -1,4 +1,4 @@
-package smw.level;
+package smw.world;
 
 public class TileSetTranslation {
   public int ID;
