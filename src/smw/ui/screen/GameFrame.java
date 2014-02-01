@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 
 import smw.entity.Player;
 import smw.gfx.Scoreboard;
-import smw.level.Level;
+import smw.world.World;
 
 public class GameFrame extends JFrame{
 
@@ -31,9 +31,9 @@ public class GameFrame extends JFrame{
 	//TODO this is REALLY hacky but i just wanted to get the stupid thing to work
 	Player[] players;
 	Scoreboard sB;
-	Level level;
+	World world;
 	
-	public GameFrame(Player[] players, Level level){
+	public GameFrame(Player[] players, World world){
 		add(new GamePanel());
 	    setTitle(Title);
 	    setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -48,7 +48,7 @@ public class GameFrame extends JFrame{
       });
 	    
 	    this.players = players;
-	    this.level = level;
+	    this.world = world;
 	    sB = new Scoreboard(this.players);
 	}
 
@@ -70,7 +70,7 @@ public class GameFrame extends JFrame{
       Graphics2D g2d = (Graphics2D)g;
       g2d.scale(scaleFactorWidth, scaleFactorHeight);
       g2d.translate(0, bumpFactor);
-      level.draw(g2d, this);
+      world.draw(g2d, this);
       if (players != null && players.length > 0) {
         for(Player p : players){
           if (p != null) {

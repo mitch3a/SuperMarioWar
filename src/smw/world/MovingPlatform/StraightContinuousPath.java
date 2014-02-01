@@ -1,6 +1,5 @@
-package smw.level.MovingPlatform;
+package smw.world.MovingPlatform;
 
-import smw.level.Path;
 
 public class StraightContinuousPath implements Path{
   

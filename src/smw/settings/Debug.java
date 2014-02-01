@@ -7,20 +7,19 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-import smw.level.Level;
-import smw.level.TileSetTranslation;
+import smw.world.TileSetTranslation;
 
 /** Provides flags to indicate whether a given function/area of code is being debugged for logging purposes. */
 public class Debug {
   public static final boolean LOG_FRAMERATE = false;
-  public static final boolean LOG_MAP_INFO = false;
+  public static final boolean LOG_WORLD_INFO = false;
   public static final boolean LOG_TILE_TYPE_INFO = false;
   
   /*
    * Prints the map name, version, and tilesets
    */
   public static void printAllMapsAndVersions(){
-    File folder = new File(Level.class.getClassLoader().getResource("map/").getFile());
+    File folder = new File(Debug.class.getClassLoader().getResource("map/").getFile());
     File[] listOfFiles = folder.listFiles();
     for(File f : listOfFiles){
       String name = f.getName();
@@ -39,7 +38,7 @@ public class Debug {
     String result = "";
     try {
       int version = 0;
-      RandomAccessFile f = new RandomAccessFile(Level.class.getClassLoader().getResource("map/" + name).getPath().replaceAll("%20", " "), "r");
+      RandomAccessFile f = new RandomAccessFile(Debug.class.getClassLoader().getResource("map/" + name).getPath().replaceAll("%20", " "), "r");
       FileChannel fc = f.getChannel();
       MappedByteBuffer buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
       buffer.order(ByteOrder.LITTLE_ENDIAN); // Java defaults to BIG_ENDIAN, but MAP files were probably made on a x86 PC.
