@@ -3,6 +3,7 @@ package smw.world;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -30,6 +31,8 @@ public class World {
   MovingPlatform[] movingPlatforms;
   
   Tile[][]   backgroundTiles;
+  // This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing
+  final ArrayList<Tile>  backgroundTileList = new ArrayList<Tile>();
   TileSheet tileSheet = new TileSheet("Classic");
   
   //This is a hardcoded value only used once. If you know why it  is 12, replace this comment with the reason
@@ -99,6 +102,10 @@ public class World {
               //For now, only one layer. 
               if(k == 0){                
                 backgroundTiles[w][h] = tile;
+                
+                if(tile.ID >= 0){
+                  backgroundTileList.add(tile);
+                }
               }
             }
             
@@ -290,12 +297,9 @@ public class World {
   public void draw(Graphics2D g, ImageObserver io) {
     // Draw the background.
     g.drawImage(backgroundImg, 0, 0, io);
-
-    // Draw the foreground using real world file data.
-    for(Tile[] tiles : backgroundTiles){
-      for(Tile tile : tiles){
-        tile.draw(g, io);
-      }
+    
+    for(Tile tile : backgroundTileList){
+      tile.draw(g,  io);
     }
 
     if(movingPlatforms != null && movingPlatforms.length > 0){

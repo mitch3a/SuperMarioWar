@@ -1,3 +1,4 @@
+package smw.world.MovingPlatform;
 
 public class EllipticalPath implements Path{ 
 
@@ -16,5 +17,11 @@ public class EllipticalPath implements Path{
   
   public int getY(){
     return -1 ;//TODO
+  }
+
+  @Override
+  public void move(float timeDif) {
+    // TODO Auto-generated method stub
+    
   }
 }
