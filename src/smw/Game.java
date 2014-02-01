@@ -28,10 +28,10 @@ public class Game implements Runnable {
   public Game(final int numPlayers) {
     
     // TODO - RPG - TEMP testing my map stuff...
-    //level.loadMap("NMcCoy_1-3.map");
-    //level.loadMap("ym7_world1-2.map");
-    //level.loadMap("two52_Up In The Hills.map");
-    //TODO level.loadMap("tubesteak_coolnights.map");
+    //world = new World("NMcCoy_1-3.map");
+    //world = new World("ym7_world1-2.map");
+    //world = new World("two52_Up In The Hills.map");
+    //TODO world = new World("tubesteak_coolnights.map");
     world = new World("Pikablu_Mushroom Kingdom.map");
         
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them

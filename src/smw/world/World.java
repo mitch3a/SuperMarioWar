@@ -158,7 +158,6 @@ public class World {
           for(int w = 0; w < MAP_WIDTH; ++w) {    
             
             backgroundTiles[w][h].specialTile = buffer.getSpecialTile();  
-            System.out.println("Row " + w + " column " + h + " type " +  backgroundTiles[w][h].specialTile.type);
             warps[w][h] = buffer.getWarp();
 
             for(short sType = 0; sType < NUM_SPAWN_AREA_TYPES; sType++){
