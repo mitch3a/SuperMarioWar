@@ -48,8 +48,6 @@ public class Level {
   
   // TODO - this stuff isn't used yet
   private boolean[] autoFilter = new boolean[MAX_AUTO_FILTERS];
-  private int tileAnimationTimer;
-  private int tileAnimationFrame;
   
   //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
@@ -125,72 +123,6 @@ public class Level {
     }
   }
   
-  public static void printAllMapsAndVersions(){
-    File folder = new File(Level.class.getClassLoader().getResource("map/").getFile());
-    File[] listOfFiles = folder.listFiles();
-    for(File f : listOfFiles){
-      String name = f.getName();
-      if(name.endsWith(".map")){
-        System.out.println(name + ": " + getMapVersion(name));
-      }
-    }
-  }
-  
-  public static String getMapVersion(String name){
-    String result = "";
-    try {
-      int version = 0;
-      RandomAccessFile f = new RandomAccessFile(Level.class.getClassLoader().getResource("map/" + name).getPath().replaceAll("%20", " "), "r");
-      FileChannel fc = f.getChannel();
-      MappedByteBuffer buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-      buffer.order(ByteOrder.LITTLE_ENDIAN); // Java defaults to BIG_ENDIAN, but MAP files were probably made on a x86 PC.
-      buffer.load();
-      
-      // Read the map version.
-      for (int i = 0; i < 4; i++) {
-        version = 10*version + buffer.getInt();
-      }
-      
-      result += "Version: " + version;
-
-      // For now only support latest map files (1.8+)
-      if (version >= 1800) {
-
-        for (int i = 0; i < MAX_AUTO_FILTERS; i++) {
-          buffer.getInt();
-        }
-        
-        buffer.getInt(); // unused 32 bits after auto filter section
-                
-        // Load tile set information.
-        final int tileSetCount = buffer.getInt();
-        TileSetTranslation[] translation = new TileSetTranslation[tileSetCount];
-        
-        result += " with tilesets: ";
-        for (int i = 0; i < tileSetCount; i++) {
-          translation[i] = new TileSetTranslation();
-          buffer.getInt(); //Not used
-
-          
-          final int ID_LENGTH = buffer.getInt();
-          for (int j = 0; j < ID_LENGTH; j++) {
-            translation[i].name += (char)(buffer.get());
-          }
-          
-          result += translation[i].name + ", ";
-        }
-      }
-      buffer.clear();
-      fc.close();
-      f.close();
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-    
-    return result;
-  }
-  
   // TODO - work in progress loading existing SMW map files (using their formats)
   // Currently we only use the latest map versions 1.8+
   // Limitations - only support 1 layer, classic tile set, and only support drawing basic tiles (no animated, moving stuff,
@@ -204,8 +136,6 @@ public class Level {
       buffer.load();
       
       // Reset map class data.
-      tileAnimationTimer = 0;
-      tileAnimationFrame = 0;
       clearAnimatedTiles();
       
       // Read the map version.
