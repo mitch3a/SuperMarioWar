@@ -150,4 +150,8 @@ public class Sprite {
 	public void crush(){
 		currentAction = Action.CRUSHED;
 	}
+	
+	public void clearAction() {
+	  currentAction = Action.NONE;
+	}
 }

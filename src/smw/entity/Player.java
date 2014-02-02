@@ -13,7 +13,6 @@ import smw.gfx.Sprite;
 import smw.settings.Debug;
 import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
-import smw.world.Tile;
 
 public class Player extends Rectangle{
 	/**
@@ -35,7 +34,7 @@ public class Player extends Rectangle{
 	public boolean pushedDown = false;
 	
 	public Player(PlayerControlBase playerControl, int playerIndex){	
-		physics = new PlayerPhysics(playerControl);
+		physics = new PlayerPhysics(playerControl, this);
 		sprite  = new Sprite();
 		score   = new Score();
 		this.playerIndex = playerIndex;
@@ -191,5 +190,9 @@ public class Player extends Rectangle{
 	    }
 	    
 	    return result.get((int)(Math.random()*result.size()));	  
+	}
+	
+	public void landed() {
+	  sprite.clearAction();
 	}
 }

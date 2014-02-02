@@ -78,16 +78,18 @@ public class PlayerPhysics {
 	float velocityX,     velocityY, remainderX, remainderY;
 	float jumpingAccelerationX, accelerationY;
 	
+	private Player player;
 	public PlayerControlBase playerControl;
 	boolean isJumping;
 	boolean isFalling;
 	boolean isSkidding;
+	boolean canJump;
 	
 	//TODO mk I don't like using the direction as an index... i think its slow, but I'm doing this
 	// for now becuase it's easier to read and speed might not be an issue
 	Direction currentVelocityDirection;
 	
-	public PlayerPhysics(PlayerControlBase playerControl){
+	public PlayerPhysics(PlayerControlBase playerControl, Player player){
 		previousTime_ms = 0;
 		velocityX = 0;
 		velocityY = 0;
@@ -98,8 +100,10 @@ public class PlayerPhysics {
 		isJumping = false;
 		isFalling = false;
 		isSkidding = false;
+		canJump = true;
 		currentVelocityDirection = Direction.RIGHT;
 		this.playerControl = playerControl;
+		this.player = player;
 	}
 	
 	//////////////////////////////////////////////////////
@@ -244,12 +248,13 @@ public class PlayerPhysics {
 	//TODO mk this is CLOSE but not quite there
   void updateY(float timeDif_ms){
     timeDif_ms = 1.0f;
-    if(!isFalling && !isJumping && playerControl.isJumping()){
+    if(!isFalling && !isJumping && playerControl.isJumping() && canJump){
     	int speedIndex = getSpeedIndex();
     	velocityY = JUMPING_VELOCITY[speedIndex];
     	setJumpingAccelerationX();
     	isJumping = true;
     	Game.soundPlayer.playSfx("jump.wav");
+    	canJump = false;
     }
     
     if(isJumping){
@@ -280,11 +285,12 @@ public class PlayerPhysics {
   public void collideWithFloor(){
   	jumpingAccelerationX = 0;
     velocityY = 0;
-    
+    player.landed();
+    isJumping = false;
     //Don't want to allow a new jumping until we get a NEW
     //jump command
     if(!playerControl.isJumping()){
-      isJumping = false;
+      canJump = true;
     }
     
     isFalling = false;
