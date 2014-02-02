@@ -78,6 +78,7 @@ public class GameFrame extends JFrame{
           }
         }
       }
+      world.drawFront(g2d, this);
       sB.draw(g2d, this);
     } finally {
       // Free up graphics.

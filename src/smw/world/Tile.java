@@ -120,7 +120,7 @@ public class Tile {
   }
   
   public BufferedImage getImage() {
-    return tileSheet.getTileImg(tileSheetColumn, tileSheetRow);
+    return (tileSheet != null) ? tileSheet.getTileImg(tileSheetColumn, tileSheetRow) : null;
   }
 
   TileType getTileType() {

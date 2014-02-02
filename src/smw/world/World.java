@@ -111,7 +111,8 @@ public class World {
               tile.tileSheet = tileSheetMap.get(tile.ID);
               backgroundTiles[w][h][k] = tile;
               
-              if(tile.ID >= 0){
+              //TODO mk check which layer is in front of people. Also might want a dif list for each layer
+              if(tile.ID >= 0 && k > 1){
                 backgroundTileList.add(tile);
               }
             }
@@ -353,16 +354,32 @@ public class World {
   }
 
   void drawTilesToBackground(){
-    for(Tile tile : backgroundTileList){
-      BufferedImage image = tile.getImage();
-      
-      for(int w = 0 ; w < image.getWidth() ; ++w){
-        for(int h = 0 ; h < image.getHeight() ; ++h){
-          int color = image.getRGB(w, h);
-          if(color != Color.TRANSLUCENT){
-            backgroundImg.setRGB(w + tile.x, h + tile.y, color);
+    //TODO can be optimized.
+    for(int i = 0 ; i < backgroundTiles.length ; ++i ){
+      for(int j = 0 ; j < backgroundTiles[0].length ; ++j){
+        for(int k = 0; k < backgroundTiles[0][0].length ; ++k){
+          Tile tile = backgroundTiles[i][j][k];
+          BufferedImage image = tile.getImage();
+          
+          if(image != null){
+            for(int w = 0 ; w < image.getWidth() ; ++w){
+              for(int h = 0 ; h < image.getHeight() ; ++h){
+                int color = image.getRGB(w, h);
+                if(color != Color.TRANSLUCENT){
+                  backgroundImg.setRGB(w + tile.x, h + tile.y, color);
+                }
+              }
+            }
           }
         }
+      }
+    }
+  }
+  
+  public void drawFront(Graphics2D g, ImageObserver io){
+    if(backgroundTileList.size() > 0){
+      for(Tile tile : backgroundTileList){
+        tile.draw(g, io);
       }
     }
   }
@@ -370,7 +387,7 @@ public class World {
   public void draw(Graphics2D g, ImageObserver io) {
     // Draw the background (has background tiles in it)
     g.drawImage(backgroundImg, 0, 0, io);
-
+    
     if(movingPlatforms != null && movingPlatforms.length > 0){
       for(MovingPlatform platform : movingPlatforms){
         platform.draw(g, io);
