@@ -15,30 +15,12 @@ public class Tile {
    * Water - kicks in swimming physics / animation
    * Interactive - Question Blocks, Teleporters, etc.
    */
-  // Tile types. 
-  //public static final int NONSOLID = 0;
-  //public static final int SOLID = 1;
-  //public static final int SOLID_ON_TOP = 2;
-  public static final int ICE = 3;
-  public static final int DEATH = 4;
-  public static final int DEATH_ON_TOP = 5;
-  public static final int DEATH_ON_BOTTOM = 6;
-  public static final int DEATH_ON_LEFT = 7;
-  public static final int DEATH_ON_RIGHT = 8;
-  public static final int ICE_ON_TOP = 9;
-  public static final int ICE_DEATH_ON_BOTTOM = 10;
-  public static final int ICE_DEATH_ON_LEFT = 11;
-  public static final int ICE_DEATH_ON_RIGHT = 12;
-  public static final int SUPER_DEATH = 13;
-  public static final int SUPER_DEATH_TOP = 14;
-  public static final int SUPER_DEATH_BOTTOM = 15;
-  public static final int SUPER_DEATH_LEFT = 16;
-  public static final int SUPER_DEATH_RIGHT = 17;
-  public static final int PLAYER_DEATH = 18;
-  public static final int GAP = 19;
   
-  public static enum TileType{
-    NONSOLID, SOLID, SOLID_ON_TOP;
+  /** Tile types specified by the original map files. */
+  public static enum TileType {
+    NONSOLID, SOLID, SOLID_ON_TOP, ICE, DEATH, DEATH_ON_TOP, DEATH_ON_BOTTOM, DEATH_ON_LEFT, DEATH_ON_RIGHT,
+    ICE_ON_TOP, ICE_DEATH_ON_BOTTOM, ICE_DEATH_ON_LEFT, ICE_DEATH_ON_RIGHT, 
+    SUPER_DEATH, SUPER_DEATH_TOP, SUPER_DEATH_BOTTOM, SUPER_DEATH_LEFT, SUPER_DEATH_RIGHT, PLAYER_DEATH, GAP;
     
     public static final int SIZE = 20;
   }
@@ -47,24 +29,36 @@ public class Tile {
   int tileSheetRow;
   int tileSheetColumn;
   public int ID;//TODO make sure we use this for something
-  //TileType type;
   SpecialTile specialTile;//TODO make sure we use this (see moving platforms)
   public static TileSheet tileSheet; //TODO not the best way to do this
   
   public static final int SIZE = 32;
   
-  public static TileType getType(int type){
+  /** Converts the provided integer value to the corresponding tile type enum literal. */
+  public static TileType getType(int type) {
     TileType result = TileType.NONSOLID;
-    
-    switch(type){
-      case 0: result = TileType.NONSOLID;
-              break;
-      case 1: result = TileType.SOLID;
-              break;
-      case 2: result = TileType.SOLID_ON_TOP;
-              break;
+    switch(type) {
+      case 0: result = TileType.NONSOLID; break;
+      case 1: result = TileType.SOLID; break;
+      case 2: result = TileType.SOLID_ON_TOP; break;
+      case 3: result = TileType.ICE; break;
+      case 4: result = TileType.DEATH; break;
+      case 5: result = TileType.DEATH_ON_TOP; break;
+      case 6: result = TileType.DEATH_ON_BOTTOM; break;
+      case 7: result = TileType.DEATH_ON_LEFT; break;
+      case 8: result = TileType.DEATH_ON_RIGHT; break;
+      case 9: result = TileType.ICE_ON_TOP; break;
+      case 10: result = TileType.ICE_DEATH_ON_BOTTOM; break;
+      case 11: result = TileType.ICE_DEATH_ON_LEFT; break;
+      case 12: result = TileType.ICE_DEATH_ON_RIGHT; break;
+      case 13: result = TileType.SUPER_DEATH; break;
+      case 14: result = TileType.SUPER_DEATH_TOP; break;
+      case 15: result = TileType.SUPER_DEATH_BOTTOM; break;
+      case 16: result = TileType.SUPER_DEATH_LEFT; break;
+      case 17: result = TileType.SUPER_DEATH_RIGHT; break;
+      case 18: result = TileType.PLAYER_DEATH; break;
+      case 19: result = TileType.GAP; break;
     }
-    
     return result;
   }
   
