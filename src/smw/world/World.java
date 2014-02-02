@@ -468,7 +468,7 @@ public class World {
             if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
                (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
                (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-              
+              player.physics.startFalling();
             }
             else{ 
               newY = platform.getY() - Sprite.IMAGE_HEIGHT;

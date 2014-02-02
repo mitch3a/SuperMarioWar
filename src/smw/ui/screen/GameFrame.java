@@ -22,8 +22,8 @@ public class GameFrame extends JFrame{
 	// TODO - RPG - should figure out how to setup resolution options w/ scaling...
 	public static int res_width = 640;
 	public static int res_height = 480;
-	public static double scaleFactorWidth = 2;
-	public static double scaleFactorHeight = 2;
+	public static double scaleFactorWidth = 1.5f;
+	public static double scaleFactorHeight = 1.5f;
 	public static int bumpFactor = 0;
 	boolean bumpUp = false;
 	boolean bumpDown = false;

@@ -79,7 +79,8 @@ public class PlayerPhysics {
 	float jumpingAccelerationX, accelerationY;
 	
 	public PlayerControlBase playerControl;
-	boolean isJumping; 
+	boolean isJumping;
+	boolean isFalling;
 	boolean isSkidding;
 	
 	//TODO mk I don't like using the direction as an index... i think its slow, but I'm doing this
@@ -95,6 +96,7 @@ public class PlayerPhysics {
 		jumpingAccelerationX = 0;
 		accelerationY = JUMPING_STRONG_GRAVITY[SpeedsForJumping.SLOW.index];
 		isJumping = false;
+		isFalling = false;
 		isSkidding = false;
 		currentVelocityDirection = Direction.RIGHT;
 		this.playerControl = playerControl;
@@ -242,7 +244,7 @@ public class PlayerPhysics {
 	//TODO mk this is CLOSE but not quite there
   void updateY(float timeDif_ms){
     timeDif_ms = 1.0f;
-    if(!isJumping && playerControl.isJumping()){
+    if(!isFalling && !isJumping && playerControl.isJumping()){
     	int speedIndex = getSpeedIndex();
     	velocityY = JUMPING_VELOCITY[speedIndex];
     	setJumpingAccelerationX();
@@ -259,6 +261,12 @@ public class PlayerPhysics {
     		accelerationY = JUMPING_STRONG_GRAVITY[speedIndex];
     	}
     }
+    else{
+      //The assumption is that if we are not jumping,
+      //then we are falling unless we hit a floor during
+      //collision checking
+      isFalling = true;
+    }
     
     float newVelocity = velocityY + (accelerationY * timeDif_ms);
     velocityY = (newVelocity > MAX_VELOCITY_Y) ? MAX_VELOCITY_Y : newVelocity;
@@ -272,7 +280,18 @@ public class PlayerPhysics {
   public void collideWithFloor(){
   	jumpingAccelerationX = 0;
     velocityY = 0;
-    isJumping = false;
+    
+    //Don't want to allow a new jumping until we get a NEW
+    //jump command
+    if(!playerControl.isJumping()){
+      isJumping = false;
+    }
+    
+    isFalling = false;
+  }
+  
+  public void startFalling(){
+    isFalling = true;
   }
   
   public void collideWithWall() {
