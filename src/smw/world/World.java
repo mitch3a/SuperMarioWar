@@ -459,10 +459,10 @@ public class World {
         if (player.y < newY) {
           //Moving down. We want to check every block that is under the sprite. This is from the first 
           //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-          Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT+ 1);
-          Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 1);
+          Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT + 16);
+          Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 16);
           
-          if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+          if( tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
             //TODO this might need some work once others are introduced, but making sure 
             //     it isn't a situation where the player is pressing down to sink through
             if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&

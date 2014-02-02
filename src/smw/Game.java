@@ -29,11 +29,11 @@ public class Game implements Runnable {
   public Game(final int numPlayers) {
     
     //world = new World("NMcCoy_1-3.map");
-    world = new World("ym7_world1-2.map");
+    //world = new World("ym7_world1-2.map");
     //world = new World("two52_Up In The Hills.map");
     //world = new World("tubesteak_coolnights.map");
     //world = new World("Pikablu_Mushroom Kingdom.map");
-    //world = new World("MrMister_Azul Montana.map");
+    world = new World("MrMister_Azul Montana.map");
     //world = new World("GG_Angry angels.map");
     //world = new World("coolman13714_green greens.map");
     //world = new World("Link901_MileHigh Madness.map");    
