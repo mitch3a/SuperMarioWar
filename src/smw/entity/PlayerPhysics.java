@@ -184,11 +184,7 @@ public class PlayerPhysics {
 	}
 	
 	void updateX(float timeDif) {
-	  timeDif = 1.0f;
-	  // Until something outside is added (wind?), velocityX is constant while in the air
-	  if(isJumping){
-	  	return;
-	  }
+	  timeDif = 1.0f;  // TODO - might want to use time dif at some point, but for now it's always 1.0 
 	  int direction = playerControl.getDirection();
 
 	  if( direction == 0){
