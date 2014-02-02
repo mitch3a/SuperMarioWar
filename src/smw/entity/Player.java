@@ -4,10 +4,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.util.ArrayList;
 
 import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
+import smw.settings.Debug;
 import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
 import smw.world.Tile;
@@ -45,6 +48,10 @@ public class Player extends Rectangle{
 	
 	public Image getImage(){
 		return sprite.getImage();
+	}
+	
+	public void init(int newX, int newY){
+	  init(newX, newY, getRandomSprite());
 	}
 	
 	public void init(int newX, int newY, String image){
@@ -231,5 +238,16 @@ public class Player extends Rectangle{
 	
 	public int getScore(){
 		return score.getScore();
+	}
+	
+	public String getRandomSprite(){
+	    ArrayList<String> result = new ArrayList<String>();
+	    File folder = new File(Debug.class.getClassLoader().getResource("sprites/").getFile());
+	    File[] listOfFiles = folder.listFiles();
+	    for(File f : listOfFiles){
+	      result.add(f.getName());
+	    }
+	    
+	    return result.get((int)(Math.random()*result.size()));	  
 	}
 }

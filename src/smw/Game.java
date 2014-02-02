@@ -3,6 +3,7 @@ package smw;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import smw.entity.Player;
 import smw.settings.Debug;
@@ -60,12 +61,10 @@ public class Game implements Runnable {
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[1] = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
-
-    String[] images = {"hazey_Lolo.png", "0smw.png", "ftg_Train.png", "BlackMage.png"};
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);
-      players[i].init(50*(i + 2), 50, images[i]);
+      players[i].init(50*(i + 2), 50);
     }
   }
 
