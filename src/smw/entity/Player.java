@@ -17,12 +17,17 @@ public class Player extends Rectangle{
 	 */
 	private static final long serialVersionUID = -4197702383138211374L;
 	private static final long RESPAWN_WAIT_MS = 2000;
-	Sprite  sprite;
-	PlayerPhysics physics;
-	Score score;
-	final int playerIndex;
-	boolean crushed = false;
-	long respawnTime;
+	private Sprite  sprite;
+	private PlayerPhysics physics;
+	private Score score;
+	private final int playerIndex;
+	private boolean crushed = false;
+	private long respawnTime;
+	
+	/** Indicates whether a player is falling through a tile by pressing down key. */
+	private boolean isFallingThrough = false;
+	/** The starting height of falling through a "solid on top" tile. */
+	private int fallHeight = 0;
 	
 	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
@@ -109,15 +114,24 @@ public class Player extends Rectangle{
         Tile.TileType tile1 = Game.world.getTileType(newX, newY + Sprite.IMAGE_HEIGHT);
         Tile.TileType tile2 = Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
         
+        // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
+        if (isFallingThrough && (y - fallHeight) >= Tile.SIZE) {
+          isFallingThrough = false;
+        }
+        
         if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
           //TODO this might need some work once others are introduced, but making sure 
           //     it isn't a situation where the player is pressing down to sink through
           if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
              (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-             (physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-            
+             (physics.playerControl.isDown())) {//either pushing down or already did and working through the tile
+                // If this is the first time we reached this then set the falling through flag and height.
+                if (!isFallingThrough) {
+                  isFallingThrough = true;
+                  fallHeight = y;
+                }
           }
-          else{ 
+          else if (!isFallingThrough){ // Not falling through a solid on top tile so it's OK to collide with floor. 
             newY = newY - (newY % Tile.SIZE); //Just above the floor
             physics.collideWithFloor();
           }
