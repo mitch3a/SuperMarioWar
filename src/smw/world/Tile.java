@@ -71,19 +71,30 @@ public class Tile {
    * TODO mk this is a helper method to get stuff working
    * but should not be a permanent solution
    */
-  public static int tileToInt(TileType tile){
-    int result = 0;
-    
-    switch(tile){
-      case NONSOLID:     result = 0;
-                                  break;
-      case SOLID:        result = 1;
-                                  break;
-      case SOLID_ON_TOP: result = 2;
-                                  break; 
+  public static int tileToInt(TileType tile) {    
+    switch (tile) {                   
+      case NONSOLID: return 0;
+      case SOLID: return 1;
+      case SOLID_ON_TOP: return 2;
+      case ICE: return 3;
+      case DEATH: return 4;
+      case DEATH_ON_TOP: return 5;
+      case DEATH_ON_BOTTOM: return 6;
+      case DEATH_ON_LEFT: return 7;
+      case DEATH_ON_RIGHT: return 8;
+      case ICE_ON_TOP: return 9;
+      case ICE_DEATH_ON_BOTTOM: return 10;
+      case ICE_DEATH_ON_LEFT: return 11;
+      case ICE_DEATH_ON_RIGHT: return 12;
+      case SUPER_DEATH: return 13;
+      case SUPER_DEATH_TOP: return 14;
+      case SUPER_DEATH_BOTTOM: return 15;
+      case SUPER_DEATH_LEFT: return 16;
+      case SUPER_DEATH_RIGHT: return 17;
+      case PLAYER_DEATH: return 18;
+      case GAP: return 19;
     }
-    
-    return result;
+    return 0;
   }
   
   public static boolean isValidType(int type){
