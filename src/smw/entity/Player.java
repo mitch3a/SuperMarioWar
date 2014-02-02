@@ -9,6 +9,7 @@ import smw.Game;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Sprite;
 import smw.ui.PlayerControlBase;
+import smw.ui.screen.GameFrame;
 import smw.world.Tile;
 
 public class Player extends Rectangle{
@@ -28,6 +29,7 @@ public class Player extends Rectangle{
 	private boolean isFallingThrough = false;
 	/** The starting height of falling through a "solid on top" tile. */
 	private int fallHeight = 0;
+	private boolean pushedDown = false;
 	
 	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
@@ -109,30 +111,35 @@ public class Player extends Rectangle{
 
     if (y != newY){
       if (y < newY) {
+        // If the player pushed the down key check to see if it was released.
+        if (pushedDown) {
+          pushedDown = physics.playerControl.isDown();
+          // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
+          if (isFallingThrough && (y - fallHeight) >= Tile.SIZE) {
+            isFallingThrough = false;
+          }
+        }
+        
         //Moving down. We want to check every block that is under the sprite. This is from the first 
         //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
         Tile.TileType tile1 = Game.world.getTileType(newX, newY + Sprite.IMAGE_HEIGHT);
         Tile.TileType tile2 = Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
         
-        // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
-        if (isFallingThrough && (y - fallHeight) >= Tile.SIZE) {
-          isFallingThrough = false;
-        }
-        
-        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
-          //TODO this might need some work once others are introduced, but making sure 
-          //     it isn't a situation where the player is pressing down to sink through
+        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID) {
+          // Handle case where player is allowed to sink through a tile.
           if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
              (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-             (physics.playerControl.isDown())) {//either pushing down or already did and working through the tile
-                // If this is the first time we reached this then set the falling through flag and height.
+             (!pushedDown && physics.playerControl.isDown())) {
+                // If this is the first time we reached this then the player pushed down the first time to fall through.
+                // Set the falling through flags and height.
                 if (!isFallingThrough) {
                   isFallingThrough = true;
                   fallHeight = y;
+                  pushedDown = true;
                 }
           }
           else if (!isFallingThrough){ // Not falling through a solid on top tile so it's OK to collide with floor. 
-            newY = newY - (newY % Tile.SIZE); //Just above the floor
+            newY = newY - (newY % Tile.SIZE); // Just above the floor.
             physics.collideWithFloor();
           }
         }
@@ -192,15 +199,15 @@ public class Player extends Rectangle{
 	 *
 	 *THIS WILL WRAP THE SCREEN AROUND CHA CHING mk
 	 ******************************************************/
-		newX = newX % 640;
-		newY = newY % 480;
+		newX = newX % GameFrame.res_width;
+		newY = newY % GameFrame.res_height;
 		
 		if(newX < 0){
-		  newX += 640;
+		  newX += GameFrame.res_width;
 		}
 		
 		if(newY < 0){
-		  newY += 480;
+		  newY += GameFrame.res_height;
 		}
 		
 		setBounds(newX, newY);					
