@@ -33,5 +33,7 @@
 	<classpathentry kind="lib" path="lib/lwjgl_util_applet.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-debug.jar"/>
 	<classpathentry kind="lib" path="lib/lzma.jar"/>
+	<classpathentry kind="lib" path="lib/jaw.jar"/>
+	<classpathentry kind="lib" path="lib/XboxController.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
