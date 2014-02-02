@@ -114,10 +114,10 @@ public class Player extends Rectangle{
         // If the player pushed the down key check to see if it was released.
         if (pushedDown) {
           pushedDown = physics.playerControl.isDown();
-          // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
-          if (isFallingThrough && (y - fallHeight) >= Tile.SIZE) {
-            isFallingThrough = false;
-          }
+        }
+        // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
+        if (isFallingThrough && (y - fallHeight) >= Tile.SIZE) {
+          isFallingThrough = false;
         }
         
         //Moving down. We want to check every block that is under the sprite. This is from the first 
