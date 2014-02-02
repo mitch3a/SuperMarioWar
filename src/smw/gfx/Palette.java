@@ -64,7 +64,7 @@ public class Palette {
 	  int[] alphaInt = {0x00000000, Color.TRANSLUCENT, 0x00000000, 0x00000000};
 	  colorMap.put(0xffff00ff, alphaInt);
 		try{
-			BufferedImage imageBuffer = ImageIO.read(this.getClass().getClassLoader().getResource("sprites/palette.png"));
+			BufferedImage imageBuffer = ImageIO.read(this.getClass().getClassLoader().getResource("palette.png"));
 			
 			final int width = imageBuffer.getWidth();
 
