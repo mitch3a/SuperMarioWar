@@ -35,7 +35,7 @@ public class Tile {
   public SpecialTile specialTile;//TODO make sure we use this (see moving platforms) and it shouldnt be public
   short[] settings = new short[1];//TODO figure out what this is for
   
-  public static TileSheet tileSheet; //TODO not the best way to do this
+  public TileSheet tileSheet;
   
   public static final int SIZE = 32;
   

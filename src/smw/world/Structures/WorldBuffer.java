@@ -5,6 +5,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
 
 import smw.world.Tile;
 import smw.world.MovingPlatform.EllipticalPath;
@@ -229,7 +230,7 @@ public class WorldBuffer {
       float angle   = getFloat();
       float velocity = getFloat();
   
-      result = new EllipticalPath(velocity, angle, radiusX, radiusY, centerX, centerY);
+      result = new EllipticalPath(velocity, angle, radiusX, radiusY, centerX - xOffset, centerY - yOffset);
     }
     
     return result;

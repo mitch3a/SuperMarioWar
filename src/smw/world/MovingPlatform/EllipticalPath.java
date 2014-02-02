@@ -14,7 +14,7 @@ public class EllipticalPath extends Path{
     this.centerX  = centerX;
     this.centerY  = centerY;
     this.angle    = angle;
-    this.velocity = velocity;
+    this.velocity = velocity/2.0f;
     
     setPosition();
   }

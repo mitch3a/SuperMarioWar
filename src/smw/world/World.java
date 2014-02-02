@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -12,8 +14,6 @@ import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingPlatform.MovingPlatform;
 import smw.world.MovingPlatform.Path;
-import smw.world.MovingPlatform.StraightContinuousPath;
-import smw.world.MovingPlatform.StraightSegmentPath;
 import smw.world.Structures.Block;
 import smw.world.Structures.DrawArea;
 import smw.world.Structures.FlagBaseLocation;
@@ -21,7 +21,6 @@ import smw.world.Structures.Hazard;
 import smw.world.Structures.Item;
 import smw.world.Structures.RaceGoalLocation;
 import smw.world.Structures.SpawnArea;
-import smw.world.Structures.TileSetTranslation;
 import smw.world.Structures.Warp;
 import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
@@ -50,26 +49,21 @@ public class World {
   RaceGoalLocation[] raceGoalLocations;
   FlagBaseLocation[] flagBaseLocation;
   
-  Tile[][]   backgroundTiles;
+  Tile[][][]   backgroundTiles;
   Warp[][]   warps;
   SpawnArea[][] spawnAreas;  
   
   final boolean[][][] nospawn;
   // This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing
-  final ArrayList<Tile>  backgroundTileList = new ArrayList<Tile>();
-  TileSheet tileSheet = new TileSheet("Classic");
- 
+  final ArrayList<Tile>  backgroundTileList = new ArrayList<Tile>(); 
   
   int musicCategoryID;
   
   public World(String worldName){
-    //TODO I DONT LIKE THIS...
-    Tile.tileSheet = tileSheet;
-    
     MAP_WIDTH = GameFrame.res_width / Tile.SIZE;
     MAP_HEIGHT = GameFrame.res_height / Tile.SIZE;
     
-    backgroundTiles = new Tile[MAP_WIDTH][MAP_HEIGHT];
+    backgroundTiles = new Tile[MAP_WIDTH][MAP_HEIGHT][MAX_LAYERS];
     warps = new Warp[MAP_WIDTH][MAP_HEIGHT];
     nospawn = new boolean[NUM_SPAWN_AREA_TYPES][MAP_WIDTH][MAP_HEIGHT];
     
@@ -90,24 +84,18 @@ public class World {
         ///////////////////////////////////////////////////////////////
         // Load tile set information.
         ///////////////////////////////////////////////////////////////
-        final int tileSheetCount = buffer.getInt();
-        TileSetTranslation[] translation = new TileSetTranslation[tileSheetCount];
-        int maxTileSetId = 0;
-        int tileSetId = 0;
+        final int numTileSheets = buffer.getInt();
         
-        for (int i = 0; i < tileSheetCount; i++) {
-          translation[i] = new TileSetTranslation();
-          tileSetId = buffer.getInt();
-          translation[i].ID = tileSetId;
+        Map<Integer, TileSheet> tileSheetMap = new HashMap<Integer, TileSheet>();
+
+        for (int i = 0; i < numTileSheets; i++) {
+          int tileSheetId      = buffer.getInt();
+          String tileSheetName = buffer.getString();
           
-          if (tileSetId > maxTileSetId) {
-            maxTileSetId = tileSetId;
-          }
-          
-          translation[i].name = buffer.getString();
+          tileSheetMap.put(tileSheetId, new TileSheet(tileSheetName));
           
           if (Debug.LOG_WORLD_INFO) {
-            System.out.println("tileset: " + translation[i].name);
+            System.out.println("tileset: " + tileSheetName);
           }
         }
         
@@ -120,13 +108,11 @@ public class World {
             for (int k = 0; k < MAX_LAYERS; k++) {
               Tile tile = buffer.getTile(w, h);
            
-              //For now, only one layer. 
-              if(k == 0){                
-                backgroundTiles[w][h] = tile;
-                
-                if(tile.ID >= 0){
-                  backgroundTileList.add(tile);
-                }
+              tile.tileSheet = tileSheetMap.get(tile.ID);
+              backgroundTiles[w][h][k] = tile;
+              
+              if(tile.ID >= 0){
+                backgroundTileList.add(tile);
               }
             }
             
@@ -134,7 +120,7 @@ public class World {
             boolean hidden = buffer.getBoolean();
             
             if(Tile.isValidType(type)){
-              backgroundTiles[w][h].setBlock(type, hidden);
+              backgroundTiles[w][h][0].setBlock(type, hidden);
             }
           }
         }
@@ -161,7 +147,7 @@ public class World {
         ///////////////////////////////////////////////////////////////
         //Load world objects
         ///////////////////////////////////////////////////////////////
-        loadPlatforms(buffer, version);
+        loadPlatforms(buffer, version, tileSheetMap);
         loadItems(buffer);
         loadHazards(buffer);
 
@@ -185,7 +171,7 @@ public class World {
         for(int h = 0; h < MAP_HEIGHT; ++h) {
           for(int w = 0; w < MAP_WIDTH; ++w) {    
             
-            backgroundTiles[w][h].specialTile = buffer.getSpecialTile();  
+            backgroundTiles[w][h][0].specialTile = buffer.getSpecialTile();  
             warps[w][h] = buffer.getWarp();
 
             for(short sType = 0; sType < NUM_SPAWN_AREA_TYPES; sType++){
@@ -253,9 +239,9 @@ public class World {
           short row    = (short) buffer.getByte();
 
           short numSettings = (short) buffer.getByte();
-          backgroundTiles[column][row].settings = new short[numSettings];
+          backgroundTiles[column][row][0].settings = new short[numSettings];
           for(short setting = 0; setting < numSettings; setting++){
-            backgroundTiles[column][row].settings[setting] = (short) buffer.getByte();
+            backgroundTiles[column][row][0].settings[setting] = (short) buffer.getByte();
           }
         }
 
@@ -295,7 +281,7 @@ public class World {
         short iCol = (short) buffer.getByte();
         short iRow = (short) buffer.getByte();
 
-        backgroundTiles[iCol][iRow].settings[0] = (short) buffer.getByte();
+        backgroundTiles[iCol][iRow][0].settings[0] = (short) buffer.getByte();
     }
   }
 
@@ -303,7 +289,7 @@ public class World {
    * Load moving platforms
    * This method expects the buffer to be at the hazards position
    */
-  void loadPlatforms(WorldBuffer buffer, int version){
+  void loadPlatforms(WorldBuffer buffer, int version, Map<Integer, TileSheet> tileSheetMap){
     int numPlatforms = buffer.getInt();
     movingPlatforms = new MovingPlatform[numPlatforms];
     
@@ -320,6 +306,7 @@ public class World {
           if(version >= 1800){
             Tile tempTile = buffer.getTile(w, h);
             tempTile.specialTile = buffer.getSpecialTile();
+            tempTile.tileSheet = tileSheetMap.get(tempTile.ID);
             platformTiles[w][h] = tempTile;
           }
           else{
@@ -422,6 +409,6 @@ public TileType getTileType(int x, int y) {
       row = MAP_HEIGHT - 1;    
     }
     
-    return backgroundTiles[column][row].getTileType();
+    return backgroundTiles[column][row][0].getTileType();
   }
 }

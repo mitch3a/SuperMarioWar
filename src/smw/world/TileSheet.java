@@ -105,7 +105,7 @@ public class TileSheet {
    * @return tile image
    */
   public BufferedImage getTileImg(int col, int row) {
-    if(col == 0 || row == 0){//TODO check not TOO big
+    if(col < 0 || row < 0){//TODO check not TOO big
       return null;
     }
     

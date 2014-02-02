@@ -15,7 +15,7 @@ public class StraightSegmentPath extends Path{
     float xLength = endX - startX;
     float yLength = endY - startY;
     
-    double angle =(xLength != 0) ? Math.tan(((float)yLength)/xLength) : (float) (Math.PI/2);
+    double angle = (xLength != 0) ? Math.atan(((float)yLength)/xLength) : (float) (Math.PI/2);
     
     if(angle == (float) (Math.PI/2)){
       this.velocity[X] = 0;
@@ -34,8 +34,8 @@ public class StraightSegmentPath extends Path{
       this.velocity[Y] = 0;
     }
     else{
-      this.velocity[X] = (float) (velocity*Math.acos(angle));
-      this.velocity[Y] = (float) (velocity*Math.asin(angle));
+      this.velocity[X] = (float) (velocity*Math.cos(angle));
+      this.velocity[Y] = (float) (velocity*Math.sin(angle));
     }
     
     //Make the "start" the "lesser" one
