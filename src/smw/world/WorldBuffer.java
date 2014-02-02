@@ -6,6 +6,11 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+import smw.world.MovingPlatform.EllipticalPath;
+import smw.world.MovingPlatform.Path;
+import smw.world.MovingPlatform.StraightContinuousPath;
+import smw.world.MovingPlatform.StraightSegmentPath;
+
 public class WorldBuffer {
 
   MappedByteBuffer buffer;
@@ -42,22 +47,42 @@ public class WorldBuffer {
     return (char)buffer.get();
   }
   
+  public DrawArea getDrawArea(){
+    DrawArea drawArea = new DrawArea();
+    
+    drawArea.x = getInt();//TODO this might have to be forced signed
+    drawArea.y = getInt();//TODO this might have to be forced signed
+    drawArea.w = getInt();
+    drawArea.h = getInt();
+    
+    return drawArea;
+  }
+  
+  public FlagBaseLocation getFlagBaseLocation() {
+    FlagBaseLocation flagBaseLocation = new FlagBaseLocation();
+    
+    flagBaseLocation.x = getShort();
+    flagBaseLocation.y = getShort();
+    
+    return flagBaseLocation;
+  }
+  
   public float getFloat() {
     return buffer.getFloat();
   }
 
   public Hazard getHazard(){
     Hazard hazard = new Hazard();
-    hazard.type = (short)buffer.getInt();
-    hazard.x    = (short)buffer.getInt();
-    hazard.y    = (short)buffer.getInt();
+    hazard.type = getShort();
+    hazard.x    = getShort();
+    hazard.y    = getShort();
 
     for(short j = 0; j < Hazard.NUMMAPHAZARDPARAMS; j++){
-      hazard.iparam[j] = (short)buffer.getInt();
+      hazard.iparam[j] = getShort();
     }
     
     for(short j = 0; j < Hazard.NUMMAPHAZARDPARAMS; j++){
-      hazard.dparam[j] = buffer.getFloat();
+      hazard.dparam[j] = getFloat();
     }
     
     return hazard;
@@ -70,15 +95,36 @@ public class WorldBuffer {
   public Item getItem(){
     Item item = new Item();
     
-    item.type = Tile.getType(buffer.getInt());
-    item.x    = buffer.getInt();
-    item.y    = buffer.getInt();
+    item.type = Tile.getType(getInt());
+    item.x    = getInt();
+    item.y    = getInt();
     
     return item;
   }
   
+  public RaceGoalLocation getRaceGoalLocation() {
+    RaceGoalLocation raceGoalLocation = new RaceGoalLocation();
+    
+    raceGoalLocation.x = getShort();
+    raceGoalLocation.y = getShort();
+    
+    return raceGoalLocation;
+  }
+  
   public short getShort() {
     return (short)buffer.getInt();
+  }
+  
+  public SpawnArea getSpawnArea(){
+    SpawnArea spawnArea = new SpawnArea();
+    
+    spawnArea.left   = getShort();
+    spawnArea.top    = getShort();
+    spawnArea.width  = getShort();
+    spawnArea.height = getShort();
+    spawnArea.size   = getShort();
+
+    return spawnArea;
   }
 
   public SpecialTile getSpecialTile() {
@@ -87,7 +133,7 @@ public class WorldBuffer {
   }
   
   public String getString() {
-    final int length = buffer.getInt();
+    final int length = getInt();
     StringBuilder stringBuilder = new StringBuilder();
     for (int i = 0; i < length ; ++i) {
       char c = getChar();
@@ -121,10 +167,70 @@ public class WorldBuffer {
   public Warp getWarp() {
     Warp warp = new Warp();
     
-    warp.direction  = (short)buffer.getInt();
-    warp.connection = (short)buffer.getInt();
-    warp.id         = (short)buffer.getInt();
+    warp.direction  = getShort();
+    warp.connection = getShort();
+    warp.id         = getShort();
     
     return (warp.id != -1) ? warp : null;
+  }
+  
+  public WarpExit getWarpExit(){
+    WarpExit warpExit = new WarpExit();
+    
+    warpExit.direction = getShort();
+    warpExit.connection = getShort();
+    
+    warpExit.id = getShort();
+    warpExit.x  = getShort();
+    warpExit.y  = getShort();
+
+    warpExit.lockx = getShort();
+    warpExit.locky = getShort();
+    warpExit.warpx = getShort();
+    warpExit.warpy = getShort();
+    
+    warpExit.numblocks = getShort();
+    
+    return warpExit;
+  }
+  
+  public Path getPath(int type, int width, int height){
+    Path result = null;
+    
+    ////////////////////////////////////////////////////////////////////////////////////
+    //For some reason, original maps use a start/end based on the center of the object.
+    //In the case of a straight path, it makes no sense so correcting it here
+    int xOffset = (int)(width*Tile.SIZE)/2;
+    int yOffset = (int)(height*Tile.SIZE)/2;
+    
+    if(type == 0){
+      float startX = getFloat();
+      float startY = getFloat();
+      float endX = getFloat();
+      float endY = getFloat();
+      float velocity = getFloat();
+      
+      result = new StraightSegmentPath(velocity, startX - xOffset, startY - yOffset, endX - xOffset, endY - yOffset);
+    }
+    else if(type == 1){
+      float startX = getFloat();
+      float startY = getFloat();
+      float angle = getFloat();
+      float velocity = getFloat();
+  
+      result = new StraightContinuousPath(velocity, startX - xOffset, startY - yOffset, angle);
+    }
+    else if(type == 2){
+      float radiusX = getFloat();
+      float radiusY = getFloat();
+      float centerX = getFloat();
+      float centerY = getFloat();
+      float angle   = getFloat();
+      float velocity = getFloat();
+  
+      result = new EllipticalPath(velocity, angle, radiusX, radiusY, centerX, centerY);
+    }
+    
+    return result;
   }
 }

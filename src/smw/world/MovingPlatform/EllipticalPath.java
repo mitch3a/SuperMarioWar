@@ -1,27 +1,32 @@
 package smw.world.MovingPlatform;
 
-public class EllipticalPath implements Path{ 
+public class EllipticalPath extends Path{ 
 
+  /*
+   * This constructor expects the centerX/Y to be relative to the top left
+   * of the moving platform and NOT the center of the moving platform
+   */
+  float radiusX, radiusY, centerX, centerY, angle, velocity;
+  
   public EllipticalPath(float velocity, float angle, float radiusX, float radiusY, float centerX, float centerY){
-  
-  }
-
-  public void move(long timeDif){
-    //TODO mk this was tough... not sure what velocity means in this case (around circumference or just angle change
-    //        speed? Wait until we get an actual map with one of these
-  }
-  
-  public int getX(){
-    return -1 ;//TODO
-  }
-  
-  public int getY(){
-    return -1 ;//TODO
+    this.radiusX  = radiusX;
+    this.radiusY  = radiusY;
+    this.centerX  = centerX;
+    this.centerY  = centerY;
+    this.angle    = angle;
+    this.velocity = velocity;
+    
+    setPosition();
   }
 
   @Override
-  public void move(float timeDif) {
-    // TODO Auto-generated method stub
-    
+  void move(int axis, float timeDif){
+    angle += velocity*timeDif;
+    setPosition();
+  }
+  
+  void setPosition(){
+    currentPos[X] = (float) (radiusX*Math.cos(angle) + centerX);
+    currentPos[Y] = (float) (radiusY*Math.sin(angle) + centerY);
   }
 }

@@ -1,16 +1,11 @@
 package smw.world.MovingPlatform;
 
 
-public class StraightSegmentPath implements Path{
+public class StraightSegmentPath extends Path{
   
-  static final int X = 0;
-  static final int Y = 1;
-  
-  float[] currentPos = new float[2];
+  float[] startPos   = new float[2];
+  float[] endPos     = new float[2];
   float[] velocity   = new float[2];
-  
-  float[] startPos = new float[2];
-  float[] endPos   = new float[2];
 
   public StraightSegmentPath(float velocity, float startX, float startY, float endX, float endY){
     this.currentPos[X] = startX;
@@ -66,44 +61,27 @@ public class StraightSegmentPath implements Path{
     }
   }
   
-  public void move(float timeDif){
-    move(X, timeDif);
-    move(Y, timeDif);
-  }
-  
-  public int getX(){
-    return get(X);
-  }
-  
-  public int getY(){
-    return get(Y);
-  }
-  
-  int get(int i){
-    return (int) currentPos[i];
-  }
-  
-  void move(int i, float timeDif){
+  void move(int axis, float timeDif){
     
-    currentPos[i] += velocity[i]*timeDif;
+    currentPos[axis] += velocity[axis]*timeDif;
     
     //////////////////////////////////////////////
     //Make sure we didn't go beyond the start/end
-    if(currentPos[i]> endPos[i]){
+    if(currentPos[axis]> endPos[axis]){
       //////////////////////////////////////////////////
       //we really want (end - how far we went beyond end) 
       //             = (end - (current - end) 
       //             = 2*end - current
-      currentPos[i]  = 2*endPos[i] - currentPos[i];
-      velocity[i] = (-1)*velocity[i];
+      currentPos[axis]  = 2*endPos[axis] - currentPos[axis];
+      velocity[axis] = (-1)*velocity[axis];
     }
-    else if(currentPos[i] < startPos[i]){
+    else if(currentPos[axis] < startPos[axis]){
       //////////////////////////////////////////////////
       //we really want (start + how far we went beyond start) 
       //             = (start + (start - current) 
       //             = 2*end - current
-      currentPos[i]  = 2*startPos[i] - currentPos[i];
-      velocity[i] = (-1)*velocity[i];
+      currentPos[axis]  = 2*startPos[axis] - currentPos[axis];
+      velocity[axis] = (-1)*velocity[axis];
     }
   }
 }
