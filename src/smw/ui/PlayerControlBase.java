@@ -103,4 +103,9 @@ public abstract class PlayerControlBase{
    * run button
    ****************************************************/
   abstract public boolean isDown();
+  
+  /** Indicates of the controller is connected.
+   * @return true = connected
+   * */
+  abstract public boolean isConnected();
 }

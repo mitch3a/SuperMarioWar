@@ -257,4 +257,10 @@ public class GamePad  extends PlayerControlBase{
   public void poll(){
   	controller.poll();
   }
+
+  @Override
+  public boolean isConnected() {
+    // TODO - How to tell if game pad is connected?
+    return false;
+  }
 }

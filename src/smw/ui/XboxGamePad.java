@@ -1,5 +1,6 @@
 package smw.ui;
 
+import smw.Utilities;
 import ch.aplu.xboxcontroller.XboxController;
 import ch.aplu.xboxcontroller.XboxControllerAdapter;
 
@@ -14,15 +15,13 @@ public class XboxGamePad extends PlayerControlBase {
   private boolean isJumping;
   private boolean isRunning;
   
-  // TODO - this should go in a common area
-  public static boolean is64bit() {
-    return System.getProperty("sun.arch.data.model").equals("64");
-  }
-
-  public XboxGamePad() {
+  public boolean isConnected;
+  
+  public XboxGamePad(int player) {
     // Create the controller and verify connection.
-    xboxController = new XboxController(is64bit() ? "xboxcontroller64" : "xboxcontroller", 1, 50, 50);
-    if (!xboxController.isConnected()) { 
+    xboxController = new XboxController(Utilities.is64bit() ? "xboxcontroller64" : "xboxcontroller", player, 50, 50);
+    isConnected = xboxController.isConnected();
+    if (!isConnected) { 
       System.out.println("Xbox controller not connected");
       xboxController.release();
       return;
@@ -148,6 +147,11 @@ public class XboxGamePad extends PlayerControlBase {
   @Override
   public boolean isDown() {
     return isDownPressed;
+  }
+  
+  @Override
+  public boolean isConnected() {
+    return isConnected;
   }
   
   // The following inherited methods do nothing, it's handled by the XboxControllerAdapter setup in the ctor.

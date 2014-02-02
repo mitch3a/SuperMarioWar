@@ -54,7 +54,17 @@ public class Game implements Runnable {
   	soundPlayer.playBGM();
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
-    pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+
+    // TODO - check for game pads, then default to keyboard--probably allow the user to change this in settings later.
+    // Start with checking for Xbox controller if running Windows.
+    if (Utilities.isWindows()) {
+      XboxGamePad controller = new XboxGamePad(1); // player 1 only - eventually check for multiple controllers
+      if (controller.isConnected()) {
+        pc[0] = controller;
+      }
+    } else {
+      pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+    }
     //pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[3] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);

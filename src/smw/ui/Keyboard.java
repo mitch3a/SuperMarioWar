@@ -23,11 +23,11 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   final HashMap<Integer, Boolean> keyMap = new HashMap<Integer, Boolean>();
 
   public Keyboard(Component component,
-  								int left,
+                	int left,
                   int right,
                   int down,
                   int jump,
-                  int run){
+                  int run) {
     this.left  = left;
     this.right = right;
     this.down  = down;
@@ -47,7 +47,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   }
   
   @Override
-  public int getDirection(){
+  public int getDirection() {
     if(keyMap.get(right)){
       return (keyMap.get(left)) ?  0 : 1;
     }
@@ -57,17 +57,17 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   }
   
   @Override
-  public boolean isJumping(){
+  public boolean isJumping() {
     return keyMap.get(jump);
   }
   
   @Override
-  public boolean isRunning(){
+  public boolean isRunning() {
     return keyMap.get(run);
   }
   
   @Override
-  public boolean isDown(){
+  public boolean isDown() {
     return keyMap.get(down);
   }
   
@@ -77,7 +77,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
    *******************************************/
   void waitForNextKey(){
     int sizeBefore = keyMap.size();
-    while(sizeBefore == keyMap.size()){
+    while(sizeBefore == keyMap.size()) {
       //Wait until something gets set
     }
   }
@@ -107,22 +107,27 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     run = mostRecentlyPushed;
   }
   
-  public void keyPressed(KeyEvent e){
-          int code = e.getKeyCode();
-          e.consume();
-          mostRecentlyPushed = code;
-          keyMap.put(code, true);
+  public void keyPressed(KeyEvent e) {
+    int code = e.getKeyCode();
+    e.consume();
+    mostRecentlyPushed = code;
+    keyMap.put(code, true);
   }
   
-  public void keyReleased(KeyEvent e){
-          int code = e.getKeyCode();
-          e.consume();
-          
-          keyMap.put(code, false);
+  public void keyReleased(KeyEvent e) {
+    int code = e.getKeyCode();
+    e.consume();
+    
+    keyMap.put(code, false);
   }
 
   public void keyTyped(KeyEvent e) {
     e.consume();
+  }
+
+  @Override
+  public boolean isConnected() {
+    return true; // TODO - probably always have a keyboard connected?
   }
 }
 
