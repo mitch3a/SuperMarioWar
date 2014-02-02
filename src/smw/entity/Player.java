@@ -140,15 +140,16 @@ public class Player extends Rectangle{
           if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
              (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
              (!pushedDown && physics.playerControl.isDown())) {
-                // If this is the first time we reached this then the player pushed down the first time to fall through.
-                // Set the falling through flags and height.
-                if (!isFallingThrough) {
-                  isFallingThrough = true;
-                  fallHeight = y;
-                  pushedDown = true;
-                }
+            // If this is the first time we reached this then the player pushed down the first time to fall through.
+            // Set the falling through flags and height.
+            if (!isFallingThrough) {
+              isFallingThrough = true;
+              fallHeight = y;
+              pushedDown = true;
+            }
           }
-          else if (!isFallingThrough){ // Not falling through a solid on top tile so it's OK to collide with floor. 
+          else if (!isFallingThrough && (newY < (GameFrame.res_height - Tile.SIZE))){
+            // Not falling through a solid on top tile AND not falling through bottom map tile--OK to collide with floor.
             newY = newY - (newY % Tile.SIZE); // Just above the floor.
             physics.collideWithFloor();
           }
