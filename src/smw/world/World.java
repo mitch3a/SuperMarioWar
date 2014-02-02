@@ -1,5 +1,6 @@
 package smw.world;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -18,27 +19,35 @@ import smw.world.Tile.TileType;
 public class World {
   
   public final int MAX_LAYERS = 4;
-
+  public final int MAX_WARPS = 32;
+  public final int NUM_SPAWN_AREA_TYPES = 6;
   public final int MAP_WIDTH;
   public final int MAP_HEIGHT;
   
   BufferedImage backgroundImg;
+
+  Item[]     items;
+  Block[]    blocks;
+  Hazard[]   hazards;
+  WarpExit[] warpExits;
+  DrawArea[] drawAreas;
+  //This is a hardcoded value only used once. If you know why it  is 12, replace this comment with the reason
+  boolean[]  autoFilter = new boolean[12];
   
-  Block[]  blocks;
-  Warp[][]   warps;
-  Item[]   items;
-  Hazard[] hazards;
-  MovingPlatform[] movingPlatforms;
+  MovingPlatform[]   movingPlatforms;
+  RaceGoalLocation[] raceGoalLocations;
+  FlagBaseLocation[] flagBaseLocation;
   
   Tile[][]   backgroundTiles;
+  Warp[][]   warps;
+  SpawnArea[][] spawnAreas;  
+  
+  final boolean[][][] nospawn;
   // This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing
   final ArrayList<Tile>  backgroundTileList = new ArrayList<Tile>();
   TileSheet tileSheet = new TileSheet("Classic");
+ 
   
-  //This is a hardcoded value only used once. If you know why it  is 12, replace this comment with the reason
-  boolean[] autoFilter = new boolean[12];
-  int NUM_SPAWN_AREA_TYPES = 6;
-  final boolean[][][] nospawn;
   int musicCategoryID;
   
   public World(String worldName){
@@ -69,12 +78,12 @@ public class World {
         ///////////////////////////////////////////////////////////////
         // Load tile set information.
         ///////////////////////////////////////////////////////////////
-        final int tileSetCount = buffer.getInt();
-        TileSetTranslation[] translation = new TileSetTranslation[tileSetCount];
+        final int tileSheetCount = buffer.getInt();
+        TileSetTranslation[] translation = new TileSetTranslation[tileSheetCount];
         int maxTileSetId = 0;
         int tileSetId = 0;
         
-        for (int i = 0; i < tileSetCount; i++) {
+        for (int i = 0; i < tileSheetCount; i++) {
           translation[i] = new TileSetTranslation();
           tileSetId = buffer.getInt();
           translation[i].ID = tileSetId;
@@ -172,6 +181,93 @@ public class World {
             }
           }
         }
+        
+        loadSwitches(buffer);
+        
+        ///////////////////////////////////////////////////////////////
+        //Load Warp Exits
+        ///////////////////////////////////////////////////////////////
+        int maxConnections = 0;
+        short numWarpExits = buffer.getShort();
+        warpExits = new WarpExit[Math.min(numWarpExits, MAX_WARPS)];
+        
+        for(int i = 0; i < warpExits.length; i++) {
+          WarpExit tempWarpExit = buffer.getWarpExit();
+          maxConnections = Math.max(maxConnections, tempWarpExit.connection);
+          warpExits[i] = tempWarpExit;
+        }
+        
+        //Ignore any more warps than the max
+        for(int i = 0; i < numWarpExits - MAX_WARPS; i++) {
+          buffer.getWarpExit();
+        }
+
+        ///////////////////////////////////////////////////////////////
+        //Load Spawn Areas
+        ///////////////////////////////////////////////////////////////
+        spawnAreas = new SpawnArea[NUM_SPAWN_AREA_TYPES][];
+        for(int i = 0; i < NUM_SPAWN_AREA_TYPES; i++) {
+          short numSpawnAreas = buffer.getShort();
+          if(numSpawnAreas == 0){
+            //If no spawn areas were identified, then create one big spawn area
+            spawnAreas[i] = new SpawnArea[1];
+            spawnAreas[i][0].left = 0;
+            spawnAreas[i][0].width = 20;
+            spawnAreas[i][0].top = 1;
+            spawnAreas[i][0].height = 12;
+            spawnAreas[i][0].size = 220;
+          }
+          else{
+            spawnAreas[i] = new SpawnArea[numSpawnAreas];
+            for(int m = 0; m < spawnAreas[i].length; m++) {
+              spawnAreas[i][m] = buffer.getSpawnArea();
+            }
+          }
+        }
+        
+        ///////////////////////////////////////////////////////////////
+        //Load Draw Areas
+        ///////////////////////////////////////////////////////////////
+        short numDrawAreas = buffer.getShort();
+        drawAreas = new DrawArea[numDrawAreas];
+        
+        for(int m = 0; m < drawAreas.length; m++) {
+            drawAreas[m] = buffer.getDrawArea();
+        }
+
+        ///////////////////////////////////////////////////////////////
+        //Load Extended Data Blocks
+        ///////////////////////////////////////////////////////////////
+        int numExtendedDataBlocks = buffer.getInt();
+
+        for(short i = 0; i < numExtendedDataBlocks; i++) {
+          short column = (short) buffer.getByte();
+          short row    = (short) buffer.getByte();
+
+          short numSettings = (short) buffer.getByte();
+          backgroundTiles[column][row].settings = new short[numSettings];
+          for(short setting = 0; setting < numSettings; setting++){
+            backgroundTiles[column][row].settings[setting] = (short) buffer.getByte();
+          }
+        }
+
+        ///////////////////////////////////////////////////////////////
+        //Load mode item locations like flags and race goals
+        ///////////////////////////////////////////////////////////////
+        int numRaceGoals = buffer.getShort();
+        raceGoalLocations = new RaceGoalLocation[numRaceGoals];
+        
+        for(int j = 0; j < raceGoalLocations.length; j++) {
+          raceGoalLocations[j] = buffer.getRaceGoalLocation();
+        }
+
+        int numFlagBases = buffer.getShort();
+        flagBaseLocation = new FlagBaseLocation[numFlagBases];
+        
+        for(int j = 0; j < flagBaseLocation.length; j++) {
+          flagBaseLocation[j] = buffer.getFlagBaseLocation();
+        }
+        
       }//end if (version >= 1800)
       
       // Close out file.
@@ -180,8 +276,21 @@ public class World {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    
+    drawTilesToBackground();
   }
   
+  void loadSwitches(WorldBuffer buffer) {
+    //Read switch block state data
+    int iNumSwitchBlockData = buffer.getInt();
+    for(short iBlock = 0; iBlock < iNumSwitchBlockData; iBlock++) {
+        short iCol = (short) buffer.getByte();
+        short iRow = (short) buffer.getByte();
+
+        backgroundTiles[iCol][iRow].settings[0] = (short) buffer.getByte();
+    }
+  }
+
   /**
    * Load moving platforms
    * This method expects the buffer to be at the hazards position
@@ -214,54 +323,9 @@ public class World {
       short drawLayer = (version >= 1801) ? (short)buffer.getInt() : 2;
       int pathType    = (version >= 1800) ? buffer.getInt() : 0;
       
-      Path path = null;
-      
-      if(pathType == 0) //segment path
-      {
-        float fStartX = buffer.getFloat();
-        float fStartY = buffer.getFloat();
-        float fEndX = buffer.getFloat();
-        float fEndY = buffer.getFloat();
-        float fVelocity = buffer.getFloat();
-        
-        ////////////////////////////////////////////////////////////////////////////////////
-        //For some reason, original maps use a start/end based on the center of the object.
-        //In the case of a straight path, it makes no sense so correcting it here
-        int xOffset = (int)(width*Tile.SIZE)/2;
-        int yOffset = (int)(height*Tile.SIZE)/2;
-
-        path = new StraightSegmentPath(fVelocity, fStartX - xOffset, fStartY - yOffset, fEndX - xOffset, fEndY - yOffset);
-      }
-      else if(pathType == 1) //continuous path
-      {
-        float fStartX = buffer.getFloat();
-        float fStartY = buffer.getFloat();
-        float fAngle = buffer.getFloat();
-        float fVelocity = buffer.getFloat();
-
-        ////////////////////////////////////////////////////////////////////////////////////
-        //For some reason, original maps use a start/end based on the center of the object.
-        //In the case of a straight path, it makes no sense so correcting it here
-        int xOffset = (int)(width*Tile.SIZE)/2;
-        int yOffset = (int)(height*Tile.SIZE)/2;
-        path = new StraightContinuousPath(fVelocity, fStartX - xOffset, fStartY - yOffset, fAngle);
-      }
-      else if(pathType == 2) //elliptical path
-      {
-        float fRadiusX = buffer.getFloat();
-        float fRadiusY = buffer.getFloat();
-        float fCenterX = buffer.getFloat();
-        float fCenterY = buffer.getFloat();
-        float fAngle   = buffer.getFloat();
-        float fVelocity = buffer.getFloat();
-
-        //NOTE: from above, straight paths keep an X, Y according to top right corner. For this, might be
-        //      better off doing it by center
-        //TODO path = new EllipsePath(fVelocity, fAngle, fRadiusX, fRadiusY, fCenterX, fCenterY, fPreview);
-      }
+      Path path = buffer.getPath(pathType, width, height);
 
       movingPlatforms[platformIndex] = new MovingPlatform(platformTiles, path);
-      //platforms[platformIndex] = new MovingPlatform(tiles, types, width, height, drawLayer, path, fPreview);
     }
   }  
   
@@ -293,14 +357,24 @@ public class World {
     }
   }
 
+  void drawTilesToBackground(){
+    for(Tile tile : backgroundTileList){
+      BufferedImage image = tile.getImage();
+      
+      for(int w = 0 ; w < image.getWidth() ; ++w){
+        for(int h = 0 ; h < image.getHeight() ; ++h){
+          int color = image.getRGB(w, h);
+          if(color != Color.TRANSLUCENT){
+            backgroundImg.setRGB(w + tile.x, h + tile.y, color);
+          }
+        }
+      }
+    }
+  }
 
   public void draw(Graphics2D g, ImageObserver io) {
-    // Draw the background.
+    // Draw the background (has background tiles in it)
     g.drawImage(backgroundImg, 0, 0, io);
-    
-    for(Tile tile : backgroundTileList){
-      tile.draw(g,  io);
-    }
 
     if(movingPlatforms != null && movingPlatforms.length > 0){
       for(MovingPlatform platform : movingPlatforms){

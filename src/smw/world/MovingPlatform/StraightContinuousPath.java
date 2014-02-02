@@ -1,13 +1,9 @@
 package smw.world.MovingPlatform;
 
 
-public class StraightContinuousPath implements Path{
+public class StraightContinuousPath extends Path{
   
-  static final int X = 0;
-  static final int Y = 1;
-  
-  float[] currentPos = new float[2];
-  float[] velocity = new float[2];
+  float[] velocity   = new float[2];
   
   public StraightContinuousPath(float velocity, float startX, float startY, float angle){
     this.currentPos[X] = startX;
@@ -35,34 +31,17 @@ public class StraightContinuousPath implements Path{
     }
   }
   
-  public void move(float timeDif){
-    move(X, timeDif);
-    move(Y, timeDif);
-  }
-  
-  public int getX(){
-    return get(X);
-  }
-  
-  public int getY(){
-    return get(Y);
-  }
-  
-  int get(int i){
-    return (int) currentPos[i];
-  }
-  
-  void move(int i, float timeDif){
-    currentPos[i] += velocity[i]*timeDif;
+  void move(int axis, float timeDif){
+    currentPos[axis] += velocity[axis]*timeDif;
     
     //TODO mk better way to do the wrapping....
-    int max = (i == X) ? 640 : 480; //TODO mk at LEAST use the constants
+    int max = (axis == X) ? 640 : 480; //TODO mk at LEAST use the constants
     
-    if(currentPos[i] < 0){
-      currentPos[i] += max;
+    if(currentPos[axis] < 0){
+      currentPos[axis] += max;
     }
     else{
-      currentPos[i] = currentPos[i] % max;
+      currentPos[axis] = currentPos[axis] % max;
     }
   }
 }
