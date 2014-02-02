@@ -6,6 +6,7 @@ public class StraightContinuousPath extends Path{
   float[] velocity   = new float[2];
   
   public StraightContinuousPath(float velocity, float startX, float startY, float angle){
+    
     this.currentPos[X] = startX;
     this.currentPos[Y] = startY;
 

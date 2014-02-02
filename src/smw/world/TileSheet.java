@@ -18,7 +18,7 @@ import smw.settings.Debug;
  */
 public class TileSheet {
   
-  private BufferedImage image;
+  protected BufferedImage image;
   Tile.TileType[] tiletypes;
   
   /** 
@@ -43,6 +43,21 @@ public class TileSheet {
     }
   }
   
+  //TODO mk I think there is a better way... but I don't know hwat it is right now
+  protected TileSheet(boolean forBlock){
+    try {
+      BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("map/tilesheets/blocks.png"));
+      // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
+      image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+      image.getGraphics().drawImage(img, 0, 0, null);
+      
+      Palette p = Palette.getInstance();
+      p.implementTransparent(image);      
+    } catch (IOException e) {
+      System.out.println("Could not read spritesheet for: blocks.png");
+      e.printStackTrace();
+    }
+  }
 
   /**
    * Reads the file that indicates the type of each tile on the tile sprite sheet.

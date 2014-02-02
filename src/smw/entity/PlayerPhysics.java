@@ -78,7 +78,7 @@ public class PlayerPhysics {
 	float velocityX,     velocityY, remainderX, remainderY;
 	float jumpingAccelerationX, accelerationY;
 	
-	PlayerControlBase playerControl;
+	public PlayerControlBase playerControl;
 	boolean isJumping; 
 	boolean isSkidding;
 	

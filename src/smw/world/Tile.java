@@ -133,6 +133,11 @@ public class Tile {
     if (image != null) {
       graphics.drawImage(image, x, y, observer);
     }
+    
+    if(block != null){
+      BlockSheet bs = BlockSheet.getInstance();
+      graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
+    }
   }
 
   public void setBlock(int type, boolean hidden) {

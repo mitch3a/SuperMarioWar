@@ -59,4 +59,8 @@ public class MovingPlatform {
     
     return Tile.TileType.NONSOLID;
   }
+
+  public int getXChange() {
+    return path.getXChange();
+  }
 }

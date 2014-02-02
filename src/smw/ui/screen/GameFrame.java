@@ -35,21 +35,22 @@ public class GameFrame extends JFrame{
 	
 	public GameFrame(Player[] players, World world){
 		add(new GamePanel());
-	    setTitle(Title);
-	    setDefaultCloseOperation(EXIT_ON_CLOSE);
-	    setSize((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight));
-	    setLocationRelativeTo(null);
-	    setVisible(true);
-	    setResizable(true);
-	    addComponentListener(new ComponentAdapter() {
-          public void componentResized(ComponentEvent e) {
-              resetScalingFactors();
-          }
-      });
-	    
-	    this.players = players;
-	    this.world = world;
-	    sB = new Scoreboard(this.players);
+    setTitle(Title);
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setSize((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight));
+    setLocationRelativeTo(null);
+    setVisible(true);
+    setResizable(true);
+    this.setContentPane(new GamePanel());
+    addComponentListener(new ComponentAdapter() {
+        public void componentResized(ComponentEvent e) {
+            resetScalingFactors();
+        }
+    });
+    
+    this.players = players;
+    this.world = world;
+    sB = new Scoreboard(this.players);
 	}
 
   @Override

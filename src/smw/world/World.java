@@ -10,6 +10,9 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import smw.Game;
+import smw.entity.Player;
+import smw.gfx.Sprite;
 import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingPlatform.MovingPlatform;
@@ -37,7 +40,6 @@ public class World {
   BufferedImage backgroundImg;
 
   Item[]     items;
-  Block[]    blocks;
   Hazard[]   hazards;
   WarpExit[] warpExits;
   DrawArea[] drawAreas;
@@ -55,7 +57,7 @@ public class World {
   
   final boolean[][][] nospawn;
   // This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing
-  final ArrayList<Tile>  backgroundTileList = new ArrayList<Tile>(); 
+  final ArrayList<Tile>  frontTileList = new ArrayList<Tile>(); 
   
   int musicCategoryID;
   
@@ -113,7 +115,7 @@ public class World {
               
               //TODO mk check which layer is in front of people. Also might want a dif list for each layer
               if(tile.ID >= 0 && k > 1){
-                backgroundTileList.add(tile);
+                frontTileList.add(tile);
               }
             }
             
@@ -122,6 +124,7 @@ public class World {
             
             if(Tile.isValidType(type)){
               backgroundTiles[w][h][0].setBlock(type, hidden);
+              frontTileList.add(backgroundTiles[w][h][0]);
             }
           }
         }
@@ -376,9 +379,197 @@ public class World {
     }
   }
   
+  public int getCollisionX(Player player, int newX){
+    ///////////////////////////////////////////////////////////////
+    // Moving Platforms
+    ///////////////////////////////////////////////////////////////
+    if(Game.world.movingPlatforms != null && Game.world.movingPlatforms.length > 0){
+      for(smw.world.MovingPlatform.MovingPlatform platform : Game.world.movingPlatforms){
+        //Moving down. We want to check every block that is under the sprite. This is from the first 
+        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+        Tile.TileType tile1 = platform.getTile(newX, player.y + Sprite.IMAGE_HEIGHT+ 1);
+        Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, player.y + Sprite.IMAGE_HEIGHT + 1);
+        
+        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+          //TODO this might need some work once others are introduced, but making sure 
+          //     it isn't a situation where the player is pressing down to sink through
+          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+             (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+            
+          }
+          else{ 
+            newX += platform.getXChange();
+          }
+        }
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////
+    // Objects
+    ///////////////////////////////////////////////////////////////
+    if (player.x != newX) {
+      if (player.x > newX) {
+        //Moving left
+        if(getBlock(newX, player.y) != null){
+          newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
+          player.physics.collideWithWall();
+        }
+      }
+      else{
+        //Moving right
+        if(getBlock(newX + Sprite.IMAGE_WIDTH, player.y) != null){
+          newX = newX - (newX % Tile.SIZE);
+          player.physics.collideWithWall();
+        }
+      }
+    } 
+    
+    ///////////////////////////////////////////////////////////////
+    // Regular tiles
+    ///////////////////////////////////////////////////////////////
+    if (player.x != newX) {
+      if (player.x > newX) {
+        //Moving left
+        if(getTileType(newX, player.y) == Tile.TileType.SOLID){
+          newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
+          player.physics.collideWithWall();
+        }
+      }
+      else{
+        //Moving right
+        if(getTileType(newX + Sprite.IMAGE_WIDTH, player.y) == Tile.TileType.SOLID){
+          newX = newX - (newX % Tile.SIZE);
+          player.physics.collideWithWall();
+        }
+      }
+    } 
+
+    
+    return newX;
+  }
+  
+  public int getCollisionY(Player player, int newX, int newY){
+    ///////////////////////////////////////////////////////////////
+    // Moving Platforms
+    ///////////////////////////////////////////////////////////////
+    if(Game.world.movingPlatforms != null && Game.world.movingPlatforms.length > 0){
+      for(smw.world.MovingPlatform.MovingPlatform platform : Game.world.movingPlatforms){
+        //TODO will ever be equals?
+        if (player.y < newY) {
+          //Moving down. We want to check every block that is under the sprite. This is from the first 
+          //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+          Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT+ 1);
+          Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 1);
+          
+          if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+            //TODO this might need some work once others are introduced, but making sure 
+            //     it isn't a situation where the player is pressing down to sink through
+            if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+               (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+               (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+              
+            }
+            else{ 
+              newY = platform.getY() - Sprite.IMAGE_HEIGHT;
+              player.physics.collideWithFloor();
+            }
+          }
+        }
+        else {
+          //Moving up
+          if(platform.getTile(newX, newY) == Tile.TileType.SOLID ||
+             platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
+            newY += Tile.SIZE - newY % Tile.SIZE;
+            player.physics.collideWithCeiling();
+          }
+        }
+      }
+    }
+    
+    ///////////////////////////////////////////////////////////////
+    // Objects
+    ///////////////////////////////////////////////////////////////
+    if (player.y != newY){
+      if (player.y < newY) {        
+        //Moving down. We want to check every block that is under the sprite. This is from the first 
+        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+        Block block1 = Game.world.getBlock(newX, newY + Sprite.IMAGE_HEIGHT);
+        Block block2 = Game.world.getBlock(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
+        
+        if(block1 != null|| block2 != null) {
+          //TODO something with the blocks
+          newY = newY - (newY % Tile.SIZE); // Just above the floor.
+          player.physics.collideWithFloor();
+        }
+      }
+      else {
+        //Moving up
+        Block block1 = Game.world.getBlock(newX, newY);
+        Block block2 = Game.world.getBlock(newX + Sprite.IMAGE_WIDTH - 1, newY);
+        
+        if(block1 != null|| block2 != null){
+          newY += Tile.SIZE - newY % Tile.SIZE;
+          player.physics.collideWithCeiling();
+        }
+      }
+    }
+    
+    ///////////////////////////////////////////////////////////////
+    // Regular tiles
+    ///////////////////////////////////////////////////////////////
+    if (player.y != newY){
+      if (player.y < newY) {
+        // If the player pushed the down key check to see if it was released.
+        if (player.pushedDown) {
+          player.pushedDown = player.physics.playerControl.isDown();
+        }
+        // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
+        if (player.isFallingThrough && (player.y - player.fallHeight) >= Tile.SIZE) {
+          player.isFallingThrough = false;
+        }
+        
+        //Moving down. We want to check every block that is under the sprite. This is from the first 
+        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+        Tile.TileType tile1 = Game.world.getTileType(newX, newY + Sprite.IMAGE_HEIGHT);
+        Tile.TileType tile2 = Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
+        
+        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID) {
+          // Handle case where player is allowed to sink through a tile.
+          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+             (!player.pushedDown && player.physics.playerControl.isDown())) {
+            // If this is the first time we reached this then the player pushed down the first time to fall through.
+            // Set the falling through flags and height.
+            if (!player.isFallingThrough) {
+              player.isFallingThrough = true;
+              player.fallHeight = player.y;
+              player.pushedDown = true;
+            }
+          }
+          else if (!player.isFallingThrough && (newY < (GameFrame.res_height - Tile.SIZE))){
+            // Not falling through a solid on top tile AND not falling through bottom map tile--OK to collide with floor.
+            newY = newY - (newY % Tile.SIZE); // Just above the floor.
+            player.physics.collideWithFloor();
+          }
+        }
+      }
+      else {
+        //Moving up
+        if(Game.world.getTileType(newX, newY) == Tile.TileType.SOLID ||
+           Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
+          newY += Tile.SIZE - newY % Tile.SIZE;
+          player.physics.collideWithCeiling();
+        }
+      }
+    }
+        
+    return newY;
+  }
+  
   public void drawFront(Graphics2D g, ImageObserver io){
-    if(backgroundTileList.size() > 0){
-      for(Tile tile : backgroundTileList){
+    if(frontTileList.size() > 0){
+      for(Tile tile : frontTileList){
         tile.draw(g, io);
       }
     }
@@ -403,6 +594,32 @@ public class World {
       }
     }
   }
+
+/**
+ * This method will return the block at the given pixel
+ * 
+ * @param x pixel on the x axis
+ * @param y pixel on the y axis
+ * @return the block at the given pixel. If there is no block, it will return null
+ */
+public Block  getBlock(int x, int y) {
+  int column = x / Tile.SIZE;
+  if (column >= MAP_WIDTH) {
+    column = MAP_WIDTH -1;
+  } else if (column < 0) {
+    column = 0;
+  }
+  
+  int row = y / Tile.SIZE;
+  if (row < 0) {
+    row = 0;
+  } else if (row >= MAP_HEIGHT) {
+    row = MAP_HEIGHT - 1;    
+  }
+  
+  return backgroundTiles[column][row][0].block;
+}
+
 
 /**
  * This method will return the tile type at the given pixel
