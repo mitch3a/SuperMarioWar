@@ -63,6 +63,8 @@ public class GamePad  extends PlayerControlBase{
   public final int NUM_BUTTONS;
   Controller controller;
   
+  boolean isConnected;
+  
   //TODO this seems to work, but might want to reset it 
   //     after every poll in case it moves in memory, no
   //     problems so far though. Really don't need it. Could
@@ -89,6 +91,7 @@ public class GamePad  extends PlayerControlBase{
   
   //TODO again, the input is for debugging until settings are stored off
   public GamePad(SavedControllerType type){
+    
     Controller[] ca = ControllerEnvironment.getDefaultEnvironment().getControllers();
 
     //Find the controller. TODO this will change but great for now. Grab the first one
@@ -96,23 +99,22 @@ public class GamePad  extends PlayerControlBase{
     for(int i =0;i<ca.length;i++){
       if(ca[i].getType() == Controller.Type.STICK){
       	controller = ca[i];
+      	isConnected = true;
       	break;
       }
     }
-
-    if(controller == null){
-    	//TODO throw an error... this is just because I only have the one controller 
-    	//     to work with mk.
-    	System.out.println("ERROR. CONTROLLER NOT SUPPORTED");
-    }
     
+    if (controller == null) {
+      throw new IllegalArgumentException(); // TODO - we should probably make our own exception that has a msg
+    }
+   
     //Need to poll in order to get the default values
     controller.poll();
     components = controller.getComponents();
     NUM_BUTTONS = components.length;
     defaultValues = new float[NUM_BUTTONS];
     
-    for(int i = 0 ; i < components.length; ++i){
+    for(int i = 0 ; i < components.length; ++i) {
     	defaultValues[i] = components[i].getPollData();
     }
     
@@ -261,6 +263,6 @@ public class GamePad  extends PlayerControlBase{
   @Override
   public boolean isConnected() {
     // TODO - How to tell if game pad is connected?
-    return false;
+    return isConnected;
   }
 }

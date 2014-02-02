@@ -22,7 +22,6 @@ public class XboxGamePad extends PlayerControlBase {
     xboxController = new XboxController(Utilities.is64bit() ? "xboxcontroller64" : "xboxcontroller", player, 50, 50);
     isConnected = xboxController.isConnected();
     if (!isConnected) { 
-      System.out.println("Xbox controller not connected");
       xboxController.release();
       return;
     }

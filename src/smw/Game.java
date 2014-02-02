@@ -3,15 +3,15 @@ package smw;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
 import smw.entity.Player;
 import smw.settings.Debug;
 import smw.sound.SoundPlayer;
+import smw.ui.GamePad;
 import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
+import smw.ui.XboxGamePad;
 import smw.ui.screen.GameFrame;
-import smw.ui.*;
 import smw.world.World;
 
 public class Game implements Runnable {  
@@ -62,8 +62,21 @@ public class Game implements Runnable {
       if (controller.isConnected()) {
         pc[0] = controller;
       }
-    } else {
-      pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+    }
+    // No Xbox controller, so check for other game pad.
+    if (pc[0] == null) {
+      try {
+        GamePad controller = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
+        if (controller.isConnected()) {
+          pc[0] = controller;
+        }
+      } catch (IllegalArgumentException e) {
+        // No controller found!
+      }
+      // If still nothing just use the keyboard.
+      if (pc[0] == null) {
+        pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+      }
     }
     //pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_G);
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);

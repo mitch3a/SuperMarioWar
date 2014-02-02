@@ -33,7 +33,15 @@
 	<classpathentry kind="lib" path="lib/lwjgl_util_applet.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-debug.jar"/>
 	<classpathentry kind="lib" path="lib/lzma.jar"/>
-	<classpathentry kind="lib" path="lib/jaw.jar"/>
-	<classpathentry kind="lib" path="lib/XboxController.jar"/>
+	<classpathentry kind="lib" path="lib/jaw.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SuperMarioWar/lib/Windows"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/XboxController.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SuperMarioWar/lib/Windows"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

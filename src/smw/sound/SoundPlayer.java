@@ -2,15 +2,11 @@ package smw.sound;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
-
-import paulscode.sound.Library;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemException;
 import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
-import paulscode.sound.libraries.LibraryJavaSound;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 
 /**
@@ -93,11 +89,8 @@ public class SoundPlayer {
   public void playBGM(String name) {
     File f = new File("res/music/game/Standard/" + name);
     if (f.exists()) {
-      try {
-        URL path = f.toURI().toURL();
-        System.out.println(path);
-        
-        soundSystem.backgroundMusic(BGM, path, name, true);
+      try {        
+        soundSystem.backgroundMusic(BGM, f.toURI().toURL(), name, true);
         soundSystem.setVolume(BGM, 0.35f);        
       } catch (MalformedURLException e) {
         e.printStackTrace();
