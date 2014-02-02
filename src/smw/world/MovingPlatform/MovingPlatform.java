@@ -48,8 +48,11 @@ public class MovingPlatform {
   }
 
   public TileType getTile(int x, int y) {
-    int indexX = (x - path.getX())/Tile.SIZE;
-    int indexY = (y - path.getY())/Tile.SIZE;
+    int difX = x - path.getX();
+    int difY = y - path.getY();
+    
+    int indexX = (difX >= 0) ? difX/Tile.SIZE : -1;
+    int indexY = (difY >= 0) ? difY/Tile.SIZE : -1;
     
     if(indexX >= 0 && indexX < tiles.length){
       if(indexY >= 0 && indexY < tiles[indexX].length){
