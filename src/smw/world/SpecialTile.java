@@ -11,8 +11,8 @@ public class SpecialTile {
     this.typeConversion = g_iTileTypeConversion[type];
   }
   
-  Tile.TileType type;
-  short typeConversion;
+  public Tile.TileType type;
+  public short typeConversion;
 
   public String getType() {
     return String.valueOf(type);

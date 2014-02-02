@@ -34,7 +34,8 @@ public class World {
   //This is a hardcoded value only used once. If you know why it  is 12, replace this comment with the reason
   boolean[]  autoFilter = new boolean[12];
   
-  MovingPlatform[]   movingPlatforms;
+  //TODO this should not be visible
+  public MovingPlatform[]   movingPlatforms;
   RaceGoalLocation[] raceGoalLocations;
   FlagBaseLocation[] flagBaseLocation;
   

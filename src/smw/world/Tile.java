@@ -29,7 +29,7 @@ public class Tile {
   int tileSheetRow;
   int tileSheetColumn;
   public int ID;//TODO make sure we use this for something
-  SpecialTile specialTile;//TODO make sure we use this (see moving platforms)
+  public SpecialTile specialTile;//TODO make sure we use this (see moving platforms) and it shouldnt be public
   short[] settings = new short[1];//TODO figure out what this is for
   
   public static TileSheet tileSheet; //TODO not the best way to do this

@@ -99,6 +99,9 @@ public class Player extends Rectangle{
 		newX = (int) (x + dx);
 		newY = (int) (y + dy);
 		
+    //#############################################################
+    // Stationary map collision
+    //#############################################################
 		if (x != newX) {
       if (x > newX) {
         //Moving left
@@ -161,8 +164,64 @@ public class Player extends Rectangle{
       }
     }
 
-		//physics.update();
-		
+    //#############################################################
+    // Platform collision
+    //#############################################################  
+    /*
+    
+    if (x > newX) {
+      //Moving left
+      if(Game.level.getTileTypeAtPx(newX, y) == Tile.SOLID){
+        newX = newX +  Level.TILE_SIZE - (newX % Level.TILE_SIZE);
+        physics.collideWithWall();
+      }
+    }
+    else{
+      //Moving right
+      if(Game.level.getTileTypeAtPx(newX + Sprite.IMAGE_WIDTH, y) == Tile.SOLID){
+        newX = newX - (newX % Level.TILE_SIZE);
+        physics.collideWithWall();
+      }
+    }
+    */
+    
+    if(Game.world.movingPlatforms != null && Game.world.movingPlatforms.length > 0){
+      for(smw.world.MovingPlatform.MovingPlatform platform : Game.world.movingPlatforms){
+        //TODO will ever be equals?
+        if (y < newY) {
+          //Moving down. We want to check every block that is under the sprite. This is from the first 
+          //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+          Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT+ 1);
+          Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 1);
+          
+          if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+            //TODO this might need some work once others are introduced, but making sure 
+            //     it isn't a situation where the player is pressing down to sink through
+            if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+               (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+               (physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+              
+            }
+            else{ 
+              newY = platform.getY() - Sprite.IMAGE_HEIGHT;
+              physics.collideWithFloor();
+            }
+          }
+        }
+        else {
+          //Moving up
+          if(platform.getTile(newX, newY) == Tile.TileType.SOLID ||
+             platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
+            newY += Tile.SIZE - newY % Tile.SIZE;
+            physics.collideWithCeiling();
+          }
+        }
+      }
+    }
+    
+    //#############################################################
+    // Player collision
+    //#############################################################
 		boolean xCollide = false;
 		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){

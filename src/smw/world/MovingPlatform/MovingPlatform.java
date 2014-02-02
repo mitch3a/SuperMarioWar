@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 
 import smw.world.Tile;
+import smw.world.Tile.TileType;
 
 public class MovingPlatform {
   Path path;
@@ -16,6 +17,14 @@ public class MovingPlatform {
   
   public void move(float timeDif){
     path.move(timeDif);
+  }
+ 
+  public int getX(){
+    return path.getX();
+  }
+  
+  public int getY(){
+    return path.getY();
   }
   
   public void draw(Graphics2D graphics, ImageObserver observer){
@@ -36,5 +45,18 @@ public class MovingPlatform {
      
      x += Tile.SIZE;
     }
+  }
+
+  public TileType getTile(int x, int y) {
+    int indexX = (x - path.getX())/Tile.SIZE;
+    int indexY = (y - path.getY())/Tile.SIZE;
+    
+    if(indexX >= 0 && indexX < tiles.length){
+      if(indexY >= 0 && indexY < tiles[indexX].length){
+        return tiles[indexX][indexY].specialTile.type;
+      }
+    }
+    
+    return Tile.TileType.NONSOLID;
   }
 }
