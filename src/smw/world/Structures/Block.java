@@ -1,4 +1,4 @@
-package smw.world;
+package smw.world.Structures;
 
 public class Block {
   public Block(int type, boolean hidden) {

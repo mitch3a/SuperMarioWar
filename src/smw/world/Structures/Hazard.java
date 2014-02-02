@@ -1,4 +1,4 @@
-package smw.world;
+package smw.world.Structures;
 
 /* 
  * TODO mk justify why we need this....

@@ -14,6 +14,17 @@ import smw.world.MovingPlatform.MovingPlatform;
 import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;
 import smw.world.MovingPlatform.StraightSegmentPath;
+import smw.world.Structures.Block;
+import smw.world.Structures.DrawArea;
+import smw.world.Structures.FlagBaseLocation;
+import smw.world.Structures.Hazard;
+import smw.world.Structures.Item;
+import smw.world.Structures.RaceGoalLocation;
+import smw.world.Structures.SpawnArea;
+import smw.world.Structures.TileSetTranslation;
+import smw.world.Structures.Warp;
+import smw.world.Structures.WarpExit;
+import smw.world.Structures.WorldBuffer;
 import smw.world.Tile.TileType;
 
 public class World {
@@ -212,11 +223,7 @@ public class World {
           if(numSpawnAreas == 0){
             //If no spawn areas were identified, then create one big spawn area
             spawnAreas[i] = new SpawnArea[1];
-            spawnAreas[i][0].left = 0;
-            spawnAreas[i][0].width = 20;
-            spawnAreas[i][0].top = 1;
-            spawnAreas[i][0].height = 12;
-            spawnAreas[i][0].size = 220;
+            spawnAreas[i][0] = new SpawnArea();
           }
           else{
             spawnAreas[i] = new SpawnArea[numSpawnAreas];

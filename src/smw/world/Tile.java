@@ -4,6 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
+import smw.world.Structures.Block;
+import smw.world.Structures.SpecialTile;
+
 public class Tile {
   /* TODO - Each tile has an image the is drawn for it
    * Tiles make up the level (map)
@@ -26,8 +29,8 @@ public class Tile {
   }
   
   Block block;
-  int tileSheetRow;
-  int tileSheetColumn;
+  public int tileSheetRow;
+  public int tileSheetColumn;
   public int ID;//TODO make sure we use this for something
   public SpecialTile specialTile;//TODO make sure we use this (see moving platforms) and it shouldnt be public
   short[] settings = new short[1];//TODO figure out what this is for

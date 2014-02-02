@@ -1,4 +1,4 @@
-package smw.world;
+package smw.world.Structures;
 
 public class FlagBaseLocation {
   short x;

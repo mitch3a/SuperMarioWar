@@ -1,8 +1,8 @@
-package smw.world;
+package smw.world.Structures;
 
 public class WarpExit {
   short direction;
-  short connection;
+  public short connection;
   short id;
   short x;
   short y;

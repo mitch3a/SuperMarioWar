@@ -8,7 +8,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-import smw.world.TileSetTranslation;
+import smw.world.Structures.TileSetTranslation;
 
 /** Provides flags to indicate whether a given function/area of code is being debugged for logging purposes. */
 public class Debug {

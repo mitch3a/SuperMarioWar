@@ -1,4 +1,4 @@
-package smw.world;
+package smw.world.Structures;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+import smw.world.Tile;
 import smw.world.MovingPlatform.EllipticalPath;
 import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;

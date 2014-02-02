@@ -1,4 +1,7 @@
-package smw.world;
+package smw.world.Structures;
+
+import smw.world.Tile;
+import smw.world.Tile.TileType;
 
 public class SpecialTile {
   
