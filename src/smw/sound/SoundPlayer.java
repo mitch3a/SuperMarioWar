@@ -38,6 +38,8 @@ public class SoundPlayer {
   /** The list of BGM that will be indexed by a value from the map file. */
   private String[][] bgmList;
   
+  private int trackList;
+  
   public SoundPlayer() {
     setupBGMList();
     
@@ -70,6 +72,19 @@ public class SoundPlayer {
     bgmList[1] = new String[]{"M1_Underground.ogg", "M3_Boss.ogg"}; // [Ghost]
     bgmList[2] = new String[]{"M3_Underwater.ogg"}; // [Bonus]
     bgmList[3] = new String[]{"M3_Boss.ogg"}; // [Battle]
+  }
+  
+  /** Sets up the track list based on the provided music category from the world. */
+  public void setTrackList(int musicCategory) {
+    // TODO - need to add handling for different categories, that don't seem to be defined anywhere...
+    if (musicCategory == 0) { 
+      trackList = musicCategory;
+    }
+  }
+  
+  /** Plays background music based on the current track list. */
+  public void playBGM() {
+    playBGM(bgmList[trackList][(int) (Math.random() * (bgmList[trackList].length))]);
   }
   
   /** Plays the provided background music. 

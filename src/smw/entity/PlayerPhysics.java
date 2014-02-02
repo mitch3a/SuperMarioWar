@@ -71,6 +71,7 @@ public class PlayerPhysics {
 	public static final float[] JUMPING_WEAK_GRAVITY   =  {qC*0x0200, qC*0x01E0, qC*0x0280 }; //If you're not holding speed button
 	public static final float[] JUMPING_STRONG_GRAVITY =  {qC*0x0700, qC*0x0600, qC*0x0900 }; //If you're not holding speed button
 	
+	public static final float MAX_VELOCITY_Y = 15.0f;
 	
 	long previousTime_ms;
 	
@@ -184,11 +185,7 @@ public class PlayerPhysics {
 	}
 	
 	void updateX(float timeDif) {
-	  timeDif = 1.0f;
-	  // Until something outside is added (wind?), velocityX is constant while in the air
-	  if(isJumping){
-	  	return;
-	  }
+	  timeDif = 1.0f;  // TODO - might want to use time dif at some point, but for now it's always 1.0 
 	  int direction = playerControl.getDirection();
 
 	  if( direction == 0){
@@ -263,7 +260,8 @@ public class PlayerPhysics {
     	}
     }
     
-    velocityY = velocityY + (accelerationY*timeDif_ms);
+    float newVelocity = velocityY + (accelerationY * timeDif_ms);
+    velocityY = (newVelocity > MAX_VELOCITY_Y) ? MAX_VELOCITY_Y : newVelocity;
   }
   
   public void collideWithCeiling(){
