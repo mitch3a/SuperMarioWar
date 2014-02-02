@@ -71,6 +71,7 @@ public class PlayerPhysics {
 	public static final float[] JUMPING_WEAK_GRAVITY   =  {qC*0x0200, qC*0x01E0, qC*0x0280 }; //If you're not holding speed button
 	public static final float[] JUMPING_STRONG_GRAVITY =  {qC*0x0700, qC*0x0600, qC*0x0900 }; //If you're not holding speed button
 	
+	public static final float MAX_VELOCITY_Y = 15.0f;
 	
 	long previousTime_ms;
 	
@@ -259,7 +260,8 @@ public class PlayerPhysics {
     	}
     }
     
-    velocityY = velocityY + (accelerationY*timeDif_ms);
+    float newVelocity = velocityY + (accelerationY * timeDif_ms);
+    velocityY = (newVelocity > MAX_VELOCITY_Y) ? MAX_VELOCITY_Y : newVelocity;
   }
   
   public void collideWithCeiling(){
