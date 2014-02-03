@@ -59,22 +59,68 @@ public class SoundPlayer {
     }
   }
   
-  // TODO - sets up the BGM track list. Not sure what the actual map values will be for a "category number"
-  // The map file provides a music category, that maps to one of the mentioned categories below
-  // We would convert that to a track list index and pick a random song from that list.
+  /** Sets up the BGM track list for each music category number that exists in a map file. */
   private void setupBGMList() {
     bgmList = new String[4][];
     bgmList[0] = new String[]{"smb3level1.ogg", "M2_Level1.ogg"}; // [Desert][Clouds][Snow][Platforms]
     bgmList[1] = new String[]{"M1_Underground.ogg", "M3_Boss.ogg"}; // [Ghost]
     bgmList[2] = new String[]{"M3_Underwater.ogg"}; // [Bonus]
-    bgmList[3] = new String[]{"M3_Boss.ogg"}; // [Battle]
+    bgmList[3] = new String[]{"M3_Boss.ogg"}; // [Battle][Castle]
   }
   
   /** Sets up the track list based on the provided music category from the world. */
   public void setTrackList(int musicCategory) {
-    // TODO - need to add handling for different categories, that don't seem to be defined anywhere...
-    if (musicCategory == 0) { 
-      trackList = musicCategory;
+    // Default category mapping according to Music.txt
+    switch (musicCategory) {
+      // Land
+      case 0:
+      case 2:
+      case 8:
+      case 9:
+      case 11:
+      case 13:
+      case 14:
+      case 24:
+        trackList = 0;
+        break;
+      // Castle
+      case 1:
+      case 6:
+      case 23:
+        trackList = 3;
+        break;
+      // Ghost
+      case 3:
+        trackList = 1;
+        break;
+      // Underground
+      case 4:
+      case 10: 
+      case 17: 
+      case 18:
+        trackList = 1;
+        break;
+      // Platforms
+      case 5: 
+      case 7:
+      case 12:
+      case 16:
+      case 20:
+      case 25:
+        trackList = 0;
+        break;
+      // Battle
+      case 15:
+      case 21:
+        trackList = 3;
+        break;
+      // Bonus
+      case 19:
+      case 22: 
+        trackList = 2;
+      default:
+        trackList = 0;
+        break;
     }
   }
   

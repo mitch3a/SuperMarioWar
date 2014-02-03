@@ -28,20 +28,19 @@ public class Game implements Runnable {
   
   public Game(final int numPlayers) {
     
+    // TODO - setup world selector or something, for now pick what you want to test code.
     //world = new World("0smw.map");
     world = new World("4matsy_Evening Fracas.map");
-    
     //world = new World("NMcCoy_1-3.map");
     //world = new World("ym7_world1-2.map");
     //world = new World("two52_Up In The Hills.map");
     //world = new World("tubesteak_coolnights.map");
     //world = new World("Pikablu_Mushroom Kingdom.map");
-    
     //world = new World("MrMister_Azul Montana.map");
-    
     //world = new World("GG_Angry angels.map");
     //world = new World("coolman13714_green greens.map");
-    //world = new World("Link901_MileHigh Madness.map");    
+    //world = new World("Link901_MileHigh Madness.map");
+    //world = new World("Xijar_Boo is Back.map");
     
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....
@@ -55,7 +54,8 @@ public class Game implements Runnable {
   	    System.exit(0);
   	  }
   	});
-  	  	
+
+  	soundPlayer.setTrackList(world.getMusicCategoryID());
   	soundPlayer.playBGM();
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 

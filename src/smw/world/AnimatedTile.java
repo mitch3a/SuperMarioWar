@@ -139,7 +139,7 @@ public class AnimatedTile {
     switch (type) {
     case BREAKABLE_BLOCK:
     case QUESTION_BLOCK:
-    case FLIP_BLOCK:
+    // TODO - flip blocks are only animated when they get hit by a player! case FLIP_BLOCK:
     case WHITE_NOTE_BLOCK:
     case BLUE_THROW_BLOCK:
     case RED_THROW_BLOCK:

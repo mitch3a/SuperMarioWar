@@ -62,7 +62,7 @@ public class World {
   /** Animated tile list used for updating animations during world update. */
   private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
   
-  int musicCategoryID;
+  private int musicCategoryID;
   
   public World(String worldName){
     MAP_WIDTH = GameFrame.res_width / Tile.SIZE;
@@ -175,6 +175,10 @@ public class World {
         eyeCandy[2] = (short)buffer.getInt();
         
         musicCategoryID = buffer.getInt();
+        
+        if (Debug.LOG_WORLD_INFO) {
+          System.out.println("music category: " + musicCategoryID);
+        }
 
         ///////////////////////////////////////////////////////////////
         //Load World specifics. Tile type overrides, warps and spawns
@@ -659,5 +663,10 @@ public TileType getTileType(int x, int y) {
     }
     
     return backgroundTiles[column][row][0].getTileType();
+  }
+
+  /** Returns the music category ID. */
+  public int getMusicCategoryID() {
+    return musicCategoryID;
   }
 }
