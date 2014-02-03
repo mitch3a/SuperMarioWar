@@ -22,9 +22,9 @@ public class BlockSheet extends TileSheet{
     if(type < 0){//TODO check not TOO big
       return null;
     }
-    
     int column = type%NUM_COLUMNS;
     int row = type/NUM_COLUMNS;
     return image.getSubimage(column * Tile.SIZE, row * Tile.SIZE, Tile.SIZE, Tile.SIZE);
+
   }
 }

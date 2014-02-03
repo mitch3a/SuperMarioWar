@@ -28,12 +28,17 @@ public class Game implements Runnable {
   
   public Game(final int numPlayers) {
     
+    //world = new World("0smw.map");
+    world = new World("4matsy_Evening Fracas.map");
+    
     //world = new World("NMcCoy_1-3.map");
     //world = new World("ym7_world1-2.map");
     //world = new World("two52_Up In The Hills.map");
     //world = new World("tubesteak_coolnights.map");
     //world = new World("Pikablu_Mushroom Kingdom.map");
-    world = new World("MrMister_Azul Montana.map");
+    
+    //world = new World("MrMister_Azul Montana.map");
+    
     //world = new World("GG_Angry angels.map");
     //world = new World("coolman13714_green greens.map");
     //world = new World("Link901_MileHigh Madness.map");    
@@ -129,7 +134,7 @@ public class Game implements Runnable {
       }
       
       if (needRender) {
-        updateGame();
+        updateGame(timePerRender_ns); // TODO - need a time delta for our update methods...
         render();
         frames++;
       }
@@ -149,7 +154,7 @@ public class Game implements Runnable {
     gameFrame.repaint();
   }
 
-  private void updateGame() {
+  private void updateGame(double timeDelta_ns) {
     // Poll player update (movement, etc.)
     // Way later poll level update and all that other junk...
   	
@@ -159,7 +164,7 @@ public class Game implements Runnable {
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
     
-    world.update();
+    world.update((int)(timeDelta_ns) / 1000000);
     
   	for(Player p : players){
   		p.poll();

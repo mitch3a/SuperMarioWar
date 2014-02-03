@@ -3,7 +3,6 @@ package smw.world;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.net.URL;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;

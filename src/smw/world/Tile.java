@@ -28,6 +28,7 @@ public class Tile {
     public static final int SIZE = 20;
   }
   
+  AnimatedTile animation;
   Block block;
   public int tileSheetRow;
   public int tileSheetColumn;
@@ -129,19 +130,36 @@ public class Tile {
   
   // TODO - not sure if a tile should draw itself...
   public void draw(Graphics2D graphics, ImageObserver observer){
-    BufferedImage image = getImage();
-    if (image != null) {
-      graphics.drawImage(image, x, y, observer);
+    
+    if (animation != null) {
+      graphics.drawImage(animation.getImage(), x, y, observer);
+      return;
     }
     
     if(block != null){
       BlockSheet bs = BlockSheet.getInstance();
       graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
+      return;
+    }
+    
+    BufferedImage image = getImage();
+    if (image != null) {
+      graphics.drawImage(image, x, y, observer);
     }
   }
 
   public void setBlock(int type, boolean hidden) {
     this.block = new Block(type, hidden);
+  }
+  
+  public void setAnimation(int type) {
+    this.animation = new AnimatedTile(type);
+  }
+
+  public void update(int timeDif_ms) {
+    if (animation != null) {
+      animation.update(timeDif_ms);
+    }
   }
   
 }

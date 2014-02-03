@@ -30,7 +30,7 @@ import smw.world.Structures.WorldBuffer;
 import smw.world.Tile.TileType;
 
 public class World {
-  
+    
   public final int MAX_LAYERS = 4;
   public final int MAX_WARPS = 32;
   public final int NUM_SPAWN_AREA_TYPES = 6;
@@ -57,7 +57,10 @@ public class World {
   
   final boolean[][][] nospawn;
   // This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing
-  final ArrayList<Tile>  frontTileList = new ArrayList<Tile>(); 
+  final ArrayList<Tile>  frontTileList = new ArrayList<Tile>();
+  
+  /** Animated tile list used for updating animations during world update. */
+  private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
   
   int musicCategoryID;
   
@@ -123,6 +126,10 @@ public class World {
             boolean hidden = buffer.getBoolean();
             
             if(Tile.isValidType(type)){
+              if (AnimatedTile.isTypeAnimated(type)) {
+                backgroundTiles[w][h][0].setAnimation(type);
+                animatedTileList.add(backgroundTiles[w][h][0]);
+              }
               backgroundTiles[w][h][0].setBlock(type, hidden);
               frontTileList.add(backgroundTiles[w][h][0]);
             }
@@ -579,6 +586,10 @@ public class World {
     // Draw the background (has background tiles in it)
     g.drawImage(backgroundImg, 0, 0, io);
     
+    for (Tile tile : animatedTileList) {
+      tile.draw(g, io);
+    }
+    
     if(movingPlatforms != null && movingPlatforms.length > 0){
       for(MovingPlatform platform : movingPlatforms){
         platform.draw(g, io);
@@ -587,11 +598,15 @@ public class World {
   }
 
 
-  public void update() {
+  public void update(int timeDelta_ms) {
     if(movingPlatforms != null && movingPlatforms.length > 0){
       for(MovingPlatform platform : movingPlatforms){
         platform.move(1);
       }
+    }
+    
+    for (Tile tile : animatedTileList) {
+      tile.update(timeDelta_ms);
     }
   }
 
