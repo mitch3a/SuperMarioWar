@@ -61,6 +61,7 @@ public class SoundPlayer {
   
   /** Sets up the BGM track list for each music category number that exists in a map file. */
   private void setupBGMList() {
+    // TODO - eventually setup based on read from a config file like \res\music\game\Standard\Music.txt
     bgmList = new String[4][];
     bgmList[0] = new String[]{"smb3level1.ogg", "M2_Level1.ogg"}; // [Desert][Clouds][Snow][Platforms]
     bgmList[1] = new String[]{"M1_Underground.ogg", "M3_Boss.ogg"}; // [Ghost]
