@@ -55,6 +55,9 @@ public class Game implements Runnable {
   	  }
   	});
 
+  	if (Debug.MUTE) {
+  	  soundPlayer.setMasterVolume(0);
+    }
   	soundPlayer.setTrackList(world.getMusicCategoryID());
   	soundPlayer.playBGM();
   	
