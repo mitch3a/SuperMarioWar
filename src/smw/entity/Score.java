@@ -7,7 +7,7 @@ public class Score {
   private int score;
   
   public Score(){
-    score = 0;
+    score = 10;
   }
   
   public int getScore(){
@@ -15,10 +15,14 @@ public class Score {
   }
   
   public void increaseScore(){
-    ++score;
+    //Nothing for stomp em
   }
   
   public void decreaseScore(){
-    
+    --score;
+  }
+
+  public boolean isOut() {
+    return score <= 0;
   }
 }
