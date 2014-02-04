@@ -181,9 +181,9 @@ public class Player extends Rectangle{
 		return score.getScore();
 	}
 	
-	public String getRandomSprite(){
+	public static String getRandomSprite(){
 	    ArrayList<String> result = new ArrayList<String>();
-	    File folder = new File(Debug.class.getClassLoader().getResource("sprites/").getFile());
+	    File folder = new File(Player.class.getClassLoader().getResource("sprites/").getFile());
 	    File[] listOfFiles = folder.listFiles();
 	    for(File f : listOfFiles){
 	      result.add(f.getName());

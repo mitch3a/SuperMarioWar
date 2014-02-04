@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +65,14 @@ public class World {
   
   private int musicCategoryID;
   
+  public World(){
+    this(getRandomWorld());
+  }
+  
   public World(String worldName){
+    
+    System.out.println("Loading world: " + worldName);
+    
     MAP_WIDTH = GameFrame.res_width / Tile.SIZE;
     MAP_HEIGHT = GameFrame.res_height / Tile.SIZE;
     
@@ -577,6 +585,18 @@ public class World {
         
     return newY;
   }
+  
+  public static String getRandomWorld(){
+    ArrayList<String> result = new ArrayList<String>();
+    File folder = new File(World.class.getClassLoader().getResource("map/").getFile());
+    File[] listOfFiles = folder.listFiles();
+    for(File f : listOfFiles){
+      result.add(f.getName());
+    }
+    
+    return result.get((int)(Math.random()*result.size()));    
+}
+
   
   public void drawFront(Graphics2D g, ImageObserver io){
     if(frontTileList.size() > 0){
