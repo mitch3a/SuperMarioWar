@@ -30,10 +30,10 @@ public class Game implements Runnable {
     
     // TODO - setup world selector or something, for now pick what you want to test code.
     //world = new World("0smw.map");
-    world = new World("4matsy_Evening Fracas.map");
+    //world = new World("4matsy_Evening Fracas.map");
     //world = new World("NMcCoy_1-3.map");
     //world = new World("ym7_world1-2.map");
-    //world = new World("two52_Up In The Hills.map");
+    world = new World("two52_Up In The Hills.map");
     //world = new World("tubesteak_coolnights.map");
     //world = new World("Pikablu_Mushroom Kingdom.map");
     //world = new World("MrMister_Azul Montana.map");
