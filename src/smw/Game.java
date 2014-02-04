@@ -44,6 +44,7 @@ public class Game implements Runnable {
                        "Xijar_Boo is Back.map"};
     
     //Starts a random world
+    //world = new World(worlds[1]);
     world = new World();
     
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them

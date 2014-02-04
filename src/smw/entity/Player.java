@@ -154,11 +154,13 @@ public class Player extends Rectangle{
 		if(newX < 0){
 		  newX += GameFrame.res_width;
 		}
-		
+		/*
+		 * commented out this section so that the top part of the screen does not wrap
+		 * appears to not change falling and appearing at the top of the screen functionality
 		if(newY < 0){
 		  newY += GameFrame.res_height;
 		}
-		
+		*/
 		setBounds(newX, newY);					
 	}
 		
