@@ -97,14 +97,18 @@ public class Palette {
 	  }
 	}
 
-	public void implementTransparent(BufferedImage image) {
-	  for(int w = 0 ; w < image.getWidth() ; ++w){
-	    for(int h = 0 ; h < image.getHeight(); ++h){
-	      if(image.getRGB(w, h) == 0xffff00ff){
-	        image.setRGB(w, h, Color.TRANSLUCENT);
+	 public void implementTransparent(BufferedImage image, int colorToRemove) {
+	    for(int w = 0 ; w < image.getWidth() ; ++w){
+	      for(int h = 0 ; h < image.getHeight(); ++h){
+	        if(image.getRGB(w, h) == colorToRemove){
+	          image.setRGB(w, h, Color.TRANSLUCENT);
+	        }
 	      }
-	    }
-	  } 
+	    } 
+	  }
+	 
+	public void implementTransparent(BufferedImage image) {
+	  implementTransparent(image, 0xffff00ff);
   }
 	
 	public void convertAllFilesToPNG(){

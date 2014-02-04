@@ -20,6 +20,7 @@ public class Player extends Rectangle{
 	 */
 	private static final long serialVersionUID = -4197702383138211374L;
 	private static final long RESPAWN_WAIT_MS = 2000;
+	static final int WRAP_AROUND_FACTOR = (GameFrame.res_width - Sprite.IMAGE_WIDTH);
 	private Sprite  sprite;
 	public PlayerPhysics physics;
 	private Score score;
@@ -80,7 +81,7 @@ public class Player extends Rectangle{
 	public void move(Player[] players){	
 		if(crushed){
 			//TODO this is messy and should be a method called at the beginning
-			if(respawnTime < System.currentTimeMillis()){
+			if(!score.isOut() && respawnTime < System.currentTimeMillis()){
 				crushed = false;
 				setBounds(300, 100);
 				sprite.setJumping();
@@ -163,6 +164,7 @@ public class Player extends Rectangle{
 		
 	protected void crush(){
 		crushed = true;
+		score.decreaseScore();
 		//TODO mk didn't like this but if you want to play with it, make gameFrame static and this works 
 		//Game.gameFrame.bump();
 		respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
@@ -175,6 +177,10 @@ public class Player extends Rectangle{
 	
 	public void draw(Graphics2D graphics, ImageObserver observer){
 	  graphics.drawImage(sprite.getImage(), x, y, observer);
+	  if(x > WRAP_AROUND_FACTOR) {
+	    //TODO this does not do any collision on the other side...
+	    graphics.drawImage(sprite.getImage(), x-GameFrame.res_width + 1, y, observer);
+	  }
 	}
 	
 	public int getScore(){
@@ -195,4 +201,8 @@ public class Player extends Rectangle{
 	public void landed() {
 	  sprite.clearAction();
 	}
+
+  public boolean isOut() {
+    return score.isOut();
+  }
 }

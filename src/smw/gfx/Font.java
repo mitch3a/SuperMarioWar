@@ -1,5 +1,6 @@
 package smw.gfx;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -66,7 +67,12 @@ public class Font {
 	    	//Now find where the character ends
 	    	while(0xffff00ff != imageBuffer.getRGB(++currentPosition, 0));
 	    	//Store the letter
-	    	font[i] = imageBuffer.getSubimage(start, 0, currentPosition - start, height);
+	    	BufferedImage convertedImg = new BufferedImage(imageBuffer.getWidth(), imageBuffer.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+	      convertedImg.getGraphics().drawImage(imageBuffer, 0, 0, null);
+	      
+	    	Palette palette = Palette.getInstance();
+	    	palette.implementTransparent(convertedImg, 0xffffffff);
+	    	font[i] = convertedImg.getSubimage(start, 0, currentPosition - start, height);
 	    }
     } catch (IOException e) {
 	    // TODO Auto-generated catch block
