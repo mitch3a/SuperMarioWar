@@ -3,8 +3,10 @@ package smw.gfx;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 
+import smw.ui.screen.GameFrame;
+
 public class WinnerText {
-  
+  public static final int WINNER_TEXT_WIDTH = 40;
   private static final float WINNER_TEXT_ACCELERATION =.5f;
   private static final float WINNER_TEXT_STARTING_VELOCITY = -10;
   public static final long TIME_BETWEEN_WINNERS_MS = 300;
@@ -14,7 +16,7 @@ public class WinnerText {
   float velocityY;
   
   public WinnerText(int x, int y){
-    this.x = x;
+    this.x = x - WINNER_TEXT_WIDTH/2;
     this.y = (float)y;
     velocityY = WINNER_TEXT_STARTING_VELOCITY;
   }

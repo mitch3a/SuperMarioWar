@@ -399,6 +399,9 @@ public class World {
   }
   
   public int getCollisionX(Player player, int newX){
+    //This is to test the bottom of the sprite
+    int lowestY = player.y + Sprite.IMAGE_HEIGHT - 1;
+    
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
@@ -430,14 +433,16 @@ public class World {
     if (player.x != newX) {
       if (player.x > newX) {
         //Moving left
-        if(getBlock(newX, player.y) != null){
+        if(getBlock(newX, player.y) != null ||
+           getBlock(newX, lowestY ) != null){
           newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
           player.physics.collideWithWall();
         }
       }
       else{
         //Moving right
-        if(getBlock(newX + Sprite.IMAGE_WIDTH, player.y) != null){
+        if(getBlock(newX + Sprite.IMAGE_WIDTH, player.y) != null ||
+           getBlock(newX + Sprite.IMAGE_WIDTH, lowestY ) != null){
           newX = newX - (newX % Tile.SIZE);
           player.physics.collideWithWall();
         }
@@ -447,19 +452,35 @@ public class World {
     ///////////////////////////////////////////////////////////////
     // Regular tiles
     ///////////////////////////////////////////////////////////////
-    if (player.x != newX) {
+    if (player.x != newX) {      
       if (player.x > newX) {
         //Moving left
-        if(getTileType(newX, player.y) == Tile.TileType.SOLID){
+      	Tile.TileType type1 = getTileType(newX, player.y);
+      	Tile.TileType type2 = getTileType(newX, lowestY);
+      	
+        if(type1 == Tile.TileType.SOLID ||
+           type2 == Tile.TileType.SOLID){
           newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
           player.physics.collideWithWall();
+        }
+        else if(type1 == Tile.TileType.SUPER_DEATH || type1 == Tile.TileType.SUPER_DEATH_LEFT ||
+                type2 == Tile.TileType.SUPER_DEATH || type2 == Tile.TileType.SUPER_DEATH_LEFT){
+        	player.superDeath();
         }
       }
       else{
         //Moving right
-        if(getTileType(newX + Sprite.IMAGE_WIDTH, player.y) == Tile.TileType.SOLID){
+        Tile.TileType type1 = getTileType(newX + Sprite.IMAGE_WIDTH, player.y);
+        Tile.TileType type2 = getTileType(newX + Sprite.IMAGE_WIDTH, lowestY);
+        
+        if(type1 == Tile.TileType.SOLID ||
+           type2 == Tile.TileType.SOLID){
           newX = newX - (newX % Tile.SIZE);
           player.physics.collideWithWall();
+        }
+        else if(type1 == Tile.TileType.SUPER_DEATH || type1 == Tile.TileType.SUPER_DEATH_LEFT ||
+                type2 == Tile.TileType.SUPER_DEATH || type2 == Tile.TileType.SUPER_DEATH_LEFT){
+        	player.superDeath();
         }
       }
     } 
@@ -641,20 +662,20 @@ public class World {
  * @param y pixel on the y axis
  * @return the block at the given pixel. If there is no block, it will return null
  */
-public Block  getBlock(int x, int y) {
-  int column = x / Tile.SIZE;
-  if (column >= MAP_WIDTH) {
-    column = MAP_WIDTH -1;
-  } else if (column < 0) {
-    column = 0;
+public Block getBlock(int x, int y) {
+//Everything above the screen is non solid
+  if(y < 0){
+    return null;
   }
   
+  //We want the right value within the window (no negatives either!)
+  x =  ( GameFrame.res_width  + x) % GameFrame.res_width; 
+  
+  //For Y, we only want to wrap the bottom to the top
+  y = y % GameFrame.res_height; 
+  
+  int column = x / Tile.SIZE;
   int row = y / Tile.SIZE;
-  if (row < 0) {
-    row = 0;
-  } else if (row >= MAP_HEIGHT) {
-    row = MAP_HEIGHT - 1;    
-  }
   
   return backgroundTiles[column][row][0].block;
 }
@@ -668,20 +689,20 @@ public Block  getBlock(int x, int y) {
  * @return the tile type at the given pixel
  */
 public TileType getTileType(int x, int y) {
+    //Everything above the screen is non solid
+    if(y < 0){
+      return TileType.NONSOLID;
+    }
+    
+    //We want the right value within the window (no negatives either!)
+    x =  ( GameFrame.res_width  + x) % GameFrame.res_width; 
+    
+    //For Y, we only want to wrap the bottom to the top
+    y = y % GameFrame.res_height; 
+    
     int column = x / Tile.SIZE;
-    if (column >= MAP_WIDTH) {
-      column = MAP_WIDTH -1;
-    } else if (column < 0) {
-      column = 0;
-    }
-    
     int row = y / Tile.SIZE;
-    if (row < 0) {
-      row = 0;
-    } else if (row >= MAP_HEIGHT) {
-      row = MAP_HEIGHT - 1;    
-    }
-    
+
     return backgroundTiles[column][row][0].getTileType();
   }
 

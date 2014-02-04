@@ -26,6 +26,7 @@ public class Player extends Rectangle{
 	private Score score;
 	private final int playerIndex;
 	private boolean crushed = false;
+	private boolean killed = false;
 	private long respawnTime;
 	
 	/** Indicates whether a player is falling through a tile by pressing down key. */
@@ -98,9 +99,16 @@ public class Player extends Rectangle{
 		
 		newX = (int) (x + dx);
 		newY = (int) (y + dy);
+		    
+    if(newX < 0){
+      newX += GameFrame.res_width;
+    }
 		
     newX = Game.world.getCollisionX(this, newX);
     newY = Game.world.getCollisionY(this, newX, newY);
+    
+    newX = newX % GameFrame.res_width;
+    newY = newY % GameFrame.res_height;
     
     //#############################################################
     // Player collision
@@ -143,24 +151,6 @@ public class Player extends Rectangle{
 			}
 		}
 
-	/*****************************************************
-	 *TODO this is not complete but good enough for now
-	 *
-	 *THIS WILL WRAP THE SCREEN AROUND CHA CHING mk
-	 ******************************************************/
-		newX = newX % GameFrame.res_width;
-		newY = newY % GameFrame.res_height;
-		
-		if(newX < 0){
-		  newX += GameFrame.res_width;
-		}
-		/*
-		 * commented out this section so that the top part of the screen does not wrap
-		 * appears to not change falling and appearing at the top of the screen functionality
-		if(newY < 0){
-		  newY += GameFrame.res_height;
-		}
-		*/
 		setBounds(newX, newY);					
 	}
 		
@@ -171,6 +161,11 @@ public class Player extends Rectangle{
 		//Game.gameFrame.bump();
 		respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
 		sprite.crush();
+	}
+	
+	public void superDeath() {
+		killed = true;
+		score.decreaseScore();
 	}
 	
 	public void poll(){

@@ -9,6 +9,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import smw.ui.screen.GameFrame;
+
 public class Font {
   private static Font instance;
 
@@ -151,12 +153,21 @@ public class Font {
 	}
 	
 	public void drawText(Graphics2D graphics, BufferedImage[] font, String text, int x, int y, ImageObserver observer){
+	  if(x < 0){
+	    x += GameFrame.res_width;
+	  }
 		char[] array = text.toCharArray();
 		for(char c : array){
 			BufferedImage i = getChar(font, c);
 			if(i != null){
 				graphics.drawImage(i, x, y, observer);
 				x += i.getWidth();
+				if(x > GameFrame.res_width){
+				  //Back up and draw the letter wrapped around
+				  int newStartingPoint = x - i.getWidth() - GameFrame.res_width;
+				  graphics.drawImage(i, newStartingPoint, y, observer);
+				  x = newStartingPoint + i.getWidth();
+				}
 			}
 			else{
 				//This is a space...should probably just add this to the buffer
