@@ -9,21 +9,14 @@ import net.java.games.input.ControllerEnvironment;
  * have another controller to test/customize with
  *******************************************************/
 public class GamePad  extends PlayerControlBase{
-	
-	//TODO the following is just so we can test without doing
-	//     the controller settings file but without having to
-	//     re-setup for the same controller on every run. mk.
-	public enum SavedControllerType{
-		NONE, SNES_MAC_MK, SNES_WIN_MK, LOGITECH_TIM
-	}
-	
+		
 	/***************************************************
 	 * TODO This method is temporary to help store off a controller
 	 * until we get settings going
 	 * 
 	 * @param type - Set to NONE if you want to auto-setup one
 	 ****************************************************/
-	void setControllerValues(SavedControllerType type){
+	void setControllerValues(ControllerType type){
 		switch(type){
 			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.index]  = 1;
 												buttonToComponentMap[PlayerButton.RIGHT.index] = 1;
@@ -90,8 +83,8 @@ public class GamePad  extends PlayerControlBase{
   final float[] pressedValues = new float[PlayerButton.NUM_BUTTONS_USED];
   
   //TODO again, the input is for debugging until settings are stored off
-  public GamePad(SavedControllerType type){
-    
+  public GamePad(ControllerType type) {
+    setType(type);
     Controller[] ca = ControllerEnvironment.getDefaultEnvironment().getControllers();
 
     //Find the controller. TODO this will change but great for now. Grab the first one
@@ -265,4 +258,7 @@ public class GamePad  extends PlayerControlBase{
     // TODO - How to tell if game pad is connected?
     return isConnected;
   }
+  
+  @Override
+  public void release() {}
 }

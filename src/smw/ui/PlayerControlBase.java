@@ -23,6 +23,12 @@ public abstract class PlayerControlBase{
 			index = i;
 		}
 	}
+	
+  public enum ControllerType {
+    NONE, KEYBOARD, SNES_MAC_MK, SNES_WIN_MK, LOGITECH_TIM, XBOX
+  }
+  
+  private ControllerType type;
   
 	/******************************************************
 	 * This method is used to initialize the button mapping.
@@ -108,4 +114,15 @@ public abstract class PlayerControlBase{
    * @return true = connected
    * */
   abstract public boolean isConnected();
+  
+  /** Returns controller type. */
+  public ControllerType getType() {
+    return type;
+  }
+  
+  protected void setType(ControllerType type) {
+    this.type = type;
+  }
+  
+  abstract public void release();
 }

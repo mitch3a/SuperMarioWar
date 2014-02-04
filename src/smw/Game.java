@@ -50,11 +50,16 @@ public class Game implements Runnable {
   	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];
   	this.gameFrame = new GameFrame(players, world);
+  	
   	// When the window is closed do any needed cleanup.
+  	// TODO - make sure we are cleaning up everything we need to and releasing native resources where applicable!
   	gameFrame.addWindowListener(new WindowAdapter() {
   	  @Override
   	  public void windowClosing(WindowEvent we) { 
   	    soundPlayer.shutDown();
+  	    for(Player p : players) {
+  	      p.physics.playerControl.release();
+  	    }
   	    System.exit(0);
   	  }
   	});
@@ -78,7 +83,7 @@ public class Game implements Runnable {
     // No Xbox controller, so check for other game pad.
     if (pc[0] == null) {
       try {
-        GamePad controller = new GamePad(GamePad.SavedControllerType.SNES_WIN_MK);
+        GamePad controller = new GamePad(GamePad.ControllerType.SNES_WIN_MK);
         if (controller.isConnected()) {
           pc[0] = controller;
         }

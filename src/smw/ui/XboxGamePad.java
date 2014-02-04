@@ -18,6 +18,7 @@ public class XboxGamePad extends PlayerControlBase {
   public boolean isConnected;
   
   public XboxGamePad(int player) {
+    setType(PlayerControlBase.ControllerType.XBOX);
     // Create the controller and verify connection.
     xboxController = new XboxController(Utilities.is64bit() ? "xboxcontroller64" : "xboxcontroller", player, 50, 50);
     isConnected = xboxController.isConnected();
@@ -171,4 +172,9 @@ public class XboxGamePad extends PlayerControlBase {
 
   @Override
   public void setRunButton() {}
+  
+  @Override
+  public void release() {
+    xboxController.release();
+  }
 }

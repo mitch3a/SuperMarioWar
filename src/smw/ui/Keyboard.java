@@ -129,5 +129,8 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   public boolean isConnected() {
     return true; // TODO - probably always have a keyboard connected?
   }
+
+  @Override
+  public void release() { }
 }
 
