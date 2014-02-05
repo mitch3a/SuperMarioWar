@@ -18,6 +18,8 @@ public class AnimatedBlock extends AnimatedDrawable{
   public static final int RED_NOTE_BLOCK = 17;
   public static final int BLUE_NOTE_BLOCK = 18;
   public static final int WHITE_THROW_BLOCK = 19;
+  
+  BufferedImage stoppedImg;
 
   /**
    * Constructs animated tile based on type.
@@ -82,6 +84,13 @@ public class AnimatedBlock extends AnimatedDrawable{
         images[i] = convertedImg.getSubimage(i * Tile.SIZE, yOffset * Tile.SIZE, Tile.SIZE, Tile.SIZE);
         animationTime_ms += updateRate_ms;
       }
+      
+      if (type == QUESTION_BLOCK) {
+        stoppedImg = convertedImg.getSubimage(0, Tile.SIZE, Tile.SIZE, Tile.SIZE);
+      } else {
+        stoppedImg = images[0];
+      }
+      
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -106,5 +115,10 @@ public class AnimatedBlock extends AnimatedDrawable{
         return true;
     }
     return false;
+  }
+  
+  @Override
+  public BufferedImage getImage() {
+    return (this.isRunning()) ? super.getImage() : stoppedImg;
   }
 }

@@ -30,25 +30,28 @@ public class Game implements Runnable {
     
     // TODO - setup world selector or something, for now pick what you want to test code.
     // ALSO ADD DESCRIPTION (good for testing ____)
-    String[] worlds = {"0smw.map", 
-                       "4matsy_Evening Fracas.map", 
-                       "NMcCoy_1-3.map", 
-                       "ym7_world1-2.map", 
-                       "two52_Up In The Hills.map", 
-                       "tubesteak_coolnights.map", //segment platform, spikes
-                       "Pikablu_Mushroom Kingdom.map",
-                       "MrMister_Azul Montana.map", 
-                       "GG_Angry angels.map", 
-                       "coolman13714_green greens.map", 
-                       "Link901_MileHigh Madness.map", 
-                       "Xijar_Boo is Back.map",
-                       "MrMister_Snow Top.map",
-                        "Xijar_1986.map", //ICE
-                        "eeliottheking_not so cave.map",
-                        "Peardian_Tower of the Sun.map"}; // has some weird ball thing that floats away when it shouldn't 
+    String[] worlds = {
+      "0smw.map", 
+      "4matsy_Evening Fracas.map", 
+      "NMcCoy_1-3.map", 
+      "ym7_world1-2.map", 
+      "two52_Up In The Hills.map", 
+      "tubesteak_coolnights.map", //segment platform, spikes
+      "Pikablu_Mushroom Kingdom.map",
+      "MrMister_Azul Montana.map", 
+      "GG_Angry angels.map", 
+      "coolman13714_green greens.map", 
+      "Link901_MileHigh Madness.map", 
+      "Xijar_Boo is Back.map",
+      "MrMister_Snow Top.map",
+      "Xijar_1986.map", //ICE
+      "eeliottheking_not so cave.map",
+      "Peardian_Tower of the Sun.map", // BUG - has some weird ball thing that floats away when it shouldn't
+      "sgraff_Buster_Beetle_s_Tower.map" // FEATURE - switches to turn on/off colored ! blocks
+    };   
     //world = new World(worlds[14]);
-
-    world = new World(); // TODO - Starts a random world (for now).
+    //world = new World(); // TODO - Starts a random world (for now).
+    world = new World("4matsy_Evening Fracas.map");
     
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world);

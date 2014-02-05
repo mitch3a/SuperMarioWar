@@ -57,21 +57,32 @@ public class World {
   SpawnArea[][] spawnAreas;  
   
   final boolean[][][] nospawn;
-  // This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing
-  final ArrayList<Tile>  frontTileList = new ArrayList<Tile>();
+  
+  /** This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing. */
+  final ArrayList<Tile> frontTileList = new ArrayList<Tile>();
   
   /** Animated tile list used for updating animations during world update. */
   private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
   
+  /** The music category ID as defined in the world file. */
   private int musicCategoryID;
   
+  /**
+   * Constructs the world based on a random map file.
+   */
   public World(){
     this(getRandomWorld());
   }
   
+  /**
+   * Constructs the world object based on the provided file name.
+   * @param worldName
+   */
   public World(String worldName){
     
-    System.out.println("Loading world: " + worldName);
+    if (Debug.LOG_WORLD_INFO) {
+      System.out.println("Loading world: " + worldName);
+    }
     
     MAP_WIDTH = GameFrame.res_width / Tile.SIZE;
     MAP_HEIGHT = GameFrame.res_height / Tile.SIZE;
@@ -82,12 +93,10 @@ public class World {
     
     try {
       WorldBuffer buffer = new WorldBuffer(worldName);
-
       int version = buffer.getVersion();
       
       // For now only support latest world files (1.8+)
       if (version >= 1800) {
-        
         for (int i = 0; i < autoFilter.length; i++) {
           autoFilter[i] = buffer.getAutoFilter();
         }
@@ -301,6 +310,10 @@ public class World {
     drawTilesToBackground();
   }
   
+  /**
+   * Loads switches.
+   * @param buffer
+   */
   void loadSwitches(WorldBuffer buffer) {
     //Read switch block state data
     int iNumSwitchBlockData = buffer.getInt();
@@ -313,8 +326,11 @@ public class World {
   }
 
   /**
-   * Load moving platforms
-   * This method expects the buffer to be at the hazards position
+   * Load moving platforms.
+   * This method expects the buffer to be at the hazards position.
+   * @param buffer
+   * @param version
+   * @param tileSheetMap
    */
   void loadPlatforms(WorldBuffer buffer, int version, Map<Integer, TileSheet> tileSheetMap){
     int numPlatforms = buffer.getInt();
@@ -354,6 +370,7 @@ public class World {
   /**
    * Load items (like carry-able spikes and springs)
    * This method expects the buffer to be at the hazards position
+   * @param buffer
    */
   void loadItems(WorldBuffer buffer) {
     
@@ -369,6 +386,7 @@ public class World {
   /**
    * Load hazards (like fireball strings, rotodiscs, pirhana plants).
    * This method expects the buffer to be at the hazards position
+   * @param buffer
    */
   void loadHazards(WorldBuffer buffer) {
     int numMapHazards = buffer.getInt();
@@ -402,7 +420,13 @@ public class World {
     }
   }
   
-  public int getCollisionX(Player player, int newX){
+  /**
+   * Performs collision handling for the X axis.
+   * @param player
+   * @param newX
+   * @return
+   */
+  public int getCollisionX(Player player, int newX) {
     //This is to test the bottom of the sprite
     int lowestY = player.y + Sprite.IMAGE_HEIGHT - 1;
     
@@ -493,7 +517,14 @@ public class World {
     return newX;
   }
   
-  public int getCollisionY(Player player, int newX, int newY){
+  /**
+   * Performs collision handling for the Y axis.
+   * @param player
+   * @param newX
+   * @param newY
+   * @return
+   */
+  public int getCollisionY(Player player, int newX, int newY) {
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
@@ -552,9 +583,34 @@ public class World {
         Block block1 = Game.world.getBlock(newX, newY);
         Block block2 = Game.world.getBlock(newX + Sprite.IMAGE_WIDTH - 1, newY);
         
-        if(block1 != null|| block2 != null){
+        // TODO consolidate
+        Tile tile1 = Game.world.getTile(newX, newY);
+        Tile tile2 = Game.world.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY);
+               
+        if (block1 != null || block2 != null) {
           newY += Tile.SIZE - newY % Tile.SIZE;
           player.physics.collideWithCeiling();
+          
+          // TODO - RPG - trying to do block interactions
+          // This is terrible, we should consolidate / clean up a lot of this code,
+          // but I'm just trying to get it to work quick for now!
+          
+          // TODO - maybe add collide to tile then let it figure out what to do based on what type it is rather than adding more stuff to the world?
+          if (tile1.block != null) {
+            System.out.println(block1.type);
+            // If type is question block
+            if (block1.type == 1) {
+              // Stop the animation
+              tile1.animatedBlock.stop();
+            }
+            // TODO
+            // If type is a flip block, make it flip, and allow player to pass through it
+            // If type is note block, bump the player and move the block -- actually this has to happen on both X and Y axis
+            // If type is switch - hide colored exclaimation blocks for that colored switch!
+          }
+          if (tile2.block != null) { 
+            System.out.println(block2.type);
+          }
         }
       }
     }
@@ -611,6 +667,10 @@ public class World {
     return newY;
   }
   
+  /**
+   * Gets a random world name from the map resource directory.
+   * @return Random world name.
+   */
   public static String getRandomWorld(){
     ArrayList<String> result = new ArrayList<String>();
     File folder = new File(World.class.getClassLoader().getResource("map/").getFile());
@@ -620,9 +680,13 @@ public class World {
     }
     
     return result.get((int)(Math.random()*result.size()));    
-}
+  }
 
-  
+  /**
+   * Draws font to provided graphics object.
+   * @param g 2D graphics object.
+   * @param io Image observer.
+   */
   public void drawFront(Graphics2D g, ImageObserver io){
     if(frontTileList.size() > 0){
       for(Tile tile : frontTileList){
@@ -631,6 +695,11 @@ public class World {
     }
   }
 
+  /**
+   * Draws the world to the provided graphics object.
+   * @param g 2D graphics object.
+   * @param io Image observer.
+   */
   public void draw(Graphics2D g, ImageObserver io) {
     // Draw the background (has background tiles in it)
     g.drawImage(backgroundImg, 0, 0, io);
@@ -646,7 +715,10 @@ public class World {
     }
   }
 
-
+  /**
+   * Updates the world based on the time delta.
+   * @param timeDelta_ms Game time passed in ms. 
+   */
   public void update(int timeDelta_ms) {
     if(movingPlatforms != null && movingPlatforms.length > 0){
       for(MovingPlatform platform : movingPlatforms){
@@ -660,28 +732,38 @@ public class World {
   }
 
 /**
- * This method will return the block at the given pixel
- * 
+ * This method will return the block at the given pixel coordinates.
  * @param x pixel on the x axis
  * @param y pixel on the y axis
  * @return the block at the given pixel. If there is no block, it will return null
  */
 public Block getBlock(int x, int y) {
-//Everything above the screen is non solid
-  if(y < 0){
+  Tile t = getTile(x, y);
+  return (t != null) ? t.block : null;
+}
+
+/**
+ * This method will return the block at the given pixel coordinates.
+ * @param x pixel on the x axis
+ * @param y pixel on the y axis
+ * @return the block at the given pixel. If there is no tile, it will return null
+ */
+public Tile getTile(int x, int y) {
+  // Everything above the screen is non solid
+  if (y < 0) {
     return null;
   }
   
-  //We want the right value within the window (no negatives either!)
-  x =  ( GameFrame.res_width  + x) % GameFrame.res_width; 
+  // We want the right value within the window (no negatives either!)
+  x = (GameFrame.res_width + x) % GameFrame.res_width; 
   
-  //For Y, we only want to wrap the bottom to the top
+  // For Y, we only want to wrap the bottom to the top.
   y = y % GameFrame.res_height; 
   
   int column = x / Tile.SIZE;
   int row = y / Tile.SIZE;
   
-  return backgroundTiles[column][row][0].block;
+  return backgroundTiles[column][row][0];
 }
 
 

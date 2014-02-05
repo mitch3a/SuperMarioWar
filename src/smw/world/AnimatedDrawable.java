@@ -17,12 +17,30 @@ public class AnimatedDrawable {
   private int elapsedTime_ms;
   /** The time that has elapsed for the current frame. */
   private int frameTime_ms;
+  /** Indicates if the animation is running. */
+  private boolean running = true;
   
+  public boolean isRunning() {
+    return running;
+  }
+
+  public void stop() {
+    this.running = false;
+  }
+  
+  public void start() {
+    this.running = true;
+  }
+
   /**
    * Updates the animation based on elapsed time.
    * @param timeDif_ms time delta 
    */
   public void update(int timeDif_ms) {
+    if (!running) {
+      return;
+    }
+    
     elapsedTime_ms += timeDif_ms;
     frameTime_ms += timeDif_ms;
     

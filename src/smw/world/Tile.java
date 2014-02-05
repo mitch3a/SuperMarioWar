@@ -149,7 +149,7 @@ public class Tile {
    */
   public void draw(Graphics2D graphics, ImageObserver observer) {
     // Check for each special tile type otherwise draw the regular image.
-    if (animatedTile != null) {
+    if (animatedTile != null && animatedTile.isRunning()) {
       graphics.drawImage(animatedTile.getImage(), x, y, observer);
     } else if (animatedBlock != null) {
       graphics.drawImage(animatedBlock.getImage(), x, y, observer);
