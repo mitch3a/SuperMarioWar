@@ -44,8 +44,8 @@ public class Game implements Runnable {
                        "Xijar_Boo is Back.map"};
     
     //Starts a random world
-    //world = new World(worlds[1]);
-    world = new World();
+    world = new World(worlds[3]);
+    //world = new World();
     
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....

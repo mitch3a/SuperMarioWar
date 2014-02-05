@@ -1,7 +1,10 @@
 package smw.ui.screen;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferStrategy;
@@ -34,8 +37,10 @@ public class GameFrame extends JFrame{
 	World world;
 	
 	public GameFrame(Player[] players, World world){
-		add(new GamePanel());
-    setTitle(Title);
+	  add(new GamePanel());
+	  
+		//This will get rid of all borders but locks up the keyboard/mouse so you are hosed setUndecorated(true);
+		setTitle(Title);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setSize((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight));
     setLocationRelativeTo(null);
@@ -69,8 +74,9 @@ public class GameFrame extends JFrame{
       g.fillRect(0, 0, getWidth(), getHeight());
       
       Graphics2D g2d = (Graphics2D)g;
+      Insets insets = getInsets();
+      g2d.translate(insets.left, bumpFactor + insets.top);
       g2d.scale(scaleFactorWidth, scaleFactorHeight);
-      g2d.translate(0, bumpFactor);
       world.draw(g2d, this);
       if (players != null && players.length > 0) {
         for(Player p : players){
@@ -90,8 +96,10 @@ public class GameFrame extends JFrame{
   }
   
   void resetScalingFactors(){
-    scaleFactorWidth = (double)(getWidth())/res_width;
-    scaleFactorHeight = (double)(getHeight())/res_height;
+    //TODO mk this is temporary. there has to be a better way of doing this
+    Insets insets = getInsets();
+    scaleFactorWidth =  ((double)(getWidth() - insets.left - insets.right))/res_width;
+    scaleFactorHeight = ((double)(getHeight()- insets.top  - insets.bottom))/res_height;
   }
   
   /********************************************
