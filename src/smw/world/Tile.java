@@ -28,7 +28,9 @@ public class Tile {
     public static final int SIZE = 20;
   }
   
-  AnimatedTile animation;
+  //TODO mk can you have both of these? Maybe just have one with parent class
+  AnimatedBlock animatedBlock;
+  AnimatedTile animatedTile;
   Block block;
   public int tileSheetRow;
   public int tileSheetColumn;
@@ -39,7 +41,7 @@ public class Tile {
   public TileSheet tileSheet;
   
   public static final int SIZE = 32;
-  
+
   /** Converts the provided integer value to the corresponding tile type enum literal. */
   public static TileType getType(int type) {
     TileType result = TileType.NONSOLID;
@@ -104,9 +106,21 @@ public class Tile {
 
   final int x, y;
   
-  public Tile(int x, int y){
+  public Tile(int x, int y, int id, int row, int col){
     this.x = x;
     this.y = y;
+    this.ID = id;
+    this.tileSheetColumn = col;
+    this.tileSheetRow = row;
+    
+    //TODO mk this probably isn't the best way to do this but it'll work for now unitl
+    //     we sort out how we organize all these tiles, etc
+    if(id == -1){
+      animatedTile = new AnimatedTile(row, col);
+    }
+    else{
+      animatedTile = null;
+    }
     
     block = null;
     specialTile = null;
@@ -131,15 +145,17 @@ public class Tile {
   // TODO - not sure if a tile should draw itself...
   public void draw(Graphics2D graphics, ImageObserver observer){
     
-    if (animation != null) {
-      graphics.drawImage(animation.getImage(), x, y, observer);
-      return;
+    if (animatedBlock != null) {
+      graphics.drawImage(animatedBlock.getImage(), x, y, observer);
+    }
+    
+    if (animatedTile != null) {
+      graphics.drawImage(animatedTile.getImage(), x, y, observer);
     }
     
     if(block != null){
       BlockSheet bs = BlockSheet.getInstance();
       graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
-      return;
     }
     
     BufferedImage image = getImage();
@@ -153,12 +169,16 @@ public class Tile {
   }
   
   public void setAnimation(int type) {
-    this.animation = new AnimatedTile(type);
+    this.animatedBlock = new AnimatedBlock(type);
   }
 
   public void update(int timeDif_ms) {
-    if (animation != null) {
-      animation.update(timeDif_ms);
+    if (animatedBlock != null) {
+      animatedBlock.update(timeDif_ms);
+    }
+    
+    if (animatedTile != null) {
+      animatedTile.update(timeDif_ms);
     }
   }
   

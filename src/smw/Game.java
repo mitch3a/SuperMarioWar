@@ -35,18 +35,20 @@ public class Game implements Runnable {
                        "NMcCoy_1-3.map", 
                        "ym7_world1-2.map", 
                        "two52_Up In The Hills.map", 
-                       "tubesteak_coolnights.map", 
+                       "tubesteak_coolnights.map", //segment platform, spikes
                        "Pikablu_Mushroom Kingdom.map",
                        "MrMister_Azul Montana.map", 
                        "GG_Angry angels.map", 
                        "coolman13714_green greens.map", 
                        "Link901_MileHigh Madness.map", 
                        "Xijar_Boo is Back.map",
-                       "MrMister_Snow Top.map"}; //ICE
+                       "MrMister_Snow Top.map",
+                        "Xijar_1986.map", //ICE
+                        "eeliottheking_not so cave.map"}; 
     
     //Starts a random world
-    world = new World(worlds[12]);
-    //world = new World();
+    //world = new World(worlds[14]);
+    world = new World();
     
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
   	//     but the keyboard needs the gameframe to register as a listener. hm....

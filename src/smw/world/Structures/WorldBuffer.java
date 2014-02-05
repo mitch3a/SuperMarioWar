@@ -147,13 +147,13 @@ public class WorldBuffer {
   }
   
   public Tile getTile(int x, int y){
-    Tile tile = new Tile(x*Tile.SIZE, y*Tile.SIZE);
-    
-    tile.ID              = (int)(buffer.get());
-    tile.tileSheetColumn = (int)(buffer.get());
-    tile.tileSheetRow    = (int)(buffer.get());
 
-    return tile;
+    
+    int id              = (int)(buffer.get());
+    int tileSheetColumn = (int)(buffer.get());
+    int tileSheetRow    = (int)(buffer.get());
+
+    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn);
   }
  
   public int getVersion() {

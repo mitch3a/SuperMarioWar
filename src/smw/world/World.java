@@ -125,8 +125,12 @@ public class World {
               backgroundTiles[w][h][k] = tile;
               
               //TODO mk check which layer is in front of people. Also might want a dif list for each layer
-              if(tile.ID >= 0 && k > 1){
+              if(tile.ID >= -1 && k > 1){
                 frontTileList.add(tile);
+              }
+              
+              if(tile.ID == -1){
+                animatedTileList.add(tile);
               }
             }
             
@@ -134,7 +138,7 @@ public class World {
             boolean hidden = buffer.getBoolean();
             
             if(Tile.isValidType(type)){
-              if (AnimatedTile.isTypeAnimated(type)) {
+              if (AnimatedBlock.isTypeAnimated(type)) {
                 backgroundTiles[w][h][0].setAnimation(type);
                 animatedTileList.add(backgroundTiles[w][h][0]);
               }
