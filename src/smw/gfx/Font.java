@@ -192,11 +192,43 @@ public class Font {
 		return null;
 	}
 	
-  public Image getLarge(char character){
+  public BufferedImage getLarge(char character){
   	return getChar(largeFont, character);
   }  
   
-  public Image getSmall(char character){
+  public BufferedImage getSmall(char character){
   	return getChar(smallFont, character);
+  }
+
+  //TODO this is AWFUL but only called once at the beginning so not bad for now
+  public BufferedImage getLargeText(String string) {
+    int width = 0;
+    int height;
+    
+    char[] charArray = string.toCharArray();
+    
+    for(char c : charArray){
+      width += getLarge(c).getWidth();
+    }
+    
+    height = getLarge(charArray[0]).getHeight();
+    
+    BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    
+    width = 0;
+    height = 0;
+    
+    for(char c : charArray){
+      BufferedImage charImage = getLarge(c);
+      for(int w = 0 ; w < charImage.getWidth() ; ++w){
+        for(int h = 0 ; h < charImage.getHeight() ; ++h){
+          result.setRGB(w + width, h, charImage.getRGB(w, h));
+        }
+      }
+      
+      width  += charImage.getWidth();
+    }
+    
+    return result;
   }
 }

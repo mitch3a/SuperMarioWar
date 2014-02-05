@@ -195,7 +195,7 @@ public class Player extends Rectangle{
 	    return result.get((int)(Math.random()*result.size()));	  
 	}
 	
-	public void landed() {
+	public void land3ed() {
 	  sprite.clearAction();
 	}
 

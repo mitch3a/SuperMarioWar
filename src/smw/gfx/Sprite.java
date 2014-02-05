@@ -33,7 +33,7 @@ public class Sprite {
   public static final int IMAGE_WIDTH = 32;
   public static final int IMAGE_HEIGHT = 32;
   public static final int NUM_IMAGES = 6;
-  public static final long TIME_TO_HALF_STEP_NS = 80000000; // .08 seconds
+  public static final long TIME_TO_HALF_STEP_MS = 60;
   
   //Keep a copy of each direction to avoid image flipping processing
   BufferedImage[][] sprites = new BufferedImage[Direction.NUM_DIRECTIONS][NUM_IMAGES];
@@ -41,10 +41,10 @@ public class Sprite {
   Action    currentAction    = Action.NONE;
   Direction currentDirection  = Direction.RIGHT;
  
-  long timeActionChange_ns = 0;
+  long timeActionChange_ms;
 
   public Sprite() {
-
+    timeActionChange_ms = System.currentTimeMillis();
   }
 
   public void init(String image, ColorScheme colorScheme){
@@ -116,10 +116,11 @@ public class Sprite {
       currentAction = Action.NONE;
     } 
     else {
-      long currentTime_ns = System.nanoTime();
-      if (currentTime_ns - timeActionChange_ns > TIME_TO_HALF_STEP_NS) {
+      long currentTime_ms = System.currentTimeMillis();
+      if (currentTime_ms - timeActionChange_ms > TIME_TO_HALF_STEP_MS) {
         currentAction = nextRunningAction;
-        timeActionChange_ns = currentTime_ns;
+        timeActionChange_ms = currentTime_ms;
+        
       }
     }
   }
@@ -127,7 +128,7 @@ public class Sprite {
   private void checkForRunning(float dx) {
     if (dx != 0) {
       currentAction = Action.RUNNING_STEP;
-      timeActionChange_ns = System.nanoTime();
+      timeActionChange_ms = System.currentTimeMillis();
     }
   }
 

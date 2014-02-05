@@ -41,10 +41,11 @@ public class Game implements Runnable {
                        "GG_Angry angels.map", 
                        "coolman13714_green greens.map", 
                        "Link901_MileHigh Madness.map", 
-                       "Xijar_Boo is Back.map"};
+                       "Xijar_Boo is Back.map",
+                       "MrMister_Snow Top.map"}; //ICE
     
     //Starts a random world
-    world = new World(worlds[3]);
+    world = new World(worlds[12]);
     //world = new World();
     
   	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them

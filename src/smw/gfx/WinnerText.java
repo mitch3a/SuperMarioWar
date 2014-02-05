@@ -1,6 +1,7 @@
 package smw.gfx;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 import smw.ui.screen.GameFrame;
@@ -11,6 +12,7 @@ public class WinnerText {
   private static final float WINNER_TEXT_STARTING_VELOCITY = -10;
   public static final long TIME_BETWEEN_WINNERS_MS = 300;
   public static final String winningString = "Winner!";
+  public static final BufferedImage winnerImage = Font.getInstance().getLargeText(winningString);
   float y;
   final int x;
   float velocityY;
@@ -22,7 +24,7 @@ public class WinnerText {
   }
   
   public boolean shouldBeRemoved(){
-    return y > 480;//TODO should NOT be hardcoded
+    return y > GameFrame.res_height;//TODO should NOT be hardcoded
   }
   
   public void update(){
@@ -31,7 +33,6 @@ public class WinnerText {
   }
   
   public void draw(Graphics2D graphics, ImageObserver observer){
-    Font font = Font.getInstance();
-    font.drawLargeText(graphics, winningString, x, (int) y, observer);
+    graphics.drawImage(winnerImage, x, (int) y, observer);
   }
 }

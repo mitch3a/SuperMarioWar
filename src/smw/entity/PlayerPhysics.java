@@ -78,7 +78,7 @@ public class PlayerPhysics {
 	float velocityX,     velocityY, remainderX, remainderY;
 	float jumpingAccelerationX, accelerationY;
 	
-	private Player player;
+	//private Player player;
 	public PlayerControlBase playerControl;
 	boolean isJumping;
 	boolean isFalling;
@@ -103,7 +103,6 @@ public class PlayerPhysics {
 		canJump = true;
 		currentVelocityDirection = Direction.RIGHT;
 		this.playerControl = playerControl;
-		this.player = player;
 	}
 	
 	//////////////////////////////////////////////////////
@@ -285,7 +284,6 @@ public class PlayerPhysics {
   public void collideWithFloor(){
   	jumpingAccelerationX = 0;
     velocityY = 0;
-    player.landed();
     isJumping = false;
     //Don't want to allow a new jumping until we get a NEW
     //jump command
