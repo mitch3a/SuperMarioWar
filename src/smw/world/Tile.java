@@ -154,8 +154,10 @@ public class Tile {
     } else if (animatedBlock != null) {
       graphics.drawImage(animatedBlock.getImage(), x, y, observer);
     } else if (block != null) {
-      BlockSheet bs = BlockSheet.getInstance();
-      graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
+      if (!block.hidden) {
+        BlockSheet bs = BlockSheet.getInstance();
+        graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
+      }
     } else {
       BufferedImage image = getImage();
       if (image != null) {
@@ -179,6 +181,13 @@ public class Tile {
     
     if (animatedTile != null) {
       animatedTile.update(timeDif_ms);
+    }
+  }
+
+  public void toggleHidden() {
+    // TODO Auto-generated method stub
+    if (this.block != null) {
+      block.hidden = !block.hidden;
     }
   }
   

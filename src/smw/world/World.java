@@ -64,6 +64,8 @@ public class World {
   /** Animated tile list used for updating animations during world update. */
   private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
   
+  private ArrayList<Tile> redBlockList = new ArrayList<Tile>();
+  
   /** The music category ID as defined in the world file. */
   private int musicCategoryID;
   
@@ -145,6 +147,11 @@ public class World {
             
             int type = (int)(buffer.getByte());
             boolean hidden = buffer.getBoolean();
+            
+            // TODO - RPG I think this is red blocks?
+            if (type == 11) {
+              redBlockList.add(backgroundTiles[w][h][0]);
+            }
             
             if(Tile.isValidType(type)){
               if (AnimatedBlock.isTypeAnimated(type)) {
@@ -461,16 +468,18 @@ public class World {
     if (player.x != newX) {
       if (player.x > newX) {
         //Moving left
-        if(getBlock(newX, player.y) != null ||
-           getBlock(newX, lowestY ) != null){
+        Block block1 = getBlock(newX, player.y);
+        Block block2 = getBlock(newX, lowestY); 
+        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
           newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
           player.physics.collideWithWall();
         }
       }
       else{
         //Moving right
-        if(getBlock(newX + Sprite.IMAGE_WIDTH, player.y) != null ||
-           getBlock(newX + Sprite.IMAGE_WIDTH, lowestY ) != null){
+        Block block1 = getBlock(newX + Sprite.IMAGE_WIDTH, player.y);
+        Block block2 = getBlock(newX + Sprite.IMAGE_WIDTH, lowestY);
+        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
           newX = newX - (newX % Tile.SIZE);
           player.physics.collideWithWall();
         }
@@ -572,7 +581,7 @@ public class World {
         Block block1 = Game.world.getBlock(newX, newY + Sprite.IMAGE_HEIGHT);
         Block block2 = Game.world.getBlock(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
         
-        if(block1 != null|| block2 != null) {
+        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
           //TODO something with the blocks
           newY = newY - (newY % Tile.SIZE); // Just above the floor.
           player.physics.collideWithFloor();
@@ -587,7 +596,7 @@ public class World {
         Tile tile1 = Game.world.getTile(newX, newY);
         Tile tile2 = Game.world.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY);
                
-        if (block1 != null || block2 != null) {
+        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
           newY += Tile.SIZE - newY % Tile.SIZE;
           player.physics.collideWithCeiling();
           
@@ -597,19 +606,27 @@ public class World {
           
           // TODO - maybe add collide to tile then let it figure out what to do based on what type it is rather than adding more stuff to the world?
           if (tile1.block != null) {
-            System.out.println(block1.type);
-            // If type is question block
-            if (block1.type == 1) {
-              // Stop the animation
+            System.out.println(block1.type); // TODO - debug            
+            switch (block1.type) {
+            case 1:
+              // Question Block - Stop the animation
               tile1.animatedBlock.stop();
-            }
+              break;
+            case 7:
+              // TODO - I think this is red switch
+              for (Tile t : redBlockList) {
+                t.toggleHidden();
+              }
+              break;
+              
+            } 
             // TODO
             // If type is a flip block, make it flip, and allow player to pass through it
             // If type is note block, bump the player and move the block -- actually this has to happen on both X and Y axis
             // If type is switch - hide colored exclaimation blocks for that colored switch!
           }
           if (tile2.block != null) { 
-            System.out.println(block2.type);
+            System.out.println(block2.type); // TODO - debug -- also do we need to handle block2 ever? Not sure how real game behaves
           }
         }
       }
