@@ -64,7 +64,10 @@ public class World {
   /** Animated tile list used for updating animations during world update. */
   private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
   
-  private ArrayList<Tile> redBlockList = new ArrayList<Tile>();
+  private ArrayList<Tile> redBlocks = new ArrayList<Tile>();
+  private ArrayList<Tile> greenBlocks = new ArrayList<Tile>();
+  private ArrayList<Tile> yellowBlocks = new ArrayList<Tile>();
+  private ArrayList<Tile> blueBlocks = new ArrayList<Tile>();
   
   /** The music category ID as defined in the world file. */
   private int musicCategoryID;
@@ -148,9 +151,20 @@ public class World {
             int type = (int)(buffer.getByte());
             boolean hidden = buffer.getBoolean();
             
-            // TODO - RPG I think this is red blocks?
-            if (type == 11) {
-              redBlockList.add(backgroundTiles[w][h][0]);
+            // Populate exclaimation point block lists.
+            switch (type) {
+            case 11:
+              redBlocks.add(backgroundTiles[w][h][0]);
+              break;
+            case 12:
+              greenBlocks.add(backgroundTiles[w][h][0]);
+              break;
+            case 13:
+              yellowBlocks.add(backgroundTiles[w][h][0]);
+              break;
+            case 14:
+              blueBlocks.add(backgroundTiles[w][h][0]);
+              break;
             }
             
             if(Tile.isValidType(type)){
@@ -612,18 +626,29 @@ public class World {
               // Question Block - Stop the animation
               tile1.animatedBlock.stop();
               break;
-            case 7:
-              block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation too!
-              // TODO - I think this is red switch only?
-              for (Tile t : redBlockList) {
+            case 7: // Red switch
+              block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation and sound too!
+              for (Tile t : redBlocks) {
                 t.toggleHidden();
               }
               break;
-            case 8: // TODO - Green switch -- consider making redBlockList, generic list and index by color so we can reuse the same code for each case
+            case 8: // Green switch
+              block1.switchOn = !block1.switchOn;
+              for (Tile t : greenBlocks) {
+                t.toggleHidden();
+              }
               break;
-            case 9: // TODO - Yellow switch
+            case 9: // Yellow switch
+              block1.switchOn = !block1.switchOn;
+              for (Tile t : yellowBlocks) {
+                t.toggleHidden();
+              }
               break;
-            case 10: // TODO - Blue switch
+            case 10: // Blue switch
+              block1.switchOn = !block1.switchOn;
+              for (Tile t : blueBlocks) {
+                t.toggleHidden();
+              }
               break;
             } 
             // TODO

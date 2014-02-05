@@ -51,7 +51,7 @@ public class Game implements Runnable {
     };   
     //world = new World(worlds[14]);
     //world = new World(); // TODO - Starts a random world (for now).
-    world = new World("4matsy_Evening Fracas.map");
+    world = new World("mm64_as seen on tv.map");
     
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world);
