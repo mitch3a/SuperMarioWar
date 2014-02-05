@@ -154,10 +154,8 @@ public class Tile {
     } else if (animatedBlock != null) {
       graphics.drawImage(animatedBlock.getImage(), x, y, observer);
     } else if (block != null) {
-      if (!block.hidden) {
         BlockSheet bs = BlockSheet.getInstance();
-        graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
-      }
+        graphics.drawImage(bs.getTileImg(block), x, y, observer);
     } else {
       BufferedImage image = getImage();
       if (image != null) {

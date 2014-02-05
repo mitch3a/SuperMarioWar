@@ -613,12 +613,18 @@ public class World {
               tile1.animatedBlock.stop();
               break;
             case 7:
-              // TODO - I think this is red switch
+              block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation too!
+              // TODO - I think this is red switch only?
               for (Tile t : redBlockList) {
                 t.toggleHidden();
               }
               break;
-              
+            case 8: // TODO - Green switch -- consider making redBlockList, generic list and index by color so we can reuse the same code for each case
+              break;
+            case 9: // TODO - Yellow switch
+              break;
+            case 10: // TODO - Blue switch
+              break;
             } 
             // TODO
             // If type is a flip block, make it flip, and allow player to pass through it
