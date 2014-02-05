@@ -627,24 +627,28 @@ public class World {
               tile1.animatedBlock.stop();
               break;
             case 7: // Red switch
+              Game.soundPlayer.playSfx("switchpress.wav");
               block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation and sound too!
               for (Tile t : redBlocks) {
                 t.toggleHidden();
               }
               break;
             case 8: // Green switch
+              Game.soundPlayer.playSfx("switchpress.wav");
               block1.switchOn = !block1.switchOn;
               for (Tile t : greenBlocks) {
                 t.toggleHidden();
               }
               break;
             case 9: // Yellow switch
+              Game.soundPlayer.playSfx("switchpress.wav");
               block1.switchOn = !block1.switchOn;
               for (Tile t : yellowBlocks) {
                 t.toggleHidden();
               }
               break;
             case 10: // Blue switch
+              Game.soundPlayer.playSfx("switchpress.wav");
               block1.switchOn = !block1.switchOn;
               for (Tile t : blueBlocks) {
                 t.toggleHidden();

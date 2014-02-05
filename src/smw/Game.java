@@ -69,11 +69,17 @@ public class Game implements Runnable {
   	  }
   	});
 
-  	if (Debug.MUTE) {
-  	  soundPlayer.setMasterVolume(0);
-    }
   	soundPlayer.setTrackList(world.getMusicCategoryID());
   	soundPlayer.playBGM();
+  	if (Debug.MUTE) {
+      soundPlayer.setMasterVolume(0);
+    }
+    if (Debug.MUTE_MUSIC) {
+      soundPlayer.setBGMVolume(0);
+    }
+    if (Debug.MUTE_SFX) {
+      soundPlayer.setSFXVolume(0);
+    }
   	
     PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
 

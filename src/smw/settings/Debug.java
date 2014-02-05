@@ -9,7 +9,9 @@ public class Debug {
   public static final boolean LOG_FRAMERATE = false;
   public static final boolean LOG_WORLD_INFO = true;
   public static final boolean LOG_TILE_TYPE_INFO = false;
-  public static final boolean MUTE = true;
+  public static final boolean MUTE = false;
+  public static final boolean MUTE_SFX = false;
+  public static final boolean MUTE_MUSIC = true;
   
   /*
    * Prints the map name, version, and tilesets
