@@ -44,16 +44,14 @@ public class Game implements Runnable {
                        "Xijar_Boo is Back.map",
                        "MrMister_Snow Top.map",
                         "Xijar_1986.map", //ICE
-                        "eeliottheking_not so cave.map"}; 
-    
-    //Starts a random world
+                        "eeliottheking_not so cave.map",
+                        "Peardian_Tower of the Sun.map"}; // has some weird ball thing that floats away when it shouldn't 
     //world = new World(worlds[14]);
-    world = new World();
+
+    world = new World(); // TODO - Starts a random world (for now).
     
-  	//TODO mk this logic weirds me out. GameFrame needs to have the players in order to draw them
-  	//     but the keyboard needs the gameframe to register as a listener. hm....
     players = new Player[numPlayers];
-  	this.gameFrame = new GameFrame(players, world);
+  	gameFrame = new GameFrame(players, world);
   	
   	// When the window is closed do any needed cleanup.
   	// TODO - make sure we are cleaning up everything we need to and releasing native resources where applicable!
@@ -99,7 +97,7 @@ public class Game implements Runnable {
         pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
       }
     }
-    if(numPlayers == 2){
+    if(numPlayers == 2) {
       pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_G);
     }
 
@@ -137,7 +135,7 @@ public class Game implements Runnable {
       final long currentTime_ns = System.nanoTime();
       neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
       lastUpdateTime_ns = currentTime_ns;
-      boolean needRender = false; // TODO - render as much as possible for now, may want to adjust this later...
+      boolean needRender = false; // TODO - need to figure out how we want our loop to work
 
       while (neededUpdates >= 1.0) {
       	//updateGame();
@@ -153,7 +151,7 @@ public class Game implements Runnable {
       }
       
       if (needRender) {
-        updateGame(timePerRender_ns); // TODO - need a time delta for our update methods...
+        updateGame(timePerRender_ns);
         render();
         frames++;
       }
@@ -169,14 +167,11 @@ public class Game implements Runnable {
   }
 
   private void render() {
-    // TODO - this will probably change to render individual stuff
+    // TODO - our drawing performance sucks this will need to change at some point
     gameFrame.repaint();
   }
 
-  private void updateGame(double timeDelta_ns) {
-    // Poll player update (movement, etc.)
-    // Way later poll level update and all that other junk...
-  	
+  private void updateGame(double timeDelta_ns) { 	
   	// Mitch - I set this up to just do the collision and if no collision, then allow the player in.
   	// not only is this unfair (ie if 2 players are running at each other, player 1 will see the spot
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
@@ -185,12 +180,12 @@ public class Game implements Runnable {
     
     world.update((int)(timeDelta_ns) / 1000000);
     
-  	for(Player p : players){
+  	for (Player p : players) {
   		p.poll();
   		p.prepareToMove();
   	}
   	
-  	for(Player p : players){
+  	for (Player p : players) {
   		p.move(players);
   	}
   }

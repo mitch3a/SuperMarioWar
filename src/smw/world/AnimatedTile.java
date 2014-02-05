@@ -21,7 +21,7 @@ public class AnimatedTile extends AnimatedDrawable{
       if(masterImage == null){
         BufferedImage bigImg = ImageIO.read(this.getClass().getClassLoader().getResource("map/tilesheets/tile_animation.png"));
         // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
-        BufferedImage masterImage = new BufferedImage(bigImg.getWidth(), bigImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+        masterImage = new BufferedImage(bigImg.getWidth(), bigImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         masterImage.getGraphics().drawImage(bigImg, 0, 0, null);
         // Setup alpha channel
         Palette p = Palette.getInstance();

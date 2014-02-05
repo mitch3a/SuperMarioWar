@@ -142,25 +142,25 @@ public class Tile {
     return (specialTile != null) ? specialTile.type : TileType.NONSOLID;
   }
   
-  // TODO - not sure if a tile should draw itself...
-  public void draw(Graphics2D graphics, ImageObserver observer){
-    
-    if (animatedBlock != null) {
-      graphics.drawImage(animatedBlock.getImage(), x, y, observer);
-    }
-    
+  /**
+   * Draws the tile image to the provided graphics object.
+   * @param graphics
+   * @param observer
+   */
+  public void draw(Graphics2D graphics, ImageObserver observer) {
+    // Check for each special tile type otherwise draw the regular image.
     if (animatedTile != null) {
       graphics.drawImage(animatedTile.getImage(), x, y, observer);
-    }
-    
-    if(block != null){
+    } else if (animatedBlock != null) {
+      graphics.drawImage(animatedBlock.getImage(), x, y, observer);
+    } else if (block != null) {
       BlockSheet bs = BlockSheet.getInstance();
       graphics.drawImage(bs.getTileImg(block.type), x, y, observer);
-    }
-    
-    BufferedImage image = getImage();
-    if (image != null) {
-      graphics.drawImage(image, x, y, observer);
+    } else {
+      BufferedImage image = getImage();
+      if (image != null) {
+        graphics.drawImage(image, x, y, observer);
+      }
     }
   }
 
