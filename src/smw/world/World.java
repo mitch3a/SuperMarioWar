@@ -1,17 +1,23 @@
 package smw.world;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import smw.Collidable;
+import smw.Drawable;
 import smw.Game;
+import smw.Updatable;
 import smw.entity.Player;
 import smw.gfx.Sprite;
 import smw.settings.Debug;
@@ -28,7 +34,6 @@ import smw.world.Structures.SpawnArea;
 import smw.world.Structures.Warp;
 import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
-import smw.world.Tile.TileType;
 
 public class World {
     
@@ -48,27 +53,33 @@ public class World {
   boolean[]  autoFilter = new boolean[12];
   
   //TODO this should not be visible
-  public MovingPlatform[]   movingPlatforms;
+
   RaceGoalLocation[] raceGoalLocations;
   FlagBaseLocation[] flagBaseLocation;
   
-  Tile[][][]   backgroundTiles;
+  final Collidable[][] collidables;
+  
+  /////////////////////////////////////////////////////////////////////
+  //Purposefully kept these apart as they should only be used to draw
+  //and should only be called in order
+  final List<Drawable> drawablesLayer0 = new LinkedList<Drawable>();
+  final List<Drawable> drawablesLayer1 = new LinkedList<Drawable>();
+  final List<Drawable> drawablesLayer2 = new LinkedList<Drawable>();
+  final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
+  
+  final List<Updatable> updatables  = new LinkedList<Updatable>();
+  final List<MovingPlatform> movingPlatforms = new LinkedList<MovingPlatform>();
+  //TODO this is temp... until there is a smarter way to update blocks on a change
+  final static public List<Block> blocks = new LinkedList<Block>();
+
   Warp[][]   warps;
   SpawnArea[][] spawnAreas;  
   
   final boolean[][][] nospawn;
-  
-  /** This is so that when drawing, you don't need to go through all tiles to find the ones worth drawing. */
-  final ArrayList<Tile> frontTileList = new ArrayList<Tile>();
-  
+
   /** Animated tile list used for updating animations during world update. */
   private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
-  
-  private ArrayList<Tile> redBlocks = new ArrayList<Tile>();
-  private ArrayList<Tile> greenBlocks = new ArrayList<Tile>();
-  private ArrayList<Tile> yellowBlocks = new ArrayList<Tile>();
-  private ArrayList<Tile> blueBlocks = new ArrayList<Tile>();
-  
+
   /** The music category ID as defined in the world file. */
   private int musicCategoryID;
   
@@ -92,7 +103,11 @@ public class World {
     MAP_WIDTH = GameFrame.res_width / Tile.SIZE;
     MAP_HEIGHT = GameFrame.res_height / Tile.SIZE;
     
-    backgroundTiles = new Tile[MAP_WIDTH][MAP_HEIGHT][MAX_LAYERS];
+    collidables = new Collidable[MAP_WIDTH][MAP_HEIGHT];
+    //This is because we read in some collidables (ie blocks) before reading in
+    //the "top" TileType. These collidables must be added after.
+    Set<Collidable> collidablesForAfter = new HashSet<Collidable>();
+    
     warps = new Warp[MAP_WIDTH][MAP_HEIGHT];
     nospawn = new boolean[NUM_SPAWN_AREA_TYPES][MAP_WIDTH][MAP_HEIGHT];
     
@@ -133,51 +148,83 @@ public class World {
           for (int w = 0; w < MAP_WIDTH; w++) {
             //Right now we are only using one layer, but still need to read them
             for (int k = 0; k < MAX_LAYERS; k++) {
-              Tile tile = buffer.getTile(w, h);
-           
-              tile.tileSheet = tileSheetMap.get(tile.ID);
-              backgroundTiles[w][h][k] = tile;
-              
-              //TODO mk check which layer is in front of people. Also might want a dif list for each layer
-              if(tile.ID >= -1 && k > 1){
-                frontTileList.add(tile);
+              Tile tile = buffer.getTile(w, h, tileSheetMap);
+
+              if(tile.hasImage()){
+                addToLayer(tile, k);
               }
-              
-              if(tile.ID == -1){
-                animatedTileList.add(tile);
+                 
+              //TODO this should be handled better
+              AnimatedTile t = tile.getAnimatedTile();
+              if(t != null){
+                drawablesLayer3.add(t); //TODO is this the correct layer?
+                updatables.add(t);
               }
             }
             
             int type = (int)(buffer.getByte());
             boolean hidden = buffer.getBoolean();
             
-            // Populate exclaimation point block lists.
-            switch (type) {
-            case 11:
-              redBlocks.add(backgroundTiles[w][h][0]);
-              break;
-            case 12:
-              greenBlocks.add(backgroundTiles[w][h][0]);
-              break;
-            case 13:
-              yellowBlocks.add(backgroundTiles[w][h][0]);
-              break;
-            case 14:
-              blueBlocks.add(backgroundTiles[w][h][0]);
-              break;
-            }
-            
             if(Tile.isValidType(type)){
               if (AnimatedBlock.isTypeAnimated(type)) {
-                backgroundTiles[w][h][0].setAnimation(type);
-                animatedTileList.add(backgroundTiles[w][h][0]);
+                AnimatedBlock animatedBlock = new AnimatedBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                drawablesLayer3.add(animatedBlock); //TODO is this the correct layer?
+                updatables.add(animatedBlock);
+                collidablesForAfter.add(animatedBlock);
               }
-              backgroundTiles[w][h][0].setBlock(type, hidden);
-              frontTileList.add(backgroundTiles[w][h][0]);
+              else{
+                Block block = new Block(type, w*Tile.SIZE, h*Tile.SIZE);
+                drawablesLayer3.add(block); //TODO is this the correct layer?
+                collidablesForAfter.add(block);
+                blocks.add(block);
+                //TODO I feel like this should be updatable? updatables.add(animatedBlock);
+              }
             }
           }
         }
+        /*
+        / TODO - RPG - trying to do block interactions
+        // This is terrible, we should consolidate / clean up a lot of this code,
+        // but I'm just trying to get it to work quick for now!
         
+        // TODO - maybe add collide to tile then let it figure out what to do based on what type it is rather than adding more stuff to the world?
+        if (tile1.block != null) {
+          System.out.println(block1.type); // TODO - debug            
+          switch (block1.type) {
+          case 1:
+            // Question Block - Stop the animation
+            tile1.animatedBlock.stop();
+            break;
+          case 7: // Red switch
+            Game.soundPlayer.playSfx("switchpress.wav");
+            block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation and sound too!
+            for (Tile t : redBlocks) {
+              t.toggleHidden();
+            }
+            break;
+          case 8: // Green switch
+            Game.soundPlayer.playSfx("switchpress.wav");
+            block1.switchOn = !block1.switchOn;
+            for (Tile t : greenBlocks) {
+              t.toggleHidden();
+            }
+            break;
+          case 9: // Yellow switch
+            Game.soundPlayer.playSfx("switchpress.wav");
+            block1.switchOn = !block1.switchOn;
+            for (Tile t : yellowBlocks) {
+              t.toggleHidden();
+            }
+            break;
+          case 10: // Blue switch
+            Game.soundPlayer.playSfx("switchpress.wav");
+            block1.switchOn = !block1.switchOn;
+            for (Tile t : blueBlocks) {
+              t.toggleHidden();
+            }
+            break;
+          } 
+        */
         ///////////////////////////////////////////////////////////////
         // Load background image
         ///////////////////////////////////////////////////////////////
@@ -196,6 +243,8 @@ public class World {
         for(int switchIndex = 0 ; switchIndex < switches.length ; ++switchIndex){
           switches[switchIndex] = buffer.getInt();
         }
+        
+        drawTilesToBackground();
         
         ///////////////////////////////////////////////////////////////
         //Load world objects
@@ -227,14 +276,17 @@ public class World {
         ///////////////////////////////////////////////////////////////
         for(int h = 0; h < MAP_HEIGHT; ++h) {
           for(int w = 0; w < MAP_WIDTH; ++w) {    
-            
-            backgroundTiles[w][h][0].specialTile = buffer.getSpecialTile();  
+            collidables[w][h] = buffer.getCollidable(w*Tile.SIZE, h*Tile.SIZE);  
             warps[w][h] = buffer.getWarp();
 
             for(short sType = 0; sType < NUM_SPAWN_AREA_TYPES; sType++){
               nospawn[sType][w][h] = buffer.getBoolean();
             }
           }
+        }
+        
+        for(Collidable collidable : collidablesForAfter){
+          collidables[collidable.column][collidable.row] = collidable; 
         }
         
         loadSwitches(buffer);
@@ -296,9 +348,10 @@ public class World {
           short row    = (short) buffer.getByte();
 
           short numSettings = (short) buffer.getByte();
-          backgroundTiles[column][row][0].settings = new short[numSettings];
+          //TODO what do these dobackgroundTiles[column][row][0].settings = new short[numSettings];
           for(short setting = 0; setting < numSettings; setting++){
-            backgroundTiles[column][row][0].settings[setting] = (short) buffer.getByte();
+            //TODO what do these dobackgroundTiles[column][row][0].settings[setting] = 
+                short waste = (short) buffer.getByte();
           }
         }
 
@@ -324,11 +377,8 @@ public class World {
       // Close out file.
       buffer.close();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
-    drawTilesToBackground();
   }
   
   /**
@@ -342,7 +392,8 @@ public class World {
         short iCol = (short) buffer.getByte();
         short iRow = (short) buffer.getByte();
 
-        backgroundTiles[iCol][iRow][0].settings[0] = (short) buffer.getByte();
+        //TODO what does this dobackgroundTiles[iCol][iRow][0].settings[0] = 
+            short waste = (short) buffer.getByte();
     }
   }
 
@@ -355,22 +406,21 @@ public class World {
    */
   void loadPlatforms(WorldBuffer buffer, int version, Map<Integer, TileSheet> tileSheetMap){
     int numPlatforms = buffer.getInt();
-    movingPlatforms = new MovingPlatform[numPlatforms];
-    
+
     for(int platformIndex = 0 ; platformIndex < numPlatforms ; ++platformIndex){
       int width = buffer.getInt();
       int height = buffer.getInt();
       
       Tile[][] platformTiles = new Tile[width][height];
+      Collidable[][] collidables = new Collidable[width][height];
       
       //////////////////////////////////////////////
       //Setup the tiles and their types
       for(int w = 0 ; w < width  ; ++w){
         for(int h = 0  ; h < height ; ++h){          
           if(version >= 1800){
-            Tile tempTile = buffer.getTile(w, h);
-            tempTile.specialTile = buffer.getSpecialTile();
-            tempTile.tileSheet = tileSheetMap.get(tempTile.ID);
+            Tile tempTile = buffer.getTile(w, h, tileSheetMap);
+            collidables[w][h] = buffer.getCollidable(w*Tile.SIZE, h*Tile.SIZE);
             platformTiles[w][h] = tempTile;
           }
           else{
@@ -384,9 +434,26 @@ public class World {
       
       Path path = buffer.getPath(pathType, width, height);
 
-      movingPlatforms[platformIndex] = new MovingPlatform(platformTiles, path);
+      MovingPlatform temp = new MovingPlatform(platformTiles, collidables, path);
+      movingPlatforms.add(temp);
+      
+      addToLayer(temp, drawLayer);
+      updatables.add(temp);
     }
   }  
+  
+  void addToLayer(Drawable drawable, int layer){
+    switch(layer){
+      case 0: drawablesLayer0.add(drawable);
+              break;
+      case 1: drawablesLayer1.add(drawable);
+              break;
+      case 2: drawablesLayer2.add(drawable);
+              break;
+      case 3: drawablesLayer3.add(drawable);
+              break;
+    }
+  }
   
   /**
    * Load items (like carry-able spikes and springs)
@@ -419,25 +486,18 @@ public class World {
   }
 
   void drawTilesToBackground(){
-    //TODO can be optimized.
-    for(int i = 0 ; i < backgroundTiles.length ; ++i ){
-      for(int j = 0 ; j < backgroundTiles[0].length ; ++j){
-        for(int k = 0; k < backgroundTiles[0][0].length ; ++k){
-          Tile tile = backgroundTiles[i][j][k];
-          BufferedImage image = tile.getImage();
-          
-          if(image != null){
-            for(int w = 0 ; w < image.getWidth() ; ++w){
-              for(int h = 0 ; h < image.getHeight() ; ++h){
-                int color = image.getRGB(w, h);
-                if(color != Color.TRANSLUCENT){
-                  backgroundImg.setRGB(w + tile.x, h + tile.y, color);
-                }
-              }
-            }
-          }
-        }
-      }
+    Graphics2D g = backgroundImg.createGraphics();
+    
+    for(Drawable drawable : drawablesLayer0){
+      drawable.draw(g, null);
+    }
+    
+    for(Drawable drawable : drawablesLayer1){
+      drawable.draw(g, null);
+    }
+    
+    for(Drawable drawable : drawablesLayer2){
+      drawable.draw(g, null);
     }
   }
   
@@ -447,95 +507,56 @@ public class World {
    * @param newX
    * @return
    */
+  //TODO mk for this and Y, replace Moving platforms with "movingCollidables". This will include fireballs, etc. For these we can't just index by position, we need to check all
   public int getCollisionX(Player player, int newX) {
     //This is to test the bottom of the sprite
-    int lowestY = player.y + Sprite.IMAGE_HEIGHT - 1;
+    int lowestYTile = ((player.y + Sprite.IMAGE_HEIGHT - 1) % GameFrame.res_height)/Tile.SIZE;
     
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
-    if(Game.world.movingPlatforms != null && Game.world.movingPlatforms.length > 0){
-      for(smw.world.MovingPlatform.MovingPlatform platform : Game.world.movingPlatforms){
-        //Moving down. We want to check every block that is under the sprite. This is from the first 
-        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-        Tile.TileType tile1 = platform.getTile(newX, player.y + Sprite.IMAGE_HEIGHT+ 1);
-        Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, player.y + Sprite.IMAGE_HEIGHT + 1);
-        
-        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
-          //TODO this might need some work once others are introduced, but making sure 
-          //     it isn't a situation where the player is pressing down to sink through
-          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
-             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-             (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-            
-          }
-          else{ 
-            newX += platform.getXChange();
-          }
+    for(MovingPlatform platform : movingPlatforms){
+      //Moving down. We want to check every block that is under the sprite. This is from the first 
+      //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+      Tile.TileType tile1 = platform.getTile(newX, player.y + Sprite.IMAGE_HEIGHT+ 1);
+      Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, player.y + Sprite.IMAGE_HEIGHT + 1);
+      
+      if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+        //TODO this might need some work once others are introduced, but making sure 
+        //     it isn't a situation where the player is pressing down to sink through
+        if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+           (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+           (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+          
+        }
+        else{ 
+          newX += platform.getXChange();
         }
       }
     }
-
+    
     ///////////////////////////////////////////////////////////////
     // Objects
     ///////////////////////////////////////////////////////////////
-    if (player.x != newX) {
-      if (player.x > newX) {
-        //Moving left
-        Block block1 = getBlock(newX, player.y);
-        Block block2 = getBlock(newX, lowestY); 
-        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
-          newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
-          player.physics.collideWithWall();
-        }
-      }
-      else{
-        //Moving right
-        Block block1 = getBlock(newX + Sprite.IMAGE_WIDTH, player.y);
-        Block block2 = getBlock(newX + Sprite.IMAGE_WIDTH, lowestY);
-        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
-          newX = newX - (newX % Tile.SIZE);
-          player.physics.collideWithWall();
-        }
-      }
-    } 
+    //TODO this is not perfect... really just want to still check the bottom part of y
+    newX = (newX + GameFrame.res_width) % GameFrame.res_width;
     
-    ///////////////////////////////////////////////////////////////
-    // Regular tiles
-    ///////////////////////////////////////////////////////////////
-    if (player.x != newX) {      
-      if (player.x > newX) {
-        //Moving left
-      	Tile.TileType type1 = getTileType(newX, player.y);
-      	Tile.TileType type2 = getTileType(newX, lowestY);
-      	
-        if(type1 == Tile.TileType.SOLID ||
-           type2 == Tile.TileType.SOLID){
-          newX = newX +  Tile.SIZE - (newX % Tile.SIZE);
-          player.physics.collideWithWall();
-        }
-        else if(type1 == Tile.TileType.SUPER_DEATH || type1 == Tile.TileType.SUPER_DEATH_LEFT ||
-                type2 == Tile.TileType.SUPER_DEATH || type2 == Tile.TileType.SUPER_DEATH_LEFT){
-        	player.superDeath();
-        }
+    if (player.x != newX && player.y >= 0){
+      if (player.x < newX) {  
+        //Moving Right so check the right side of the sprite with the left side of the object
+        int xCollision = ((newX + Sprite.IMAGE_HEIGHT)% GameFrame.res_width)/Tile.SIZE;
+        
+        newX = collidables[xCollision][player.y/Tile.SIZE].collideWithLeft(player, newX);
+        newX = collidables[xCollision][lowestYTile       ].collideWithLeft(player, newX);
       }
       else{
-        //Moving right
-        Tile.TileType type1 = getTileType(newX + Sprite.IMAGE_WIDTH, player.y);
-        Tile.TileType type2 = getTileType(newX + Sprite.IMAGE_WIDTH, lowestY);
+        //Moving Left so check the left side of the sprite with the right side of the object
+        int xCollision = newX/Tile.SIZE;
         
-        if(type1 == Tile.TileType.SOLID ||
-           type2 == Tile.TileType.SOLID){
-          newX = newX - (newX % Tile.SIZE);
-          player.physics.collideWithWall();
-        }
-        else if(type1 == Tile.TileType.SUPER_DEATH || type1 == Tile.TileType.SUPER_DEATH_LEFT ||
-                type2 == Tile.TileType.SUPER_DEATH || type2 == Tile.TileType.SUPER_DEATH_LEFT){
-        	player.superDeath();
-        }
+        newX = collidables[xCollision][player.y/Tile.SIZE].collideWithRight(player, newX);
+        newX = collidables[xCollision][lowestYTile       ].collideWithRight(player, newX);
       }
-    } 
-
+    }
     
     return newX;
   }
@@ -551,127 +572,49 @@ public class World {
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
-    if(Game.world.movingPlatforms != null && Game.world.movingPlatforms.length > 0){
-      for(smw.world.MovingPlatform.MovingPlatform platform : Game.world.movingPlatforms){
-        //TODO will ever be equals?
-        if (player.y < newY) {
-          //Moving down. We want to check every block that is under the sprite. This is from the first 
-          //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-          Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT + 16);
-          Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 16);
-          
-          if( tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
-            //TODO this might need some work once others are introduced, but making sure 
-            //     it isn't a situation where the player is pressing down to sink through
-            if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
-               (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-               (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-              player.physics.startFalling();
-            }
-            else{ 
-              newY = platform.getY() - Sprite.IMAGE_HEIGHT;
-              player.physics.collideWithFloor();
-            }
-          }
-        }
-        else {
-          //Moving up
-          if(platform.getTile(newX, newY) == Tile.TileType.SOLID ||
-             platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
-            newY += Tile.SIZE - newY % Tile.SIZE;
-            player.physics.collideWithCeiling();
-          }
-        }
-      }
-    }
-    
-    ///////////////////////////////////////////////////////////////
-    // Objects
-    ///////////////////////////////////////////////////////////////
-    if (player.y != newY){
-      if (player.y < newY) {        
+    for(MovingPlatform platform : movingPlatforms){
+      //TODO will ever be equals?
+      if (player.y < newY) {
         //Moving down. We want to check every block that is under the sprite. This is from the first 
         //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-        Block block1 = Game.world.getBlock(newX, newY + Sprite.IMAGE_HEIGHT);
-        Block block2 = Game.world.getBlock(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
+        Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT + 16);
+        Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 16);
         
-        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
-          //TODO something with the blocks
-          newY = newY - (newY % Tile.SIZE); // Just above the floor.
-          player.physics.collideWithFloor();
+        if( tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+          //TODO this might need some work once others are introduced, but making sure 
+          //     it isn't a situation where the player is pressing down to sink through
+          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+             (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+            player.physics.startFalling();
+          }
+          else{ 
+            newY = platform.getY() - Sprite.IMAGE_HEIGHT;
+            player.physics.collideWithFloor();
+          }
         }
       }
       else {
         //Moving up
-        Block block1 = Game.world.getBlock(newX, newY);
-        Block block2 = Game.world.getBlock(newX + Sprite.IMAGE_WIDTH - 1, newY);
-        
-        // TODO consolidate
-        Tile tile1 = Game.world.getTile(newX, newY);
-        Tile tile2 = Game.world.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY);
-               
-        if ((block1 != null && !block1.hidden) || (block2 != null && !block2.hidden)) {
+        if(platform.getTile(newX, newY) == Tile.TileType.SOLID ||
+           platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
           newY += Tile.SIZE - newY % Tile.SIZE;
           player.physics.collideWithCeiling();
-          
-          // TODO - RPG - trying to do block interactions
-          // This is terrible, we should consolidate / clean up a lot of this code,
-          // but I'm just trying to get it to work quick for now!
-          
-          // TODO - maybe add collide to tile then let it figure out what to do based on what type it is rather than adding more stuff to the world?
-          if (tile1.block != null) {
-            System.out.println(block1.type); // TODO - debug            
-            switch (block1.type) {
-            case 1:
-              // Question Block - Stop the animation
-              tile1.animatedBlock.stop();
-              break;
-            case 7: // Red switch
-              Game.soundPlayer.playSfx("switchpress.wav");
-              block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation and sound too!
-              for (Tile t : redBlocks) {
-                t.toggleHidden();
-              }
-              break;
-            case 8: // Green switch
-              Game.soundPlayer.playSfx("switchpress.wav");
-              block1.switchOn = !block1.switchOn;
-              for (Tile t : greenBlocks) {
-                t.toggleHidden();
-              }
-              break;
-            case 9: // Yellow switch
-              Game.soundPlayer.playSfx("switchpress.wav");
-              block1.switchOn = !block1.switchOn;
-              for (Tile t : yellowBlocks) {
-                t.toggleHidden();
-              }
-              break;
-            case 10: // Blue switch
-              Game.soundPlayer.playSfx("switchpress.wav");
-              block1.switchOn = !block1.switchOn;
-              for (Tile t : blueBlocks) {
-                t.toggleHidden();
-              }
-              break;
-            } 
-            // TODO
-            // If type is a flip block, make it flip, and allow player to pass through it
-            // If type is note block, bump the player and move the block -- actually this has to happen on both X and Y axis
-            // If type is switch - hide colored exclaimation blocks for that colored switch!
-          }
-          if (tile2.block != null) { 
-            System.out.println(block2.type); // TODO - debug -- also do we need to handle block2 ever? Not sure how real game behaves
-          }
         }
       }
     }
     
+    int rightmostXTile = ((newX + Sprite.IMAGE_WIDTH - 1)%GameFrame.res_width)/Tile.SIZE;
+    
     ///////////////////////////////////////////////////////////////
-    // Regular tiles
+    // Objects
     ///////////////////////////////////////////////////////////////
-    if (player.y != newY){
-      if (player.y < newY) {
+    newY = newY % GameFrame.res_height;
+    
+    //TODO this >= 0 thing is to let us go above the screen... it needs a little more work tho
+    if (player.y != newY && newY >= 0){
+      if (player.y < newY) {        
+        //TODO mk don't think this is where we want this
         // If the player pushed the down key check to see if it was released.
         if (player.pushedDown) {
           player.pushedDown = player.physics.playerControl.isDown();
@@ -681,38 +624,18 @@ public class World {
           player.isFallingThrough = false;
         }
         
-        //Moving down. We want to check every block that is under the sprite. This is from the first 
-        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-        Tile.TileType tile1 = Game.world.getTileType(newX, newY + Sprite.IMAGE_HEIGHT);
-        Tile.TileType tile2 = Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT);
+        //Moving down so check the bottom of the sprite with the top of the object
+        int yCollision = ((newY + Sprite.IMAGE_HEIGHT)% GameFrame.res_height)/Tile.SIZE;
         
-        if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID) {
-          // Handle case where player is allowed to sink through a tile.
-          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
-             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-             (!player.pushedDown && player.physics.playerControl.isDown())) {
-            // If this is the first time we reached this then the player pushed down the first time to fall through.
-            // Set the falling through flags and height.
-            if (!player.isFallingThrough) {
-              player.isFallingThrough = true;
-              player.fallHeight = player.y;
-              player.pushedDown = true;
-            }
-          }
-          else if (!player.isFallingThrough && (newY < (GameFrame.res_height - Tile.SIZE))){
-            // Not falling through a solid on top tile AND not falling through bottom map tile--OK to collide with floor.
-            newY = newY - (newY % Tile.SIZE); // Just above the floor.
-            player.physics.collideWithFloor();
-          }
-        }
+        newY = collidables[newX/Tile.SIZE][yCollision].collideWithTop(player, newY);
+        newY = collidables[rightmostXTile][yCollision].collideWithTop(player, newY);
       }
-      else {
-        //Moving up
-        if(Game.world.getTileType(newX, newY) == Tile.TileType.SOLID ||
-           Game.world.getTileType(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
-          newY += Tile.SIZE - newY % Tile.SIZE;
-          player.physics.collideWithCeiling();
-        }
+      else{
+        //Moving up so check the top of the sprite with the bottom of the object
+        int yCollision = newY/Tile.SIZE;
+        
+        newY = collidables[newX/Tile.SIZE][yCollision].collideWithBottom(player, newY);
+        newY = collidables[rightmostXTile][yCollision].collideWithBottom(player, newY);
       }
     }
         
@@ -734,36 +657,28 @@ public class World {
     return result.get((int)(Math.random()*result.size()));    
   }
 
-  /**
-   * Draws font to provided graphics object.
-   * @param g 2D graphics object.
-   * @param io Image observer.
-   */
-  public void drawFront(Graphics2D g, ImageObserver io){
-    if(frontTileList.size() > 0){
-      for(Tile tile : frontTileList){
-        tile.draw(g, io);
-      }
+  //TODO probably just get ride of layer0 list because they are on the background.
+  //     ALSO can we do the same with layer1? AND layer2? depends on whats stuck
+  //     to background always
+  public void drawLayer0(Graphics2D g, ImageObserver io){
+    g.drawImage(backgroundImg, 0, 0, io);
+  }
+  
+  public void drawLayer1(Graphics2D g, ImageObserver io){
+    for(Drawable drawables : drawablesLayer1){
+      drawables.draw(g, io);
     }
   }
-
-  /**
-   * Draws the world to the provided graphics object.
-   * @param g 2D graphics object.
-   * @param io Image observer.
-   */
-  public void draw(Graphics2D g, ImageObserver io) {
-    // Draw the background (has background tiles in it)
-    g.drawImage(backgroundImg, 0, 0, io);
-    
-    for (Tile tile : animatedTileList) {
-      tile.draw(g, io);
+  
+  public void drawLayer2(Graphics2D g, ImageObserver io){
+    for(Drawable drawables : drawablesLayer2){
+      drawables.draw(g, io);
     }
-    
-    if(movingPlatforms != null && movingPlatforms.length > 0){
-      for(MovingPlatform platform : movingPlatforms){
-        platform.draw(g, io);
-      }
+  }
+  
+  public void drawLayer3(Graphics2D g, ImageObserver io){
+    for(Drawable drawables : drawablesLayer3){
+      drawables.draw(g, io);
     }
   }
 
@@ -771,77 +686,10 @@ public class World {
    * Updates the world based on the time delta.
    * @param timeDelta_ms Game time passed in ms. 
    */
-  public void update(int timeDelta_ms) {
-    if(movingPlatforms != null && movingPlatforms.length > 0){
-      for(MovingPlatform platform : movingPlatforms){
-        platform.move(1);
-      }
+  public void update(float timeDelta_ms) {
+    for (Updatable updatable : updatables) {
+      updatable.update(timeDelta_ms);
     }
-    
-    for (Tile tile : animatedTileList) {
-      tile.update(timeDelta_ms);
-    }
-  }
-
-/**
- * This method will return the block at the given pixel coordinates.
- * @param x pixel on the x axis
- * @param y pixel on the y axis
- * @return the block at the given pixel. If there is no block, it will return null
- */
-public Block getBlock(int x, int y) {
-  Tile t = getTile(x, y);
-  return (t != null) ? t.block : null;
-}
-
-/**
- * This method will return the block at the given pixel coordinates.
- * @param x pixel on the x axis
- * @param y pixel on the y axis
- * @return the block at the given pixel. If there is no tile, it will return null
- */
-public Tile getTile(int x, int y) {
-  // Everything above the screen is non solid
-  if (y < 0) {
-    return null;
-  }
-  
-  // We want the right value within the window (no negatives either!)
-  x = (GameFrame.res_width + x) % GameFrame.res_width; 
-  
-  // For Y, we only want to wrap the bottom to the top.
-  y = y % GameFrame.res_height; 
-  
-  int column = x / Tile.SIZE;
-  int row = y / Tile.SIZE;
-  
-  return backgroundTiles[column][row][0];
-}
-
-
-/**
- * This method will return the tile type at the given pixel
- * 
- * @param x pixel on the x axis
- * @param y pixel on the y axis
- * @return the tile type at the given pixel
- */
-public TileType getTileType(int x, int y) {
-    //Everything above the screen is non solid
-    if(y < 0){
-      return TileType.NONSOLID;
-    }
-    
-    //We want the right value within the window (no negatives either!)
-    x =  ( GameFrame.res_width  + x) % GameFrame.res_width; 
-    
-    //For Y, we only want to wrap the bottom to the top
-    y = y % GameFrame.res_height; 
-    
-    int column = x / Tile.SIZE;
-    int row = y / Tile.SIZE;
-
-    return backgroundTiles[column][row][0].getTileType();
   }
 
   /** Returns the music category ID. */

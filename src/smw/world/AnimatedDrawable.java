@@ -1,8 +1,16 @@
 package smw.world;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
-public class AnimatedDrawable {
+import smw.Collidable;
+import smw.Drawable;
+import smw.Updatable;
+import smw.world.Tile.TileType;
+
+//TODO I don't like this being collidable... need to fix this
+public class AnimatedDrawable extends Collidable implements Updatable, Drawable{
   /** Images used for each frame of animation. */
   protected BufferedImage[] images;
   /** Current image index in the animation. */
@@ -20,6 +28,16 @@ public class AnimatedDrawable {
   /** Indicates if the animation is running. */
   private boolean running = true;
   
+  //TODO consider moving these to a parent class
+  private int x, y;
+  
+  public AnimatedDrawable(int x, int y){
+    super((short)1, x, y);
+    
+    this.x = x;
+    this.y = y;
+  }
+  
   public boolean isRunning() {
     return running;
   }
@@ -36,7 +54,7 @@ public class AnimatedDrawable {
    * Updates the animation based on elapsed time.
    * @param timeDif_ms time delta 
    */
-  public void update(int timeDif_ms) {
+  public void update(float timeDif_ms) {
     if (!running) {
       return;
     }
@@ -56,11 +74,12 @@ public class AnimatedDrawable {
     }
   }
 
-  /**
-   * Returns the current image of the animation.
-   * @return current image
-   */
-  public BufferedImage getImage() {
+  @Override
+  public void draw(Graphics2D g, ImageObserver io) {
+    g.drawImage(images[currentImg], x, y, io);
+  }
+  
+  public BufferedImage getImage(){
     return images[currentImg];
   }
 }

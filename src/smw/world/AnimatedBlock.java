@@ -25,7 +25,9 @@ public class AnimatedBlock extends AnimatedDrawable{
    * Constructs animated tile based on type.
    * @param type Block type defined by map.
    */
-  public AnimatedBlock(int type) {
+  public AnimatedBlock(int type, int x, int y) {
+    super(x, y);
+    
     // TODO - eventually support all animated tile types Not sure how this giant tile sheet fits into the picture (\res\map\tilesheets\tile_animation.png)
     String image = "powerupblock.png";
     int yOffset = 0;
@@ -115,10 +117,5 @@ public class AnimatedBlock extends AnimatedDrawable{
         return true;
     }
     return false;
-  }
-  
-  @Override
-  public BufferedImage getImage() {
-    return (this.isRunning()) ? super.getImage() : stoppedImg;
   }
 }

@@ -5,8 +5,11 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Map;
 
+import smw.Collidable;
 import smw.world.Tile;
+import smw.world.TileSheet;
 import smw.world.MovingPlatform.EllipticalPath;
 import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;
@@ -46,6 +49,11 @@ public class WorldBuffer {
   
   public char getChar(){
     return (char)buffer.get();
+  }
+  
+  public Collidable getCollidable(int x, int y) {
+    short type =  getShort();
+    return new Collidable(type, x, y);
   }
   
   public DrawArea getDrawArea(){
@@ -127,11 +135,6 @@ public class WorldBuffer {
 
     return spawnArea;
   }
-
-  public SpecialTile getSpecialTile() {
-    short type =  getShort();
-    return new SpecialTile(type);
-  }
   
   public String getString() {
     final int length = getInt();
@@ -145,15 +148,14 @@ public class WorldBuffer {
     
     return stringBuilder.toString();
   }
-  
-  public Tile getTile(int x, int y){
 
-    
+  public Tile getTile(int x, int y, Map<Integer, TileSheet> tileSheetMap){
+   
     int id              = (int)(buffer.get());
     int tileSheetColumn = (int)(buffer.get());
     int tileSheetRow    = (int)(buffer.get());
 
-    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn);
+    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn, tileSheetMap.get(id));
   }
  
   public int getVersion() {

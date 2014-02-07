@@ -49,7 +49,7 @@ public class Game implements Runnable {
       "Peardian_Tower of the Sun.map", // BUG - has some weird ball thing that floats away when it shouldn't
       "sgraff_Buster_Beetle_s_Tower.map" // FEATURE - switches to turn on/off colored ! blocks
     };   
-    //world = new World(worlds[14]);
+    //world = new World(worlds[16]);
     //world = new World(); // TODO - Starts a random world (for now).
     world = new World("mm64_as seen on tv.map");
     
@@ -186,15 +186,15 @@ public class Game implements Runnable {
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
-    
-    world.update((int)(timeDelta_ns) / 1000000);
+    float timeDelta_ms = (int)(timeDelta_ns) / 1000000;
+    world.update(timeDelta_ms);
     
   	for (Player p : players) {
   		p.poll();
-  		p.prepareToMove();
   	}
   	
   	for (Player p : players) {
+  	  p.update(timeDelta_ms);
   		p.move(players);
   	}
   }

@@ -3,20 +3,21 @@ package smw.world.MovingPlatform;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 
+import smw.Collidable;
+import smw.Drawable;
+import smw.Updatable;
 import smw.world.Tile;
 import smw.world.Tile.TileType;
 
-public class MovingPlatform {
+public class MovingPlatform implements Drawable, Updatable{
   Path path;
   Tile[][] tiles;
+  Collidable[][] collidables; //TODO really don't like this
   
-  public MovingPlatform(Tile[][] tiles, Path path){
+  public MovingPlatform(Tile[][] tiles, Collidable[][] collidables, Path path){
     this.path = path;
     this.tiles = tiles;
-  }
-  
-  public void move(float timeDif){
-    path.move(timeDif);
+    this.collidables = collidables;
   }
  
   public int getX(){
@@ -37,7 +38,7 @@ public class MovingPlatform {
      for(int j = 0 ; j < tiles[i].length ; ++j){
        Tile tile = tiles[i][j];
        //Sometimes there is a gap in the middle
-       if(tile.ID >= 0){
+       if(tile.hasImage()){
          graphics.drawImage(tile.getImage(), x, y, observer);
        }
        y += Tile.SIZE;
@@ -45,6 +46,13 @@ public class MovingPlatform {
      
      x += Tile.SIZE;
     }
+    /* TODO mk want something like this but would need to pass the x, y of path down somehow
+    for(int i = 0 ; i < tiles.length ; ++i){
+      for(int j = 0 ; j < tiles[i].length ; ++j){
+        tiles[i][j].draw(graphics, observer);
+      }
+    }
+    */
   }
 
   public TileType getTile(int x, int y) {
@@ -56,7 +64,7 @@ public class MovingPlatform {
     
     if(indexX >= 0 && indexX < tiles.length){
       if(indexY >= 0 && indexY < tiles[indexX].length){
-        return tiles[indexX][indexY].specialTile.type;
+        return collidables[indexX][indexY].type;
       }
     }
     
@@ -65,5 +73,11 @@ public class MovingPlatform {
 
   public int getXChange() {
     return path.getXChange();
+  }
+
+  @Override
+  public void update(float timeDif_ms) {
+    timeDif_ms = 1.0f;//TODO
+    path.move(timeDif_ms);
   }
 }

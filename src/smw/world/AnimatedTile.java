@@ -12,7 +12,9 @@ public class AnimatedTile extends AnimatedDrawable{
   static BufferedImage masterImage = null; //TODO not crazy about how this is done but quick/efficient
 
   /*** column is in sets of four (so the index 8th tile would be columnOfFour index 2) ***/
-  public AnimatedTile(int row, int columnOfFour){
+  public AnimatedTile(int row, int columnOfFour, int x, int y){
+    super(x, y);
+    
     //TODO mk stole from Animated Block
     frameRate = 4; // TODO - not sure how this should be set or if it's the same for all block animations
     updateRate_ms = 1000 / frameRate;
@@ -32,16 +34,20 @@ public class AnimatedTile extends AnimatedDrawable{
       // Number of images in the animation assuming our file is laid out horizontally
       images = new BufferedImage[ANIMATED_TILE_STATES];
       
-      int x = ANIMATED_TILE_STATES*columnOfFour*Tile.SIZE;
-      int y = row*Tile.SIZE;
+      int xStart = ANIMATED_TILE_STATES*columnOfFour*Tile.SIZE;
+      int yStart = row*Tile.SIZE;
       
       for (int i = 0; i < ANIMATED_TILE_STATES; ++i ) {
-        images[i] = masterImage.getSubimage(x , y, Tile.SIZE, Tile.SIZE);
+        images[i] = masterImage.getSubimage(xStart , yStart, Tile.SIZE, Tile.SIZE);
         animationTime_ms += updateRate_ms;
-        x += Tile.SIZE;
+        xStart += Tile.SIZE;
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  
+  public boolean hasImage(){
+    return true;
   }
 }

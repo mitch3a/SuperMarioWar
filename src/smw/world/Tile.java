@@ -4,21 +4,20 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
+import smw.Collidable;
+import smw.Drawable;
+import smw.entity.Player;
 import smw.world.Structures.Block;
 import smw.world.Structures.SpecialTile;
 
-public class Tile {
-  /* TODO - Each tile has an image the is drawn for it
-   * Tiles make up the level (map)
-   * They indicate whether or not the player can pass through them
-   * There could be many different types:
-   * Pass - player can pass
-   * NoPass - player cannot pass (solid blocks)
-   * Damage - hurt or kill the player (spikes, etc.)
-   * Water - kicks in swimming physics / animation
-   * Interactive - Question Blocks, Teleporters, etc.
-   */
-  
+/* 
+ * Each tile has an image the is drawn for it
+ * Tiles make up the world. They are purely for 
+ * drawing.
+ */
+public class Tile implements Drawable {
+
+  //TODO all this TileType stuff should move. It really isn't applicable
   /** Tile types specified by the original map files. */
   public static enum TileType {
     NONSOLID, SOLID, SOLID_ON_TOP, ICE, DEATH, DEATH_ON_TOP, DEATH_ON_BOTTOM, DEATH_ON_LEFT, DEATH_ON_RIGHT,
@@ -27,20 +26,6 @@ public class Tile {
     
     public static final int SIZE = 20;
   }
-  
-  //TODO mk can you have both of these? Maybe just have one with parent class
-  AnimatedBlock animatedBlock;
-  AnimatedTile animatedTile;
-  Block block;
-  public int tileSheetRow;
-  public int tileSheetColumn;
-  public int ID;//TODO make sure we use this for something
-  public SpecialTile specialTile;//TODO make sure we use this (see moving platforms) and it shouldnt be public
-  short[] settings = new short[1];//TODO figure out what this is for
-  
-  public TileSheet tileSheet;
-  
-  public static final int SIZE = 32;
 
   /** Converts the provided integer value to the corresponding tile type enum literal. */
   public static TileType getType(int type) {
@@ -104,89 +89,51 @@ public class Tile {
     return (type >= 0 && type < TileType.SIZE);
   }
 
-  final int x, y;
+  public static final int SIZE = 32;
   
-  public Tile(int x, int y, int id, int row, int col){
+  int tileSheetRow, tileSheetColumn, x, y, id;
+  boolean hasImage;
+  
+  TileSheet tileSheet;
+
+  
+  public Tile(int x, int y, int id, int row, int col, TileSheet tileSheet){
     this.x = x;
     this.y = y;
-    this.ID = id;
-    this.tileSheetColumn = col;
+    this.id = id;
+
     this.tileSheetRow = row;
+    this.tileSheetColumn = col;
+    this.tileSheet = tileSheet;
     
-    //TODO mk this probably isn't the best way to do this but it'll work for now unitl
-    //     we sort out how we organize all these tiles, etc
+    hasImage = (tileSheet != null && tileSheet.getTileImg(tileSheetColumn, tileSheetRow) != null);
+  }
+  
+  //TODO this is NOT a solution
+  public AnimatedTile getAnimatedTile(){
     if(id == -1){
-      animatedTile = new AnimatedTile(row, col);
-    }
-    else{
-      animatedTile = null;
+      return new AnimatedTile(tileSheetRow, tileSheetColumn, x, y);
     }
     
-    block = null;
-    specialTile = null;
-  }
-  
-  int getX() {
-    return x;
-  }
-  
-  int getY() {
-    return y;
-  }
-  
-  public BufferedImage getImage() {
-    return (tileSheet != null) ? tileSheet.getTileImg(tileSheetColumn, tileSheetRow) : null;
+    return null;
   }
 
-  TileType getTileType() {
-    return (specialTile != null) ? specialTile.type : TileType.NONSOLID;
-  }
-  
   /**
    * Draws the tile image to the provided graphics object.
    * @param graphics
    * @param observer
    */
   public void draw(Graphics2D graphics, ImageObserver observer) {
-    // Check for each special tile type otherwise draw the regular image.
-    if (animatedTile != null && animatedTile.isRunning()) {
-      graphics.drawImage(animatedTile.getImage(), x, y, observer);
-    } else if (animatedBlock != null) {
-      graphics.drawImage(animatedBlock.getImage(), x, y, observer);
-    } else if (block != null) {
-        BlockSheet bs = BlockSheet.getInstance();
-        graphics.drawImage(bs.getTileImg(block), x, y, observer);
-    } else {
-      BufferedImage image = getImage();
-      if (image != null) {
-        graphics.drawImage(image, x, y, observer);
-      }
+    if (hasImage) {
+      graphics.drawImage(tileSheet.getTileImg(tileSheetColumn, tileSheetRow), x, y, observer);
     }
   }
 
-  public void setBlock(int type, boolean hidden) {
-    this.block = new Block(type, hidden);
+  public boolean hasImage() {
+    return hasImage;
   }
   
-  public void setAnimation(int type) {
-    this.animatedBlock = new AnimatedBlock(type);
+  public BufferedImage getImage(){
+    return (hasImage) ? tileSheet.getTileImg(tileSheetColumn, tileSheetRow) : null;
   }
-
-  public void update(int timeDif_ms) {
-    if (animatedBlock != null) {
-      animatedBlock.update(timeDif_ms);
-    }
-    
-    if (animatedTile != null) {
-      animatedTile.update(timeDif_ms);
-    }
-  }
-
-  public void toggleHidden() {
-    // TODO Auto-generated method stub
-    if (this.block != null) {
-      block.hidden = !block.hidden;
-    }
-  }
-  
 }

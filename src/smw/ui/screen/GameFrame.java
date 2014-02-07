@@ -77,7 +77,10 @@ public class GameFrame extends JFrame{
       Insets insets = getInsets();
       g2d.translate(insets.left, bumpFactor + insets.top);
       g2d.scale(scaleFactorWidth, scaleFactorHeight);
-      world.draw(g2d, this);
+      
+      world.drawLayer0(g2d, this);
+      world.drawLayer1(g2d, this);
+      
       if (players != null && players.length > 0) {
         for(Player p : players){
           if (p != null) {
@@ -85,7 +88,9 @@ public class GameFrame extends JFrame{
           }
         }
       }
-      world.drawFront(g2d, this);
+      world.drawLayer2(g2d, this);
+      world.drawLayer3(g2d, this);
+      
       sB.draw(g2d, this);
     } finally {
       // Free up graphics.
