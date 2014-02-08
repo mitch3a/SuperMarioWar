@@ -160,7 +160,8 @@ public class SoundPlayer {
    */
   public void playSfx(String name) {
     try {      
-      soundSystem.newSource(false, name, new File("res/sfx/packs/Classic/" + name).toURI().toURL(), name, false, 0, 0, 0,
+      // TODO - rather than doing this stuff every time we play a sound effect we could probably setup each one at construction then just call play("name")
+      soundSystem.newSource(false, name, new File("res/Classic/" + name).toURI().toURL(), name, false, 0, 0, 0,
         SoundSystemConfig.ATTENUATION_NONE, SoundSystemConfig.getDefaultRolloff());
       soundSystem.setPriority(name, false);
       soundSystem.setPosition(name, 0, 0, 0);
@@ -212,4 +213,155 @@ public class SoundPlayer {
     masterVol = level;
     soundSystem.setMasterVolume(masterVol);
   }  
+  
+  public void sfxMip() {
+    playSfx("mip.wav");
+  }
+  public void sfxDeath() {
+    playSfx("death.wav");
+  }
+  public void sfxJump() {
+    playSfx("jump.wav");
+  }
+  public void sfxSkid() {
+    playSfx("skid.wav");
+  }
+  public void sfxCapeJump() {
+    playSfx("capejump.wav");
+  }
+  public void sfxInvincible() {
+    playSfx("invincible.wav");
+  }
+  public void sfx1Up() {
+    playSfx("1up.wav");
+  }
+  public void sfxSprout() {
+    playSfx("sprout.wav");
+  }
+  public void sfxCollectPowerup() {
+    playSfx("collectpowerup.wav");
+  }
+  public void sfxFeather() {
+    playSfx("feather.wav");
+  }
+  public void sfxTail() {
+    playSfx("tail.wav");
+  }
+  public void sfxStoreItem() {
+    playSfx("storeitem.wav");
+  }
+  public void sfxBreakBlock() {
+    playSfx("breakblock.wav");
+  }
+  public void sfxBump() {
+    playSfx("bump.wav");
+  }
+  public void sfxCoin() {
+    playSfx("coin.wav");
+  }
+  public void sfxFireball() {
+    playSfx("fireball.wav");
+  }
+  public void sfxSpringJump() {
+    playSfx("springjump.wav");
+  }
+  public void sfxTimeWarning() {
+    playSfx("timewarning.wav");
+  }
+  public void sfxHit() {
+    playSfx("hit.wav");
+  }
+  public void sfxChicken() {
+    playSfx("chicken.wav");
+  }
+  public void sfxTransform() {
+    playSfx("transform.wav");
+  }
+  public void sfxYoshi() {
+    playSfx("yoshi.wav");
+  }
+  public void sfxPause() {
+    playSfx("pause.wav");
+  }
+  public void sfxBobomb() {
+    playSfx("bob-omb.wav");
+  }
+  public void sfxDCoin() {
+    playSfx("dcoin.wav");
+  }
+  public void sfxCannon() {
+    playSfx("cannon.wav");
+  }
+  public void sfxBurnup() {
+    playSfx("burnup.wav");
+  }
+  public void sfxWarp() {
+    playSfx("warp.wav");
+  }
+  public void sfxThunder() {
+    playSfx("thunder.wav");
+  }
+  public void sfxClock() {
+    playSfx("clock.wav");
+  }
+  public void sfxSlowDown() {
+    playSfx("slowdown.wav");
+  }
+  public void sfxStoredPowerup() {
+    playSfx("storedpowerup.wav");
+  }
+  public void sfxKick() {
+    playSfx("kick.wav");
+  }
+  public void sfxRace() {
+    playSfx("race.wav");
+  }
+  public void sfxBulletBill() {
+    playSfx("bulletbill.wav");
+  }
+  public void sfxBoomerang() {
+    playSfx("boomerang.wav");
+  }
+  public void sfxSpit() {
+    playSfx("spit.wav");
+  }
+  public void sfxStarWarning() {
+    playSfx("starwarning.wav");
+  }
+  public void sfxPowerDown() {
+    playSfx("powerdown.wav");
+  }
+  public void sfxSwitchPress() {
+    playSfx("switchpress.wav");
+  }
+  public void sfxSuperSpring() {
+    playSfx("superspring.wav");
+  }
+  public void sfxStun() {
+    playSfx("stun.wav");
+  }
+  public void sfxInventory() {
+    playSfx("inventory.wav");
+  }
+  public void sfxMapMove() {
+    playSfx("mapmove.wav");
+  }
+  public void sfxTreasureChest() {
+    playSfx("treasurechest.wav");
+  }
+  public void sfxFlameCannon() {
+    playSfx("flamecannon.wav");
+  }
+  public void sfxWand() {
+    playSfx("wand.wav");
+  }
+  public void sfxEnterStage() {
+    playSfx("enter-stage.wav");
+  }
+  public void sfxGameover() {
+    playSfx("gameover.wav");
+  }
+  public void sfxPickup() {
+    playSfx("pickup.wav");
+  }
 }
