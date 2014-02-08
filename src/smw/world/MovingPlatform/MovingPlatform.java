@@ -6,6 +6,8 @@ import java.awt.image.ImageObserver;
 import smw.Collidable;
 import smw.Drawable;
 import smw.Updatable;
+import smw.entity.Player;
+import smw.gfx.Sprite;
 import smw.world.Tile;
 import smw.world.Tile.TileType;
 
@@ -79,5 +81,79 @@ public class MovingPlatform implements Drawable, Updatable{
   public void update(float timeDif_ms) {
     timeDif_ms = 1.0f;//TODO
     path.move(timeDif_ms);
+  }
+
+  //This method returns the pixel a player should be at if this
+  //platform is pushing him/her
+  public int getFrontEdgeX(int newX) {
+    //TODO not the most accurate width
+    int leftX = getX();
+    int rightX = leftX + tiles[0].length*Tile.SIZE;
+
+    //TODO these additive factors are bc the way the turnaround works, platform might not
+    //     hit the edge during a frame. This should be done more accurately somehow
+    if(Math.abs(leftX - newX) > Math.abs(rightX - newX)){
+      return rightX + 2;
+    }
+    
+    return leftX - Tile.SIZE - 2;
+  }
+
+  public int collideX(Player player, int newX) {
+    int rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
+    int bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
+    
+    //If the platform is pushing player left/right, update newX
+    if(Tile.TileType.SOLID == getTile(rightMostX, player.y) ||
+       Tile.TileType.SOLID == getTile(newX, player.y) ||
+       Tile.TileType.SOLID == getTile(rightMostX, bottomYPlayer) ||
+       Tile.TileType.SOLID == getTile(newX, bottomYPlayer)){
+      
+      newX = getFrontEdgeX(newX);
+    }
+    
+    
+    int justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1;
+    
+    //If the platform underneath is moving, so should the player
+    if(Tile.TileType.SOLID == getTile(newX,       justUnderPlayer) || 
+       Tile.TileType.SOLID == getTile(rightMostX, justUnderPlayer)){
+      newX += getXChange();
+    }
+    
+    return newX;
+  }
+
+  public int collideY(Player player, int newX, int newY) {
+    if (player.y < newY) {
+      //Moving down. We want to check every block that is under the sprite. This is from the first 
+      //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
+      Tile.TileType tile1 = getTile(newX, newY + Sprite.IMAGE_HEIGHT + 16);
+      Tile.TileType tile2 = getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 16);
+      
+      if( tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
+        //TODO this might need some work once others are introduced, but making sure 
+        //     it isn't a situation where the player is pressing down to sink through
+        if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
+           (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
+           (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
+          player.physics.startFalling();
+        }
+        else{ 
+          newY = getY() - Sprite.IMAGE_HEIGHT;
+          player.physics.collideWithFloor();
+        }
+      }
+    }
+    else {
+      //Moving up
+      if(getTile(newX, newY) == Tile.TileType.SOLID ||
+         getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
+        newY += Tile.SIZE - newY % Tile.SIZE;
+        player.physics.collideWithCeiling();
+      }
+    }
+    
+    return newY;
   }
 }

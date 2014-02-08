@@ -25,7 +25,7 @@ public abstract class Path{
   public int getY(){
     return get(Y);
   }
-  
+
   public int getXChange(){
     return getX() - prev[X];
   }

@@ -21,10 +21,12 @@ public class GamePad  extends PlayerControlBase{
 			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.index]  = 1;
 												buttonToComponentMap[PlayerButton.RIGHT.index] = 1;
 												buttonToComponentMap[PlayerButton.DOWN.index]  = 0;
+												buttonToComponentMap[PlayerButton.UP.index]    = 0;
 												buttonToComponentMap[PlayerButton.JUMP.index]  = 8;
 												buttonToComponentMap[PlayerButton.RUN.index]   = 9;
 												pressedValues[PlayerButton.LEFT.index]  = -1.0f;
 												pressedValues[PlayerButton.RIGHT.index] =  1.0f;
+												pressedValues[PlayerButton.UP.index]    = -1.0f;
 												pressedValues[PlayerButton.DOWN.index]  =  1.0f;
 												pressedValues[PlayerButton.JUMP.index]  =  1.0f;
 												pressedValues[PlayerButton.RUN.index]   =  1.0f;
@@ -202,6 +204,11 @@ public class GamePad  extends PlayerControlBase{
   public void setDownButton() {
     setNextButton(PlayerButton.DOWN);
   }
+  
+  @Override
+  public void setUpButton() {
+    setNextButton(PlayerButton.UP);
+  }
 
   @Override
   public void setJumpButton() {
@@ -236,6 +243,11 @@ public class GamePad  extends PlayerControlBase{
   @Override
   public boolean isDown() {
     return isPressed(PlayerButton.DOWN);
+  }
+  
+  @Override
+  public boolean isUp() {
+    return isPressed(PlayerButton.UP);
   }
 
   @Override

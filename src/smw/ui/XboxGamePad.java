@@ -9,6 +9,7 @@ public class XboxGamePad extends PlayerControlBase {
   private XboxController xboxController;
   private int xbDirection;
   private boolean isDownPressed;
+  private boolean isUpPressed;
   private boolean isJumping;
   private boolean isRunning;
   private boolean isPaused;
@@ -46,6 +47,7 @@ public class XboxGamePad extends PlayerControlBase {
          *  /|\
          * 5 4 3
          */
+        //TODO mk need to add isUpPressed
         switch (direction) {
           case 1:
           case 2:
@@ -66,6 +68,7 @@ public class XboxGamePad extends PlayerControlBase {
         }
       }
       public void leftThumbDirection(double direction) {
+        //TODO add isUpPressed
         if ((direction > 160.0) && (direction < 200.0)) {
           isDownPressed = true;
           xbDirection = 0;
@@ -84,6 +87,7 @@ public class XboxGamePad extends PlayerControlBase {
         // Need to clear direction when dead zone is hit.
         if (magnitude < 0.26) {
           xbDirection = 0;
+          //TODO add isUpPressed
           isDownPressed = false;
         }
       }
@@ -153,6 +157,11 @@ public class XboxGamePad extends PlayerControlBase {
   }
   
   @Override
+  public boolean isUp() {
+    return isUpPressed;
+  }
+  
+  @Override
   public boolean isConnected() {
     return isConnected;
   }
@@ -184,6 +193,9 @@ public class XboxGamePad extends PlayerControlBase {
 
   @Override
   public void setDownButton() {}
+  
+  @Override
+  public void setUpButton() {}
 
   @Override
   public void setJumpButton() {}

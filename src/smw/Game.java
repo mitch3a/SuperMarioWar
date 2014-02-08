@@ -50,10 +50,13 @@ public class Game implements Runnable {
       "sgraff_Buster_Beetle_s_Tower.map", // FEATURE - switches to turn on/off colored ! blocks
       "GG_Fire Fortress.map", //Animated blocks
       "tubesteak_lockout.map", //Spinning block, note box
-      "cristomarquez_abovethedomes.map" //falling donuts, warps, clouds
+      "cristomarquez_abovethedomes.map", //falling donuts, warps, clouds
+      "MrMister_Airshipz.map",//TODO buffer gets overdrawn...
+      "Sgraff_Bewarehouse.map"
+      
     };   
-    world = new World(worlds[19]);
-    //world = new World(); // TODO - Starts a random world (for now).
+    //world = new World(worlds[21]);
+    world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
     
     players = new Player[numPlayers];
@@ -106,11 +109,11 @@ public class Game implements Runnable {
       }
       // If still nothing just use the keyboard.
       if (pc[0] == null) {
-        pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+        pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
       }
     }
     if(numPlayers == 2) {
-      pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_G);
+      pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_W, KeyEvent.VK_G);
     }
 
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);

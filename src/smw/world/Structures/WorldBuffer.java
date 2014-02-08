@@ -168,20 +168,20 @@ public class WorldBuffer {
     return version;
   }
   
-  public Warp getWarp() {
-    Warp warp = new Warp();
+  public Warp getWarp(int x, int y) {
+    Warp warp = new Warp(x, y);
     
-    warp.direction  = getShort();
+    warp.direction  = Warp.getDirection(getShort());
     warp.connection = getShort();
     warp.id         = getShort();
     
-    return (warp.id != -1) ? warp : null;
+    return warp;
   }
   
   public WarpExit getWarpExit(){
     WarpExit warpExit = new WarpExit();
     
-    warpExit.direction = getShort();
+    warpExit.direction = Warp.getOppositeDirection(getShort());
     warpExit.connection = getShort();
     
     warpExit.id = getShort();

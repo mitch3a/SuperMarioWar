@@ -11,6 +11,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
 	int left;
   int right;
   int down;
+  int up;
   int jump;
   int run;
   
@@ -26,11 +27,13 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
                 	int left,
                   int right,
                   int down,
+                  int up,
                   int jump,
                   int run) {
     this.left  = left;
     this.right = right;
     this.down  = down;
+    this.up    = up;
     this.jump  = jump;
     this.run   = run;
     
@@ -38,6 +41,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     keyMap.put(this.left, false);
     keyMap.put(this.right, false);
     keyMap.put(this.down, false);
+    keyMap.put(this.up, false);
     keyMap.put(this.jump, false);
     keyMap.put(this.run, false); 
   }
@@ -71,6 +75,11 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     return keyMap.get(down);
   }
   
+  @Override
+  public boolean isUp() {
+    return keyMap.get(up);
+  }
+  
   /*******************************************
    * This method waits until an unused key is 
    * pressed. That key is stored in mostRecentlyPushed
@@ -94,7 +103,12 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   
   public void setDownButton() {
     waitForNextKey();
-    right = mostRecentlyPushed;
+    down = mostRecentlyPushed;
+  }
+  
+  public void setUpButton() {
+    waitForNextKey();
+    up = mostRecentlyPushed;
   }
 
   public void setJumpButton() {

@@ -32,6 +32,7 @@ import smw.world.Structures.SpawnArea;
 import smw.world.Structures.Warp;
 import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
+import smw.world.Structures.Warp.Direction;
 import smw.world.blocks.AnimatedBlock;
 import smw.world.blocks.FlipBlock;
 import smw.world.blocks.QuestionBlock;
@@ -307,7 +308,7 @@ public class World {
         for(int h = 0; h < MAP_HEIGHT; ++h) {
           for(int w = 0; w < MAP_WIDTH; ++w) {    
             collidables[w][h] = buffer.getCollidable(w*Tile.SIZE, h*Tile.SIZE);  
-            warps[w][h] = buffer.getWarp();
+            warps[w][h] = buffer.getWarp(w, h);
 
             for(short sType = 0; sType < NUM_SPAWN_AREA_TYPES; sType++){
               nospawn[sType][w][h] = buffer.getBoolean();
@@ -531,6 +532,83 @@ public class World {
     }
   }
   
+  public void testWarps(Player player, int newX, int newY){
+      
+    if(player.physics.playerControl.isDown()){
+      int yToCheck = (player.y + Tile.SIZE + 1)/Tile.SIZE;
+      Warp result = testWarps(player.x/Tile.SIZE, yToCheck, (player.x + Tile.SIZE - 1)/Tile.SIZE, yToCheck, Direction.DOWN);
+      if(result != null){
+        player.warp(Direction.DOWN, getWarpExit(result));
+        return;
+      }
+    }
+    
+    if(player.physics.playerControl.isUp()){
+      int yToCheck = (player.y - 1)/Tile.SIZE;
+      Warp result = testWarps(player.x/Tile.SIZE, yToCheck, (player.x + Tile.SIZE - 1)/Tile.SIZE, yToCheck, Direction.UP);
+      
+      if(result != null){
+        player.warp(Direction.UP, getWarpExit(result));
+        return;
+      }
+    }
+    
+    if(player.physics.playerControl.getDirection() < 0){
+      int XToCheck = (player.x - 1)/Tile.SIZE;
+      Warp result = testWarps(XToCheck, player.y/Tile.SIZE, XToCheck, (player.y + Tile.SIZE - 1)/Tile.SIZE, Direction.LEFT);
+      if(result != null){
+        player.warp(Direction.LEFT, getWarpExit(result));
+        return;
+      }
+    }
+    else if(player.physics.playerControl.getDirection() > 0){
+      int XToCheck = (player.x + Tile.SIZE + 1)/Tile.SIZE;
+      Warp result = testWarps(XToCheck, player.y/Tile.SIZE, XToCheck, (player.y + Tile.SIZE - 1)/Tile.SIZE, Direction.RIGHT);
+      if(result != null){
+        player.warp(Direction.RIGHT, getWarpExit(result));
+        return;
+      }
+    }
+  }
+  
+  //Returns a valid warp if hit warp
+  Warp testWarps(int column1, int row1, int column2, int row2, Direction direction){
+    if(row1 < 0 || column1 < 0 || row2 < 0 || column2 < 0 ||
+       row1 >= warps[0].length || column1 >= warps.length || row2 >= warps[0].length || column2 >= warps.length){
+      return null;//TODO there has got to be a smarter way to do this
+    }
+    Warp warp = warps[column1][row1];
+    
+    if(warp.connection >= 0 && warp.direction == direction){
+      //Need both that the player is touching to be same warp
+      Warp warp2 = warps[column2][row2];
+      
+      if(warp.id == warp2.id  && warp2.direction == direction){
+        return warp;
+      }
+    }
+    
+    return null;
+  }
+  
+  WarpExit getWarpExit(Warp warp){
+    //TODO WOW this is awful
+    List<WarpExit> options = new ArrayList<WarpExit>();
+    WarpExit sameAsWarp = null;
+    for(WarpExit warpExit : warpExits){
+      if(warp.connection == warpExit.connection){
+        if(warp.id == warpExit.id){
+          sameAsWarp = warpExit;
+        }
+        else{
+          options.add(warpExit);
+        }
+      }
+    }
+    
+    return (options.isEmpty()) ? sameAsWarp : options.get((int)(options.size()*Math.random()));
+  }
+  
   /**
    * Performs collision handling for the X axis.
    * @param player
@@ -550,28 +628,12 @@ public class World {
     
     //If half of player is above the top, just check the bottom half of the player twice
     int highestYTile = (player.y < 0) ? lowestYTile : player.y/Tile.SIZE;
-    
+
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
     for(MovingPlatform platform : movingPlatforms){
-      //Moving down. We want to check every block that is under the sprite. This is from the first 
-      //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-      Tile.TileType tile1 = platform.getTile(newX, player.y + Sprite.IMAGE_HEIGHT+ 1);
-      Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, player.y + Sprite.IMAGE_HEIGHT + 1);
-      
-      if(tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
-        //TODO this might need some work once others are introduced, but making sure 
-        //     it isn't a situation where the player is pressing down to sink through
-        if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
-           (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-           (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-          
-        }
-        else{ 
-          newX += platform.getXChange();
-        }
-      }
+      newX = platform.collideX(player, newX);
     }
     
     ///////////////////////////////////////////////////////////////
@@ -611,35 +673,7 @@ public class World {
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
     for(MovingPlatform platform : movingPlatforms){
-      //TODO will ever be equals?
-      if (player.y < newY) {
-        //Moving down. We want to check every block that is under the sprite. This is from the first 
-        //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-        Tile.TileType tile1 = platform.getTile(newX, newY + Sprite.IMAGE_HEIGHT + 16);
-        Tile.TileType tile2 = platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 16);
-        
-        if( tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
-          //TODO this might need some work once others are introduced, but making sure 
-          //     it isn't a situation where the player is pressing down to sink through
-          if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
-             (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-             (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-            player.physics.startFalling();
-          }
-          else{ 
-            newY = platform.getY() - Sprite.IMAGE_HEIGHT;
-            player.physics.collideWithFloor();
-          }
-        }
-      }
-      else {
-        //Moving up
-        if(platform.getTile(newX, newY) == Tile.TileType.SOLID ||
-           platform.getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
-          newY += Tile.SIZE - newY % Tile.SIZE;
-          player.physics.collideWithCeiling();
-        }
-      }
+      newY = platform.collideY(player, newX, newY);
     }
     
     int rightmostXTile = ((newX + Sprite.IMAGE_WIDTH - 1)%GameFrame.res_width)/Tile.SIZE;
@@ -706,8 +740,14 @@ public class World {
   //TODO probably just get ride of layer0 list because they are on the background.
   //     ALSO can we do the same with layer1? AND layer2? depends on whats stuck
   //     to background always
-  public void drawLayer0(Graphics2D g, ImageObserver io){
+  public void drawBackground(Graphics2D g, ImageObserver io){
     g.drawImage(backgroundImg, 0, 0, io);
+  }
+  
+  public void drawLayer0(Graphics2D g, ImageObserver io){
+    for(Drawable drawables : drawablesLayer0){
+      drawables.draw(g, io);
+    }
   }
   
   public void drawLayer1(Graphics2D g, ImageObserver io){
