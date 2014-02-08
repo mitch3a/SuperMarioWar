@@ -28,7 +28,11 @@ public class SolidBlock extends Collidable implements Drawable{
    * This is a block that, by default, will not let anything
    * pass through it. 
    */
-  public SolidBlock(int x, int y) {
+  public SolidBlock(int x, int y){
+    this(x, y, "blocks.png");
+  }
+  
+  public SolidBlock(int x, int y, String blockSheet) {
     super((short)1, x, y);
     
     this.x = x;
@@ -38,7 +42,7 @@ public class SolidBlock extends Collidable implements Drawable{
     subImageX = 0;
     subImageY = 0;
         
-    tileSheet = TileSheetManager.getInstance().getTileSheet("blocks.png");
+    tileSheet = TileSheetManager.getInstance().getTileSheet(blockSheet);
   }
   
   @Override
