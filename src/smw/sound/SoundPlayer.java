@@ -161,7 +161,7 @@ public class SoundPlayer {
   public void playSfx(String name) {
     try {      
       // TODO - rather than doing this stuff every time we play a sound effect we could probably setup each one at construction then just call play("name")
-      soundSystem.newSource(false, name, new File("res/Classic/" + name).toURI().toURL(), name, false, 0, 0, 0,
+      soundSystem.newSource(false, name, new File("res/sfx/packs/Classic/" + name).toURI().toURL(), name, false, 0, 0, 0,
         SoundSystemConfig.ATTENUATION_NONE, SoundSystemConfig.getDefaultRolloff());
       soundSystem.setPriority(name, false);
       soundSystem.setPosition(name, 0, 0, 0);
