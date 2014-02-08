@@ -110,9 +110,22 @@ public abstract class PlayerControlBase{
    ****************************************************/
   abstract public boolean isDown();
   
-  /** Indicates of the controller is connected.
+  /**
+   * Returns whether the action button is pressed.
+   * @return true = pressed
+   */
+  abstract public boolean isActionPressed();
+  
+  /**
+   * Returns whether the pause button is pressed.
+   * @return true = paused
+   */
+  abstract public boolean isPaused();
+  
+  /** 
+   * Indicates of the controller is connected.
    * @return true = connected
-   * */
+   */
   abstract public boolean isConnected();
   
   /** Returns controller type. */
@@ -120,9 +133,14 @@ public abstract class PlayerControlBase{
     return type;
   }
   
+  /**
+   * Sets the type of the controller.
+   * @param type Controller type.
+   */
   protected void setType(ControllerType type) {
     this.type = type;
   }
   
+  /** Releases any controller assets for cleanup. */
   abstract public void release();
 }
