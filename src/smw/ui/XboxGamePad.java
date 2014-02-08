@@ -6,17 +6,20 @@ import ch.aplu.xboxcontroller.XboxControllerAdapter;
 
 public class XboxGamePad extends PlayerControlBase {
 
-  private XboxController xboxController = null;
-  
-  private int thumbDir;
+  private XboxController xboxController;
   private int xbDirection;
-  private double leftThumbDirection;
   private boolean isDownPressed;
   private boolean isJumping;
   private boolean isRunning;
-  
+  private boolean isPaused;
+  private boolean isActionPressed;
   public boolean isConnected;
   
+  
+  /**
+   * Sets up the Xbox controller for the provided player number.
+   * @param player Player number.
+   */
   public XboxGamePad(int player) {
     setType(PlayerControlBase.ControllerType.XBOX);
     // Create the controller and verify connection.
@@ -26,6 +29,7 @@ public class XboxGamePad extends PlayerControlBase {
       xboxController.release();
       return;
     }
+    xboxController.setLeftThumbDeadZone(0.25);
     // Setup the input listener.
     xboxController.addXboxControllerListener(new XboxControllerAdapter() {
       public void buttonA(boolean pressed) {
@@ -62,42 +66,43 @@ public class XboxGamePad extends PlayerControlBase {
         }
       }
       public void leftThumbDirection(double direction) {
-        leftThumbDirection = direction;
+        if ((direction > 160.0) && (direction < 200.0)) {
+          isDownPressed = true;
+          xbDirection = 0;
+        } else {
+          isDownPressed = false;
+          if ((direction > 45.0) && (direction < 135.0)) {
+            xbDirection = 1;
+          } else if ((direction > 225.0) && (direction < 315.0)) {
+            xbDirection = -1;
+          } else {
+            xbDirection = 0;
+          }
+        }
       }
       public void leftThumbMagnitude(double magnitude) {
-        //System.out.println(magnitude);
-        int mag = (int)(magnitude * 100.0);
-        System.out.println(mag);
-        // TODO - seems like ~0.25 would be a good value to start moving... maybe?
-        //System.out.println("dir="+leftThumbDirection+" mag="+magnitude+" dir="+thumbDir);
-        if (mag > 10) {
-          if ((leftThumbDirection > 70.0) && (leftThumbDirection < 92.0)) {
-            //thumbDir = (magnitude >= 0.20) ? 1 : 0;
-            thumbDir = 1;
-            //mag
-            //System.out.println(thumbDir);
-          } else if ((leftThumbDirection > 260.0) && (leftThumbDirection < 315.0)) {
-            thumbDir = -1;
-          } else if ((leftThumbDirection > 187.0) && (leftThumbDirection < 193.0)) {
-            isDownPressed = true;
-          }
-        } else {
-          thumbDir = 0;
+        // Need to clear direction when dead zone is hit.
+        if (magnitude < 0.26) {
+          xbDirection = 0;
+          isDownPressed = false;
         }
       }
       public void start(boolean pressed) {
-        System.out.println("START");
-        // TODO - PAUSE GAME
+        // If start is pressed, toggle the pause indicatation.
+        if (pressed) {
+          isPaused = !isPaused;
+        }
+      }
+      // TODO - which one should be the powerup button?
+      public void buttonB(boolean pressed) {
+        isActionPressed = pressed;
+      }
+      public void buttonY(boolean pressed) {
+        isActionPressed = pressed;
       }
       /* Probably won't use these buttons in this game!
       public void back(boolean pressed) {
         System.out.println("BACK");
-      }
-      public void buttonB(boolean pressed) {
-        System.out.println("B");
-      }
-      public void buttonY(boolean pressed) {
-        System.out.println("Y");
       }
       public void leftShoulder(boolean pressed) {
         System.out.println("LB");
@@ -125,13 +130,11 @@ public class XboxGamePad extends PlayerControlBase {
       }
       */
     });
-    // TODO - do we want a dead zone setup?
-    //xboxController.setLeftThumbDeadZone(0.2);
   }
 
   @Override
   public int getDirection() {
-    return (xbDirection != 0) ? xbDirection : thumbDir;
+    return xbDirection;
   }
 
   @Override
@@ -154,7 +157,22 @@ public class XboxGamePad extends PlayerControlBase {
     return isConnected;
   }
   
-  // The following inherited methods do nothing, it's handled by the XboxControllerAdapter setup in the ctor.
+  @Override
+  public boolean isActionPressed() {
+    return isActionPressed;
+  }
+  
+  @Override
+  public boolean isPaused() {
+    return isPaused;
+  }
+  
+  @Override
+  public void release() {
+    xboxController.release();
+  }
+
+  // The following inherited methods do nothing, it's handled by the XboxControllerAdapter setup in the constructor.
   @Override
   public void poll() {}
 
@@ -172,9 +190,4 @@ public class XboxGamePad extends PlayerControlBase {
 
   @Override
   public void setRunButton() {}
-  
-  @Override
-  public void release() {
-    xboxController.release();
-  }
 }

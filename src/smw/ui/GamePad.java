@@ -261,4 +261,16 @@ public class GamePad  extends PlayerControlBase{
   
   @Override
   public void release() {}
+
+  @Override
+  public boolean isPaused() {
+    // TODO - Assign pause button and use it!
+    return false;
+  }
+
+  @Override
+  public boolean isActionPressed() {
+    // TODO - Assign action/powerup button (or would be just use run button?)
+    return false;
+  }
 }
