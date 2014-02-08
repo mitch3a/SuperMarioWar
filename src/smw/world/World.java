@@ -32,6 +32,7 @@ import smw.world.Structures.SpawnArea;
 import smw.world.Structures.Warp;
 import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
+import smw.world.blocks.AnimatedBlock;
 import smw.world.blocks.SolidBlock;
 import smw.world.blocks.SwitchBlock;
 import smw.world.blocks.SwitchControlBlock;
@@ -166,57 +167,84 @@ public class World {
             int type = (int)(buffer.getByte());
             boolean hidden = buffer.getBoolean(); //TODO do we use this or is it always false?
             
+            SolidBlock block = null;
+            
             if(Tile.isValidType(type)){
-              if (AnimatedBlock.isTypeAnimated(type)) {
-                AnimatedBlock animatedBlock = new AnimatedBlock(type, w*Tile.SIZE, h*Tile.SIZE);
-                drawablesLayer3.add(animatedBlock); //TODO is this the correct layer?
-                updatables.add(animatedBlock);
-                collidablesForAfter.add(animatedBlock);
+              switch(type){
+                /** Animated Blocks (more further down) **/  
+                case  0: AnimatedBlock temp0 = new AnimatedBlock.BreakableBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp0);
+                         block = temp0;
+                         break;
+                case  1: AnimatedBlock temp1 = new AnimatedBlock.QuestionBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp1);
+                         block = temp1;
+                         break;
+                case  3: AnimatedBlock temp3 = new AnimatedBlock.FlipBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp3);
+                         block = temp3;
+                         break;
+                case  5: AnimatedBlock temp5 = new AnimatedBlock.WhiteNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
+                          updatables.add(temp5);
+                          block = temp5;
+                          break;
+                case  6: AnimatedBlock temp6 = new AnimatedBlock.BlueThrowBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp6);
+                         block = temp6;
+                         break;
+                         
+                /** Switch Control Blocks **/
+                case  7: block = new SwitchControlBlock.Red(type, w*Tile.SIZE, h*Tile.SIZE);
+                         break;
+                case  8: block = new SwitchControlBlock.Green(type, w*Tile.SIZE, h*Tile.SIZE);
+                         break;
+                case  9: block = new SwitchControlBlock.Yellow(type, w*Tile.SIZE, h*Tile.SIZE);
+                         break;
+                case 10: block = new SwitchControlBlock.Blue(type, w*Tile.SIZE, h*Tile.SIZE);
+                         break;
+                         
+                /** Switch Blocks **/
+                case 11: SwitchBlock temp11 = new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                         SwitchControlBlock.Red.registerBlock(temp11);
+                         block = temp11;
+                         break;
+                case 12: SwitchBlock temp12 =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                         SwitchControlBlock.Green.registerBlock(temp12);
+                         block = temp12;
+                         break;
+                case 13: SwitchBlock temp13 =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                         SwitchControlBlock.Yellow.registerBlock(temp13);
+                         block = temp13;
+                         break;
+                case 14: SwitchBlock temp14 =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                         SwitchControlBlock.Blue.registerBlock(temp14);
+                         block = temp14;
+                         break;
+                         
+                /** More Animated Blocks **/      
+                case 16: AnimatedBlock temp16 = new AnimatedBlock.RedThrowBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp16);
+                         block = temp16;
+                         break;
+                case 17: AnimatedBlock temp17 = new AnimatedBlock.RedNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp17);
+                         block = temp17;
+                         break;
+                case 18: AnimatedBlock temp18 = new AnimatedBlock.BlueNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp18);
+                         block = temp18;
+                         break;
+                case 19: AnimatedBlock temp19 = new AnimatedBlock.BreakableBlock(w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp19);
+                         block = temp19;
+                         break;
+                /** TODO Blocks **/         
+                default: block = new SolidBlock(w*Tile.SIZE, h*Tile.SIZE);
               }
-              else{
-                SolidBlock block = null;
-                //Need this for switch blocks to pass it to the control block before 
-                //casting it to a regular block 
-                SwitchBlock temp = null;
-                
-                switch(type){
-                  /** Switch Control Blocks **/
-                  case  7: block = new SwitchControlBlock.Red(type, w*Tile.SIZE, h*Tile.SIZE);
-                           break;
-                  case  8: block = new SwitchControlBlock.Green(type, w*Tile.SIZE, h*Tile.SIZE);
-                           break;
-                  case  9: block = new SwitchControlBlock.Yellow(type, w*Tile.SIZE, h*Tile.SIZE);
-                           break;
-                  case 10: block = new SwitchControlBlock.Blue(type, w*Tile.SIZE, h*Tile.SIZE);
-                           break;
-                           
-                  /** Switch Blocks **/
-                  case 11: temp = new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
-                           SwitchControlBlock.Red.registerBlock(temp);
-                           block = temp;
-                           break;
-                  case 12: temp =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
-                           SwitchControlBlock.Green.registerBlock(temp);
-                           block = temp;
-                           break;
-                  case 13: temp =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
-                           SwitchControlBlock.Yellow.registerBlock(temp);
-                           block = temp;
-                           break;
-                  case 14: temp =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
-                           SwitchControlBlock.Blue.registerBlock(temp);
-                           block = temp;
-                           break;
-                           
-                  /** TODO Blocks **/         
-                  default: block =new SolidBlock(w*Tile.SIZE, h*Tile.SIZE);
-                }
-                
-                drawablesLayer3.add(block); //TODO is this the correct layer?
-                collidablesForAfter.add(block);
-                blocks.add(block);
-                //TODO I feel like this should be updatable? updatables.add(animatedBlock);
-              }
+                            
+              drawablesLayer3.add(block); //TODO is this the correct layer?
+              collidablesForAfter.add(block);
+              blocks.add(block);
             }
           }
         }

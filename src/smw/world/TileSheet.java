@@ -131,6 +131,10 @@ public class TileSheet {
     }
     
     return image.getSubimage(x, y, Tile.SIZE, Tile.SIZE);
+  }
+
+  public int getWidth() {
+    return image.getWidth();
   }  
   
   
