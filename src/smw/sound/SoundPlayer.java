@@ -7,7 +7,9 @@ import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemException;
 import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
+import paulscode.sound.libraries.LibraryJavaSound;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
+import smw.world.World;
 
 /**
  * Plays all the BGM and sounds in the game (including menus).
@@ -22,40 +24,33 @@ import paulscode.sound.libraries.LibraryLWJGLOpenAL;
  * All rights reserved.
  */
 public class SoundPlayer {
-  
-  public static final String BGM = "BGM";
-  
+  /** Identifier for controlling background music playback. */
+  private static final String BGM = "BGM";
+  /** The sound system instance. */
   private SoundSystem soundSystem = null;
-  
+  /** The master volume. */
   private float masterVol = 1.0f;
+  /** The sound effect volume. */
   private float sfxVol = 1.0f;
+  /** The background music volume. */
   private float bgmVol = 0.33f;
-  
   /** The list of BGM that will be indexed by a value from the map file. */
   private String[][] bgmList;
-  
+  /** The track list number for the current world. */
   private int trackList;
   
-  public SoundPlayer() {
-    setupBGMList();
-    
-    // TODO - figure out why the library compatibility check isn't working
-    // We want to use LibraryLWJGLOpenAL if compatible on the current machine (Java Sound sounds crappy apparently)
-    // Should be checking for library compatibility before attempting to construct the sound system object!
-    //boolean aLCompatible = SoundSystem.libraryCompatible( LibraryLWJGLOpenAL.class ); 
-    //boolean jSCompatible = SoundSystem.libraryCompatible( LibraryJavaSound.class );
-        
+  /** Constructs the sound player. */
+  public SoundPlayer() {    
     try {
-      soundSystem = new SoundSystem(LibraryLWJGLOpenAL.class);
-
+      soundSystem = new SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
+        LibraryLWJGLOpenAL.class : LibraryJavaSound.class);
       SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
       SoundSystemConfig.setCodec("wav", CodecWav.class);
-      
       setMasterVolume(masterVol);
-    }
-    catch(SoundSystemException e)
-    {
-      System.err.println("error linking with the plug-ins" );
+      setupBGMList();
+      setupSfx();
+    } catch (SoundSystemException e)  {
+      System.err.println("Error linking sound plugins!");
     }
   }
   
@@ -158,20 +153,32 @@ public class SoundPlayer {
   /** Plays the specified sound effect.
    * @param name File name of sound effect. 
    */
-  public void playSfx(String name) {
-    try {      
-      // TODO - rather than doing this stuff every time we play a sound effect we could probably setup each one at construction then just call play("name")
-      soundSystem.newSource(false, name, new File("res/sfx/packs/Classic/" + name).toURI().toURL(), name, false, 0, 0, 0,
-        SoundSystemConfig.ATTENUATION_NONE, SoundSystemConfig.getDefaultRolloff());
-      soundSystem.setPriority(name, false);
-      soundSystem.setPosition(name, 0, 0, 0);
-      soundSystem.setAttenuation(name, SoundSystemConfig.ATTENUATION_ROLLOFF);
-      soundSystem.setDistOrRoll(name, SoundSystemConfig.getDefaultRolloff());
-      soundSystem.setPitch(name, 1.0f);
-      soundSystem.setVolume(name, sfxVol);      
-      soundSystem.play(name);
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
+  private void playSfx(String name) {
+    if (soundSystem.playing(name)) {
+      soundSystem.stop(name);
+    }
+    // To adjust volume always need to set it because volume is tied to each sound.
+    soundSystem.setVolume(name, sfxVol);
+    soundSystem.play(name);
+  }
+  
+  /** Sets up the sound effects based on the classic sound pack. */
+  public void setupSfx() {
+    File[] listOfFiles = new File(World.class.getClassLoader().getResource("sfx/packs/Classic").getFile()).listFiles();
+    for(File f : listOfFiles) {
+      String name = f.getName();
+      try {
+        soundSystem.newSource(false, name, f.toURI().toURL(), name, false, 0, 0, 0,
+          SoundSystemConfig.ATTENUATION_NONE, SoundSystemConfig.getDefaultRolloff());
+        soundSystem.setPriority(name, false);
+        soundSystem.setPosition(name, 0, 0, 0);
+        soundSystem.setAttenuation(name, SoundSystemConfig.ATTENUATION_ROLLOFF);
+        soundSystem.setDistOrRoll(name, SoundSystemConfig.getDefaultRolloff());
+        soundSystem.setPitch(name, 1.0f);
+        soundSystem.setVolume(name, sfxVol);
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      }
     }
   }
   
@@ -212,8 +219,9 @@ public class SoundPlayer {
   public void setMasterVolume(float level) {
     masterVol = level;
     soundSystem.setMasterVolume(masterVol);
-  }  
+  }
   
+  // Helper functions to play each sound effect (note: these need to exist in the sfx pack resource dir).
   public void sfxMip() {
     playSfx("mip.wav");
   }

@@ -252,7 +252,7 @@ public class PlayerPhysics {
     	velocityY = JUMPING_VELOCITY[speedIndex];
     	setJumpingAccelerationX();
     	isJumping = true;
-    	Game.soundPlayer.playSfx("jump.wav");
+    	Game.soundPlayer.sfxJump();
     	canJump = false;
     }
     

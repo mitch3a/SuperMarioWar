@@ -26,7 +26,7 @@ public abstract class SwitchControlBlock extends SolidBlock {
 
   @Override
   public int collideWithBottom(Player player, int newY) {
-    Game.soundPlayer.playSfx("switchpress.wav");
+    Game.soundPlayer.sfxSwitchPress();
     blocksOff = !blocksOff;
     
     //TODO don't love this but works for now
