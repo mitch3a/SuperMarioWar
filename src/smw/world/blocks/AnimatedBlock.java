@@ -15,7 +15,7 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
   /** The time that has elapsed for the current frame. */
   private int frameTime_ms;
   /** Indicates if the animation is running. */
-  private boolean running = true;
+  protected boolean running = true;
   
   public AnimatedBlock(int x, int y, String tileSheet) {
     super(x, y, tileSheet);
@@ -50,18 +50,6 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
   public static class BreakableBlock extends AnimatedBlock{
     public BreakableBlock(int x, int y){
       super(x, y, "breakableblock.png");
-    }
-  }
-  
-  public static class QuestionBlock extends AnimatedBlock{
-    public QuestionBlock(int x, int y){
-      super(x, y, "powerupblock.png");
-    }
-  }
-  
-  public static class FlipBlock extends AnimatedBlock{
-    public FlipBlock(int x, int y){
-      super(x, y, "flipblock.png");
     }
   }
   
@@ -102,6 +90,12 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
     public RedThrowBlock(int x, int y){
       super(x, y, "throwblock.png");
       this.subImageY += 2*Tile.SIZE;
+    }
+  }
+  
+  public static class FallingDonutBlock extends AnimatedBlock{
+    public FallingDonutBlock(int x, int y){
+      super(x, y, "donutblock.png");
     }
   }
 }
