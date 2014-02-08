@@ -47,11 +47,12 @@ public class Game implements Runnable {
       "Xijar_1986.map", //ICE
       "eeliottheking_not so cave.map",
       "Peardian_Tower of the Sun.map", // BUG - has some weird ball thing that floats away when it shouldn't
-      "sgraff_Buster_Beetle_s_Tower.map" // FEATURE - switches to turn on/off colored ! blocks
+      "sgraff_Buster_Beetle_s_Tower.map", // FEATURE - switches to turn on/off colored ! blocks
+      "GG_Fire Fortress.map" //Animated blocks
     };   
-    //world = new World(worlds[16]);
-    //world = new World(); // TODO - Starts a random world (for now).
-    world = new World("mm64_as seen on tv.map");
+    //world = new World(worlds[17]);
+    world = new World(); // TODO - Starts a random world (for now).
+    //world = new World("mm64_as seen on tv.map");
     
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world);

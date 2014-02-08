@@ -18,7 +18,7 @@ import smw.settings.Debug;
 public class TileSheet {
   
   protected BufferedImage image;
-  Tile.TileType[] tiletypes;
+  //TODO I dont think we are using this Tile.TileType[] tiletypes;
   
   /** 
    * TileSet constructor.
@@ -27,7 +27,10 @@ public class TileSheet {
    */
   public TileSheet(String name) {
     try {
-      BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("map/tilesheets/" + name + "/large.png"));
+      //TODO obviously I hate this...
+      String fullName = "map/tilesheets/" + name + ((name.endsWith(".png")) ? "" : "/large.png");
+      BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource(fullName));
+
       // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
       image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
       image.getGraphics().drawImage(img, 0, 0, null);
@@ -35,7 +38,7 @@ public class TileSheet {
       Palette p = Palette.getInstance();
       p.implementTransparent(image);      
       
-      readTileTypeFile(name);
+      //TODO I dont think we are using this but it crashes for non "large" tilesheets readTileTypeFile(name);
     } catch (IOException e) {
       System.out.println("Could not read spritesheet for: " + name);
       e.printStackTrace();
@@ -65,6 +68,7 @@ public class TileSheet {
    * The file is in little endian, but this is dependent on what type of machine generated it.
    * @param name
    */
+  /*
   private void readTileTypeFile(String name) {       
     try {
       RandomAccessFile f = new RandomAccessFile(this.getClass().getClassLoader().getResource(
@@ -95,6 +99,7 @@ public class TileSheet {
       e.printStackTrace();
     }
   }
+  */
   
   /**
    * Returns the tile type at the provided x and y.
@@ -102,6 +107,7 @@ public class TileSheet {
    * @param y row of the tile sheet
    * @return tile type
    */
+  /*
   Tile.TileType getTileType(int x, int y) {
     final int index = x + y * 32;
       
@@ -111,6 +117,7 @@ public class TileSheet {
     
     return Tile.TileType.NONSOLID;
   }
+  */
   
   /**
    * Gets the image of a tile from the sheet at the provided row and col.
@@ -118,11 +125,13 @@ public class TileSheet {
    * @param row row of the tile sheet
    * @return tile image
    */
-  public BufferedImage getTileImg(int col, int row) {
-    if(col < 0 || row < 0){//TODO check not TOO big
+  public BufferedImage getTileImg(int x, int y) {
+    if(x < 0 || y < 0){//TODO check not TOO big
       return null;
     }
     
-    return image.getSubimage(col * Tile.SIZE, row * Tile.SIZE, Tile.SIZE, Tile.SIZE);
+    return image.getSubimage(x, y, Tile.SIZE, Tile.SIZE);
   }  
+  
+  
 }

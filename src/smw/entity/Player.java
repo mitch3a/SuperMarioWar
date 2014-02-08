@@ -107,9 +107,9 @@ public class Player extends Rectangle implements Drawable, Updatable{
     }
 		
     newX = Game.world.getCollisionX(this, newX);
-    newY = Game.world.getCollisionY(this, newX, newY);
-    
     newX = newX % GameFrame.res_width;
+    
+    newY = Game.world.getCollisionY(this, newX, newY);
     newY = newY % GameFrame.res_height;
     
     //#############################################################

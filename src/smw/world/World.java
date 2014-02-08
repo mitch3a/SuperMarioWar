@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 
 import smw.Collidable;
 import smw.Drawable;
-import smw.Game;
 import smw.Updatable;
 import smw.entity.Player;
 import smw.gfx.Sprite;
@@ -24,7 +23,6 @@ import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingPlatform.MovingPlatform;
 import smw.world.MovingPlatform.Path;
-import smw.world.Structures.Block;
 import smw.world.Structures.DrawArea;
 import smw.world.Structures.FlagBaseLocation;
 import smw.world.Structures.Hazard;
@@ -34,6 +32,9 @@ import smw.world.Structures.SpawnArea;
 import smw.world.Structures.Warp;
 import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
+import smw.world.blocks.SolidBlock;
+import smw.world.blocks.SwitchBlock;
+import smw.world.blocks.SwitchControlBlock;
 
 public class World {
     
@@ -70,7 +71,7 @@ public class World {
   final List<Updatable> updatables  = new LinkedList<Updatable>();
   final List<MovingPlatform> movingPlatforms = new LinkedList<MovingPlatform>();
   //TODO this is temp... until there is a smarter way to update blocks on a change
-  final static public List<Block> blocks = new LinkedList<Block>();
+  final static public List<SolidBlock> blocks = new LinkedList<SolidBlock>();
 
   Warp[][]   warps;
   SpawnArea[][] spawnAreas;  
@@ -128,13 +129,13 @@ public class World {
         ///////////////////////////////////////////////////////////////
         final int numTileSheets = buffer.getInt();
         
-        Map<Integer, TileSheet> tileSheetMap = new HashMap<Integer, TileSheet>();
-
+        Map<Integer, String> tileSheetMap = new HashMap<Integer, String>();
+        
         for (int i = 0; i < numTileSheets; i++) {
           int tileSheetId      = buffer.getInt();
           String tileSheetName = buffer.getString();
           
-          tileSheetMap.put(tileSheetId, new TileSheet(tileSheetName));
+          tileSheetMap.put(tileSheetId, tileSheetName);
           
           if (Debug.LOG_WORLD_INFO) {
             System.out.println("tileset: " + tileSheetName);
@@ -163,7 +164,7 @@ public class World {
             }
             
             int type = (int)(buffer.getByte());
-            boolean hidden = buffer.getBoolean();
+            boolean hidden = buffer.getBoolean(); //TODO do we use this or is it always false?
             
             if(Tile.isValidType(type)){
               if (AnimatedBlock.isTypeAnimated(type)) {
@@ -173,7 +174,44 @@ public class World {
                 collidablesForAfter.add(animatedBlock);
               }
               else{
-                Block block = new Block(type, w*Tile.SIZE, h*Tile.SIZE);
+                SolidBlock block = null;
+                //Need this for switch blocks to pass it to the control block before 
+                //casting it to a regular block 
+                SwitchBlock temp = null;
+                
+                switch(type){
+                  /** Switch Control Blocks **/
+                  case  7: block = new SwitchControlBlock.Red(type, w*Tile.SIZE, h*Tile.SIZE);
+                           break;
+                  case  8: block = new SwitchControlBlock.Green(type, w*Tile.SIZE, h*Tile.SIZE);
+                           break;
+                  case  9: block = new SwitchControlBlock.Yellow(type, w*Tile.SIZE, h*Tile.SIZE);
+                           break;
+                  case 10: block = new SwitchControlBlock.Blue(type, w*Tile.SIZE, h*Tile.SIZE);
+                           break;
+                           
+                  /** Switch Blocks **/
+                  case 11: temp = new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                           SwitchControlBlock.Red.registerBlock(temp);
+                           block = temp;
+                           break;
+                  case 12: temp =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                           SwitchControlBlock.Green.registerBlock(temp);
+                           block = temp;
+                           break;
+                  case 13: temp =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                           SwitchControlBlock.Yellow.registerBlock(temp);
+                           block = temp;
+                           break;
+                  case 14: temp =new SwitchBlock(type, w*Tile.SIZE, h*Tile.SIZE);
+                           SwitchControlBlock.Blue.registerBlock(temp);
+                           block = temp;
+                           break;
+                           
+                  /** TODO Blocks **/         
+                  default: block =new SolidBlock(w*Tile.SIZE, h*Tile.SIZE);
+                }
+                
                 drawablesLayer3.add(block); //TODO is this the correct layer?
                 collidablesForAfter.add(block);
                 blocks.add(block);
@@ -182,49 +220,7 @@ public class World {
             }
           }
         }
-        /*
-        / TODO - RPG - trying to do block interactions
-        // This is terrible, we should consolidate / clean up a lot of this code,
-        // but I'm just trying to get it to work quick for now!
-        
-        // TODO - maybe add collide to tile then let it figure out what to do based on what type it is rather than adding more stuff to the world?
-        if (tile1.block != null) {
-          System.out.println(block1.type); // TODO - debug            
-          switch (block1.type) {
-          case 1:
-            // Question Block - Stop the animation
-            tile1.animatedBlock.stop();
-            break;
-          case 7: // Red switch
-            Game.soundPlayer.playSfx("switchpress.wav");
-            block1.switchOn = !block1.switchOn; // TODO - probably should have a bounce animation and sound too!
-            for (Tile t : redBlocks) {
-              t.toggleHidden();
-            }
-            break;
-          case 8: // Green switch
-            Game.soundPlayer.playSfx("switchpress.wav");
-            block1.switchOn = !block1.switchOn;
-            for (Tile t : greenBlocks) {
-              t.toggleHidden();
-            }
-            break;
-          case 9: // Yellow switch
-            Game.soundPlayer.playSfx("switchpress.wav");
-            block1.switchOn = !block1.switchOn;
-            for (Tile t : yellowBlocks) {
-              t.toggleHidden();
-            }
-            break;
-          case 10: // Blue switch
-            Game.soundPlayer.playSfx("switchpress.wav");
-            block1.switchOn = !block1.switchOn;
-            for (Tile t : blueBlocks) {
-              t.toggleHidden();
-            }
-            break;
-          } 
-        */
+
         ///////////////////////////////////////////////////////////////
         // Load background image
         ///////////////////////////////////////////////////////////////
@@ -404,7 +400,7 @@ public class World {
    * @param version
    * @param tileSheetMap
    */
-  void loadPlatforms(WorldBuffer buffer, int version, Map<Integer, TileSheet> tileSheetMap){
+  void loadPlatforms(WorldBuffer buffer, int version, Map<Integer, String> tileSheetMap){
     int numPlatforms = buffer.getInt();
 
     for(int platformIndex = 0 ; platformIndex < numPlatforms ; ++platformIndex){
@@ -510,7 +506,16 @@ public class World {
   //TODO mk for this and Y, replace Moving platforms with "movingCollidables". This will include fireballs, etc. For these we can't just index by position, we need to check all
   public int getCollisionX(Player player, int newX) {
     //This is to test the bottom of the sprite
+    
+    //Above everything
+    if(player.y < -31){
+      return newX;
+    }
+    
     int lowestYTile = ((player.y + Sprite.IMAGE_HEIGHT - 1) % GameFrame.res_height)/Tile.SIZE;
+    
+    //If half of player is above the top, just check the bottom half of the player twice
+    int highestYTile = (player.y < 0) ? lowestYTile : player.y/Tile.SIZE;
     
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
@@ -538,23 +543,22 @@ public class World {
     ///////////////////////////////////////////////////////////////
     // Objects
     ///////////////////////////////////////////////////////////////
-    //TODO this is not perfect... really just want to still check the bottom part of y
     newX = (newX + GameFrame.res_width) % GameFrame.res_width;
     
-    if (player.x != newX && player.y >= 0){
+    if (player.x != newX){
       if (player.x < newX) {  
         //Moving Right so check the right side of the sprite with the left side of the object
         int xCollision = ((newX + Sprite.IMAGE_HEIGHT)% GameFrame.res_width)/Tile.SIZE;
         
-        newX = collidables[xCollision][player.y/Tile.SIZE].collideWithLeft(player, newX);
-        newX = collidables[xCollision][lowestYTile       ].collideWithLeft(player, newX);
+        newX = collidables[xCollision][highestYTile].collideWithLeft(player, newX);
+        newX = collidables[xCollision][lowestYTile ].collideWithLeft(player, newX);
       }
       else{
         //Moving Left so check the left side of the sprite with the right side of the object
         int xCollision = newX/Tile.SIZE;
         
-        newX = collidables[xCollision][player.y/Tile.SIZE].collideWithRight(player, newX);
-        newX = collidables[xCollision][lowestYTile       ].collideWithRight(player, newX);
+        newX = collidables[xCollision][highestYTile].collideWithRight(player, newX);
+        newX = collidables[xCollision][lowestYTile ].collideWithRight(player, newX);
       }
     }
     
@@ -612,7 +616,7 @@ public class World {
     newY = newY % GameFrame.res_height;
     
     //TODO this >= 0 thing is to let us go above the screen... it needs a little more work tho
-    if (player.y != newY && newY >= 0){
+    if (player.y != newY){
       if (player.y < newY) {        
         //TODO mk don't think this is where we want this
         // If the player pushed the down key check to see if it was released.
@@ -627,12 +631,20 @@ public class World {
         //Moving down so check the bottom of the sprite with the top of the object
         int yCollision = ((newY + Sprite.IMAGE_HEIGHT)% GameFrame.res_height)/Tile.SIZE;
         
+        if(yCollision < 0){
+          return newY;
+        }
+        
         newY = collidables[newX/Tile.SIZE][yCollision].collideWithTop(player, newY);
         newY = collidables[rightmostXTile][yCollision].collideWithTop(player, newY);
       }
       else{
         //Moving up so check the top of the sprite with the bottom of the object
         int yCollision = newY/Tile.SIZE;
+        
+        if(yCollision < 0){
+          return newY;
+        }
         
         newY = collidables[newX/Tile.SIZE][yCollision].collideWithBottom(player, newY);
         newY = collidables[rightmostXTile][yCollision].collideWithBottom(player, newY);

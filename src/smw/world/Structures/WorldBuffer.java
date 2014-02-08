@@ -10,6 +10,7 @@ import java.util.Map;
 import smw.Collidable;
 import smw.world.Tile;
 import smw.world.TileSheet;
+import smw.world.TileSheetManager;
 import smw.world.MovingPlatform.EllipticalPath;
 import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;
@@ -149,13 +150,13 @@ public class WorldBuffer {
     return stringBuilder.toString();
   }
 
-  public Tile getTile(int x, int y, Map<Integer, TileSheet> tileSheetMap){
+  public Tile getTile(int x, int y, Map<Integer, String> tileSheetMap){
    
     int id              = (int)(buffer.get());
     int tileSheetColumn = (int)(buffer.get());
     int tileSheetRow    = (int)(buffer.get());
 
-    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn, tileSheetMap.get(id));
+    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn, TileSheetManager.getInstance().getTileSheet(tileSheetMap.get(id)));
   }
  
   public int getVersion() {

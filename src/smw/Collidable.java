@@ -6,6 +6,7 @@ import smw.world.Tile;
 import smw.world.Tile.TileType;
 
 //TODO mk as other objects are implemented, might want to replace Player with something generic
+//     ALSO this should probably be an abstract type
 public class Collidable {
   //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
@@ -27,7 +28,7 @@ public class Collidable {
     
     left   = (x - Tile.SIZE + GameFrame.res_width) % GameFrame.res_width;
     right  = (x + Tile.SIZE) % GameFrame.res_width;
-    top    = (y - Tile.SIZE + GameFrame.res_height) % GameFrame.res_height;
+    top    = (y - Tile.SIZE) % GameFrame.res_height;
     bottom = (y + Tile.SIZE) % GameFrame.res_height;
   }
 
