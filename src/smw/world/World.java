@@ -579,11 +579,11 @@ public class World {
     }
     Warp warp = warps[column1][row1];
     
-    if(warp.connection >= 0 && warp.direction == direction){
+    if(warp.id >= 0 && warp.connection >= 0 && warp.direction == direction){
       //Need both that the player is touching to be same warp
       Warp warp2 = warps[column2][row2];
       
-      if(warp.id == warp2.id  && warp2.direction == direction){
+      if(warp2.id >= 0 && warp.id == warp2.id  && warp2.direction == direction){
         return warp;
       }
     }

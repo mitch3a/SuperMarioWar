@@ -1,7 +1,7 @@
 package smw.world.Structures;
 
 import smw.world.Tile;
-
+/*
 public class SpecialTile {
   
   //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful
@@ -20,3 +20,4 @@ public class SpecialTile {
     return String.valueOf(type);
   }
 }
+*/

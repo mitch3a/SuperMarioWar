@@ -25,21 +25,27 @@ public class Game implements Runnable {
   
   /** Indicates if main game loop is running. */
   private boolean running = false;
+  private boolean paused = false;
+  // 1: pause has been pressed but never released
+  // 2: pause has been released after being pressed
+  // 3: pause has been pushed again but not yet released
+  private int pauseState = 0;
+  private int pausePlayer;
   
   public Game(final int numPlayers) {
     
     // TODO - setup world selector or something, for now pick what you want to test code.
     // ALSO ADD DESCRIPTION (good for testing ____)
     String[] worlds = {
-      "0smw.map", 
-      "4matsy_Evening Fracas.map", 
-      "NMcCoy_1-3.map", 
-      "ym7_world1-2.map", 
+      "0smw.map", //0 
+      "4matsy_Evening Fracas.map",//1 
+      "NMcCoy_1-3.map",  //2 Plain with one moving platform (continuous only Y)
+      "ym7_world1-2.map", //3 underground, bricks + two cont platforms on Y, dif directions
       "two52_Up In The Hills.map", 
       "tubesteak_coolnights.map", //segment platform, spikes
       "Pikablu_Mushroom Kingdom.map",
       "MrMister_Azul Montana.map", 
-      "GG_Angry angels.map", 
+      "GG_Angry angels.map", //8 clouds, sideways platform, pipe with plant
       "coolman13714_green greens.map", 
       "Link901_MileHigh Madness.map", 
       "Xijar_Boo is Back.map",
@@ -51,12 +57,13 @@ public class Game implements Runnable {
       "GG_Fire Fortress.map", //Animated blocks
       "tubesteak_lockout.map", //Spinning block, note box
       "cristomarquez_abovethedomes.map", //falling donuts, warps, clouds
-      "MrMister_Airshipz.map",//TODO buffer gets overdrawn...
+      "MrMister_Airshipz.map",//20 TODO buffer gets overdrawn...
       "Sgraff_Bewarehouse.map",
-      "Peardian_arcterra gate.map" //lots of ice + ice spikes
+      "Peardian_arcterra gate.map", //22 lots of ice + ice spikes
+      "JJames_Clocks on Fire.map" // 23 lava, circular moving platform and 2 spinning hazards
     };   
-    //world = new World(worlds[22]);
-    world = new World(); // TODO - Starts a random world (for now).
+    world = new World(worlds[7]);
+    //world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
     
     players = new Player[numPlayers];
@@ -109,11 +116,11 @@ public class Game implements Runnable {
       }
       // If still nothing just use the keyboard.
       if (pc[0] == null) {
-        pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_SPACE);
+        pc[0] = new Keyboard(gameFrame, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_J, KeyEvent.VK_SPACE);
       }
     }
     if(numPlayers == 2) {
-      pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_W, KeyEvent.VK_G);
+      pc[1] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W, KeyEvent.VK_W, KeyEvent.VK_G, KeyEvent.VK_SPACE);
     }
 
     //pc[2] = new Keyboard(gameFrame, KeyEvent.VK_A,KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_G);
@@ -152,8 +159,9 @@ public class Game implements Runnable {
       lastUpdateTime_ns = currentTime_ns;
       boolean needRender = false; // TODO - need to figure out how we want our loop to work
 
+      updatePause();
+      
       while (neededUpdates >= 1.0) {
-      	//updateGame();
         updates++;
         neededUpdates -= 1.0;
         needRender = true;
@@ -166,7 +174,15 @@ public class Game implements Runnable {
       }
       
       if (needRender) {
-        updateGame(timePerRender_ns);
+        
+        for (Player p : players) {
+          p.poll();
+        }
+        
+        if(!paused){
+          updateGame(timePerRender_ns);
+        }
+        
         render();
         frames++;
       }
@@ -178,6 +194,40 @@ public class Game implements Runnable {
         updates = 0;
       }
       
+    }
+  }
+  
+  private void updatePause(){
+    if(!paused){
+      for(int i = 0 ; i < players.length ; ++i){
+        if(players[i].physics.playerControl.isPaused()){
+          pausePlayer = i;
+          paused = true;
+          pauseState = 0;
+          break;
+        }
+      }
+    }
+    else{
+      if(pauseState == 0){
+        //Pause has been pressed but never released
+        if(!players[pausePlayer].physics.playerControl.isPaused()){
+          pauseState = 1;
+        }
+      }
+      else if(pauseState == 1){
+        //Fully paused. Waiting for unpause to be pushed
+        if(players[pausePlayer].physics.playerControl.isPaused()){
+          pauseState = 2;
+        }
+      }
+      else if(pauseState == 2){
+        //Unpaused pushed but must be released before end of pause
+        if(!players[pausePlayer].physics.playerControl.isPaused()){
+          pauseState = 0;
+          paused = false;
+        }
+      }
     }
   }
 
@@ -194,10 +244,6 @@ public class Game implements Runnable {
   	// closer than 2 pixels to him. But this is good enough for now. 
     float timeDelta_ms = (int)(timeDelta_ns) / 1000000;
     world.update(timeDelta_ms);
-    
-  	for (Player p : players) {
-  		p.poll();
-  	}
   	
   	for (Player p : players) {
   	  p.update(timeDelta_ms);

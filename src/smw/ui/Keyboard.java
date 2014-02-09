@@ -14,6 +14,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   int up;
   int jump;
   int run;
+  int pause;
   
   //TODO this isn't the smartest way to do this. Maybe reconsider this
   //     and other PlayerControlBases for something better and similar
@@ -29,13 +30,15 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
                   int down,
                   int up,
                   int jump,
-                  int run) {
+                  int run,
+                  int pause) {
     this.left  = left;
     this.right = right;
     this.down  = down;
     this.up    = up;
     this.jump  = jump;
     this.run   = run;
+    this.pause = pause;
     
     component.addKeyListener(this);
     keyMap.put(this.left, false);
@@ -44,6 +47,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     keyMap.put(this.up, false);
     keyMap.put(this.jump, false);
     keyMap.put(this.run, false); 
+    keyMap.put(this.pause, false);
   }
   
   public void poll(){
@@ -79,6 +83,12 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   public boolean isUp() {
     return keyMap.get(up);
   }
+  
+  @Override
+  public boolean isPaused() {
+    return keyMap.get(pause);
+  }
+
   
   /*******************************************
    * This method waits until an unused key is 
@@ -121,6 +131,12 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     run = mostRecentlyPushed;
   }
   
+  @Override
+  public void setPauseButton() {
+    waitForNextKey();
+    pause = mostRecentlyPushed;
+  }
+  
   public void keyPressed(KeyEvent e) {
     int code = e.getKeyCode();
     e.consume();
@@ -146,12 +162,6 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
 
   @Override
   public void release() { }
-
-  @Override
-  public boolean isPaused() {
-    // TODO - Assign pause button and use it! (probably esc button)
-    return false;
-  }
 
   @Override
   public boolean isActionPressed() {

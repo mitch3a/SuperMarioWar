@@ -202,4 +202,10 @@ public class XboxGamePad extends PlayerControlBase {
 
   @Override
   public void setRunButton() {}
+
+  @Override
+  public void setPauseButton() {
+    // TODO Auto-generated method stub
+    
+  }
 }

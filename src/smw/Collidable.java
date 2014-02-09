@@ -3,7 +3,6 @@ package smw;
 import smw.entity.Player;
 import smw.ui.screen.GameFrame;
 import smw.world.Tile;
-import smw.world.Tile.TileType;
 
 //TODO mk as other objects are implemented, might want to replace Player with something generic
 //     ALSO this should probably be an abstract type
@@ -19,8 +18,6 @@ public abstract class Collidable {
   
   public int x, y;
   
-  public TileType type;//TODO this should be deleted. Keeping it for moving platforms for now
-  
   public Collidable(int x, int y) {
     
     this.x = x;
@@ -30,6 +27,16 @@ public abstract class Collidable {
     right  = (x + Tile.SIZE) % GameFrame.res_width;
     top    = (y - Tile.SIZE) % GameFrame.res_height;
     bottom = (y + Tile.SIZE) % GameFrame.res_height;
+  }
+  
+
+  public void move(int dx, int dy) {
+    x += dx;
+    y += dy;
+    left = (left + dx + GameFrame.res_width) % GameFrame.res_width;
+    right = (right + dx + GameFrame.res_width) % GameFrame.res_width;
+    top += dy;
+    bottom += dy;
   }
 
   /** by default, non-solid **/
@@ -50,6 +57,14 @@ public abstract class Collidable {
   /** by default, non-solid **/
   public int collideWithBottom(Player player, int newY){
     return newY;
+  }
+  
+  /**
+   *  this method is for moving platforms to let the caller know if
+   *  it should move whatever is on top of it 
+   */
+  public boolean willDrag(){
+    return false;
   }
   
   public static Collidable getCollideable(int type, int x, int y){
@@ -85,7 +100,6 @@ public abstract class Collidable {
   public static class NonSolid extends Collidable{
     public NonSolid(int x, int y) {
       super(x, y);
-      type = Tile.TileType.NONSOLID;
     }
   }
   
@@ -96,7 +110,11 @@ public abstract class Collidable {
     
     public Solid(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SOLID;
+    }
+    
+    @Override
+    public boolean willDrag(){
+      return true;
     }
 
     @Override
@@ -130,7 +148,11 @@ public abstract class Collidable {
   public static class SolidOnTop extends Collidable{
     public SolidOnTop(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SOLID_ON_TOP;
+    }
+    
+    @Override
+    public boolean willDrag(){
+      return true;
     }
     
     @Override
@@ -159,7 +181,6 @@ public abstract class Collidable {
   public static class Death extends Solid{
     public Death(int x, int y) {
       super(x, y);
-      type = Tile.TileType.DEATH;
     }
     
     @Override
@@ -193,7 +214,6 @@ public abstract class Collidable {
   public static class DeathOnTop extends Solid{
     public DeathOnTop(int x, int y) {
       super(x, y);
-      type = Tile.TileType.DEATH_ON_TOP;
     }
     
     @Override
@@ -209,7 +229,6 @@ public abstract class Collidable {
   public static class DeathOnBottom extends Solid{
     public DeathOnBottom(int x, int y) {
       super(x, y);
-      type = Tile.TileType.DEATH_ON_BOTTOM;
     }
     
     @Override
@@ -225,7 +244,6 @@ public abstract class Collidable {
   public static class DeathOnRight extends Solid{
     public DeathOnRight(int x, int y) {
       super(x, y);
-      type = Tile.TileType.DEATH_ON_RIGHT;
     }
     
     @Override
@@ -241,7 +259,6 @@ public abstract class Collidable {
   public static class DeathOnLeft extends Solid{
     public DeathOnLeft(int x, int y) {
       super(x, y);
-      type = Tile.TileType.DEATH_ON_LEFT;
     }
     
     @Override
@@ -257,7 +274,6 @@ public abstract class Collidable {
   public static class SuperDeath extends Solid{
     public SuperDeath(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SUPER_DEATH;
     }
     
     @Override
@@ -291,7 +307,6 @@ public abstract class Collidable {
   public static class SuperDeathOnTop extends Solid{
     public SuperDeathOnTop(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SUPER_DEATH_TOP;
     }
     
     @Override
@@ -307,7 +322,6 @@ public abstract class Collidable {
   public static class SuperDeathOnBottom extends Solid{
     public SuperDeathOnBottom(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SUPER_DEATH_BOTTOM;
     }
     
     @Override
@@ -323,7 +337,6 @@ public abstract class Collidable {
   public static class SuperDeathOnRight extends Solid{
     public SuperDeathOnRight(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SUPER_DEATH_RIGHT;
     }
     
     @Override
@@ -339,7 +352,6 @@ public abstract class Collidable {
   public static class SuperDeathOnLeft extends Solid{
     public SuperDeathOnLeft(int x, int y) {
       super(x, y);
-      type = Tile.TileType.SUPER_DEATH_LEFT;
     }
     
     @Override
@@ -355,7 +367,6 @@ public abstract class Collidable {
   public static class IceDeathOnBottom extends Solid{
     public IceDeathOnBottom(int x, int y) {
       super(x, y);
-      type = Tile.TileType.ICE_DEATH_ON_BOTTOM;
     }
     
     @Override
@@ -371,7 +382,6 @@ public abstract class Collidable {
   public static class IceDeathOnRight extends Solid{
     public IceDeathOnRight(int x, int y) {
       super(x, y);
-      type = Tile.TileType.ICE_DEATH_ON_RIGHT;
     }
     
     @Override
@@ -387,7 +397,6 @@ public abstract class Collidable {
   public static class IceDeathOnLeft extends Solid{
     public IceDeathOnLeft(int x, int y) {
       super(x, y);
-      type = Tile.TileType.ICE_DEATH_ON_LEFT;
     }
     
     @Override

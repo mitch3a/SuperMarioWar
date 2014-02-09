@@ -28,6 +28,7 @@ public abstract class SwitchControlBlock extends SolidBlock {
   public int collideWithBottom(Player player, int newY) {
     Game.soundPlayer.sfxSwitchPress();
     blocksOff = !blocksOff;
+    //TODO need to make sure it doesnt get called twice (same for other blocks as well)
     
     //TODO don't love this but works for now
     for(SwitchBlock block : blocksToChange){

@@ -8,18 +8,25 @@ import smw.Drawable;
 import smw.Updatable;
 import smw.entity.Player;
 import smw.gfx.Sprite;
+import smw.ui.screen.GameFrame;
 import smw.world.Tile;
-import smw.world.Tile.TileType;
 
 public class MovingPlatform implements Drawable, Updatable{
   Path path;
   Tile[][] tiles;
-  Collidable[][] collidables; //TODO really don't like this
+  Collidable[][] collidables;
   
   public MovingPlatform(Tile[][] tiles, Collidable[][] collidables, Path path){
     this.path = path;
     this.tiles = tiles;
     this.collidables = collidables;
+    
+    //Shift the collidables by the start point of the path
+    for(Collidable[] collidableArray : collidables){
+      for(Collidable collidable : collidableArray){
+        collidable.move(path.getX(), path.getY());
+      }
+    }
   }
  
   public int getX(){
@@ -38,121 +45,162 @@ public class MovingPlatform implements Drawable, Updatable{
      int y = startY;
     
      for(int j = 0 ; j < tiles[i].length ; ++j){
-       Tile tile = tiles[i][j];
-       //Sometimes there is a gap in the middle
-       if(tile.hasImage()){
-         graphics.drawImage(tile.getImage(), x, y, observer);
+       tiles[i][j].draw(graphics, x, y, observer);
+       
+       if(x > GameFrame.res_width - Tile.SIZE){
+         //Draw it if it overlaps
+         tiles[i][j].draw(graphics, x - GameFrame.res_width, y, observer);
        }
+       
        y += Tile.SIZE;
      }
      
      x += Tile.SIZE;
+     
+     if(x > GameFrame.res_width){
+       x = x % GameFrame.res_width;
+     }
     }
-    /* TODO mk want something like this but would need to pass the x, y of path down somehow
-    for(int i = 0 ; i < tiles.length ; ++i){
-      for(int j = 0 ; j < tiles[i].length ; ++j){
-        tiles[i][j].draw(graphics, observer);
-      }
-    }
-    */
   }
-
-  public TileType getTile(int x, int y) {
+  
+  Collidable getCollidable(int x, int y){
     int difX = x - path.getX();
-    int difY = y - path.getY();
+    int difY = y - path.getY(); 
+    
+    difX = (difX + GameFrame.res_width) % GameFrame.res_width;
+    difY = (difY + GameFrame.res_height) % GameFrame.res_height;
     
     int indexX = (difX >= 0) ? difX/Tile.SIZE : -1;
     int indexY = (difY >= 0) ? difY/Tile.SIZE : -1;
     
     if(indexX >= 0 && indexX < tiles.length){
       if(indexY >= 0 && indexY < tiles[indexX].length){
-        return collidables[indexX][indexY].type;
+        return collidables[indexX][indexY];
       }
     }
     
-    return Tile.TileType.NONSOLID;
-  }
-
-  public int getXChange() {
-    return path.getXChange();
+    return null;
   }
 
   @Override
   public void update(float timeDif_ms) {
     timeDif_ms = 1.0f;//TODO
     path.move(timeDif_ms);
-  }
-
-  //This method returns the pixel a player should be at if this
-  //platform is pushing him/her
-  public int getFrontEdgeX(int newX) {
-    //TODO not the most accurate width
-    int leftX = getX();
-    int rightX = leftX + tiles[0].length*Tile.SIZE;
-
-    //TODO these additive factors are bc the way the turnaround works, platform might not
-    //     hit the edge during a frame. This should be done more accurately somehow
-    if(Math.abs(leftX - newX) > Math.abs(rightX - newX)){
-      return rightX + 2;
+    
+    for(Collidable[] collidableArray : collidables){
+      for(Collidable collidable : collidableArray){
+        collidable.move(path.getXChange(), path.getYChange());
+      }
     }
-    
-    return leftX - Tile.SIZE - 2;
   }
-
-  public int collideX(Player player, int newX) {
-    int rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
-    int bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
+  
+  /**
+   * Helper method to check collision between right side of a player and
+   * left side of a collidable
+   */
+  int checkCollisionRight(Player player, int xToCheck, int yToCheck, int newX){
+    Collidable temp = getCollidable(xToCheck, yToCheck);
     
-    //If the platform is pushing player left/right, update newX
-    if(Tile.TileType.SOLID == getTile(rightMostX, player.y) ||
-       Tile.TileType.SOLID == getTile(newX, player.y) ||
-       Tile.TileType.SOLID == getTile(rightMostX, bottomYPlayer) ||
-       Tile.TileType.SOLID == getTile(newX, bottomYPlayer)){
-      
-      newX = getFrontEdgeX(newX);
-    }
-    
-    
-    int justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1;
-    
-    //If the platform underneath is moving, so should the player
-    if(Tile.TileType.SOLID == getTile(newX,       justUnderPlayer) || 
-       Tile.TileType.SOLID == getTile(rightMostX, justUnderPlayer)){
-      newX += getXChange();
+    if(temp != null){
+      newX = temp.collideWithLeft(player, newX);
     }
     
     return newX;
   }
+  
+  /**
+   * Helper method to check collision between left side of a player and
+   * right side of a collidable
+   */
+  int checkCollisionLeft(Player player, int xToCheck, int yToCheck, int newX){
+    Collidable temp = getCollidable(xToCheck, yToCheck);
+    
+    if(temp != null){
+      newX = temp.collideWithRight(player, newX);
+    }
+    
+    return newX;
+  }
+  
+  /**
+   * Helper method to check collision between left side of a player and
+   * right side of a collidable
+   */
+  boolean willDrag(int xToCheck, int yToCheck){
+    Collidable temp = getCollidable(xToCheck, yToCheck);
+    
+    if(temp != null){
+      return temp.willDrag();
+    }
+    
+    return false;
+  }
+  
+  public int collideX(Player player, int newX) {
+    int rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
+    int bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
+    
+    int justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1;
+    
+    //If the platform underneath is moving, so should the player
+    if(willDrag(newX,       justUnderPlayer) || 
+       willDrag(rightMostX, justUnderPlayer)){
+      newX += path.getXChange();
+    }
+            
+    newX = checkCollisionRight(player, rightMostX, player.y,      newX);
+    newX = checkCollisionRight(player, rightMostX, bottomYPlayer, newX);
+    newX = checkCollisionLeft (player, newX,       player.y,      newX);
+    newX = checkCollisionLeft (player, newX,       bottomYPlayer, newX);
 
+    return newX;
+  }
+
+  /**
+   * Helper method to check collision between top of a player and
+   * bottom of a collidable
+   */
+  int checkCollisionTop(Player player, int xToCheck, int yToCheck, int newY){
+    Collidable temp = getCollidable(xToCheck, yToCheck);
+    
+    if(temp != null){
+      newY = temp.collideWithBottom(player, newY);
+    }
+    
+    return newY;
+  }
+  
+  /**
+   * Helper method to check collision between bottom of a player and
+   * top of a collidable
+   */
+  int checkCollisionBottom(Player player, int xToCheck, int yToCheck, int newY){
+    Collidable temp = getCollidable(xToCheck, yToCheck);
+    
+    if(temp != null){
+      newY = temp.collideWithTop(player, newY);
+    }
+    
+    return newY;
+  }
+  
   public int collideY(Player player, int newX, int newY) {
-    if (player.y < newY) {
-      //Moving down. We want to check every block that is under the sprite. This is from the first 
-      //             Pixel (newX) to the last (newX + (Sprite.Width - 1))
-      Tile.TileType tile1 = getTile(newX, newY + Sprite.IMAGE_HEIGHT + 16);
-      Tile.TileType tile2 = getTile(newX + Sprite.IMAGE_WIDTH - 1, newY + Sprite.IMAGE_HEIGHT + 16);
-      
-      if( tile1 != Tile.TileType.NONSOLID || tile2 != Tile.TileType.NONSOLID){
-        //TODO this might need some work once others are introduced, but making sure 
-        //     it isn't a situation where the player is pressing down to sink through
-        if((tile1 == Tile.TileType.SOLID_ON_TOP || tile1 == Tile.TileType.NONSOLID) &&
-           (tile2 == Tile.TileType.SOLID_ON_TOP || tile2 == Tile.TileType.NONSOLID) &&
-           (player.physics.playerControl.isDown())) {//either pushing down or already did and working through the block
-          player.physics.startFalling();
-        }
-        else{ 
-          newY = getY() - Sprite.IMAGE_HEIGHT;
-          player.physics.collideWithFloor();
-        }
-      }
+    int rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
+    int bottomYPlayer = newY +Sprite.IMAGE_HEIGHT - 1;
+    
+    //TODO i think this (and X version) should probably be called before the collides?
+    int justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT + 1 + path.getYChange();
+    //If the platform underneath is moving, so should the player
+    if(willDrag(newX,       justUnderPlayer) || 
+       willDrag(rightMostX, justUnderPlayer)){
+      newY += path.getYChange();
     }
-    else {
-      //Moving up
-      if(getTile(newX, newY) == Tile.TileType.SOLID ||
-         getTile(newX + Sprite.IMAGE_WIDTH - 1, newY) == Tile.TileType.SOLID){
-        newY += Tile.SIZE - newY % Tile.SIZE;
-        player.physics.collideWithCeiling();
-      }
-    }
+         
+    
+    newY = checkCollisionTop   (player, newX,       newY,      newY);
+    newY = checkCollisionTop   (player, rightMostX, newY,      newY);
+    newY = checkCollisionBottom(player, newX,       bottomYPlayer, newY);
+    newY = checkCollisionBottom(player, rightMostX, bottomYPlayer, newY);
     
     return newY;
   }

@@ -18,18 +18,20 @@ public class GamePad  extends PlayerControlBase{
 	 ****************************************************/
 	void setControllerValues(ControllerType type){
 		switch(type){
-			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.index]  = 1;
-												buttonToComponentMap[PlayerButton.RIGHT.index] = 1;
-												buttonToComponentMap[PlayerButton.DOWN.index]  = 0;
-												buttonToComponentMap[PlayerButton.UP.index]    = 0;
-												buttonToComponentMap[PlayerButton.JUMP.index]  = 8;
-												buttonToComponentMap[PlayerButton.RUN.index]   = 9;
+			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.index]  =  1;
+												buttonToComponentMap[PlayerButton.RIGHT.index] =  1;
+												buttonToComponentMap[PlayerButton.DOWN.index]  =  0;
+												buttonToComponentMap[PlayerButton.UP.index]    =  0;
+												buttonToComponentMap[PlayerButton.JUMP.index]  =  8;
+												buttonToComponentMap[PlayerButton.RUN.index]   =  9;
+												buttonToComponentMap[PlayerButton.PAUSE.index] = 15;
 												pressedValues[PlayerButton.LEFT.index]  = -1.0f;
 												pressedValues[PlayerButton.RIGHT.index] =  1.0f;
 												pressedValues[PlayerButton.UP.index]    = -1.0f;
 												pressedValues[PlayerButton.DOWN.index]  =  1.0f;
 												pressedValues[PlayerButton.JUMP.index]  =  1.0f;
 												pressedValues[PlayerButton.RUN.index]   =  1.0f;
+												pressedValues[PlayerButton.PAUSE.index]  =  1.0f;
 												break;
 			case LOGITECH_TIM: buttonToComponentMap[PlayerButton.LEFT.index]  = 16;
                          buttonToComponentMap[PlayerButton.RIGHT.index] = 16;
@@ -41,6 +43,7 @@ public class GamePad  extends PlayerControlBase{
                          //TODO pressedValues[PlayerButton.DOWN.index] =  0.5f;
                          pressedValues[PlayerButton.JUMP.index]  =  1.0f;
                          pressedValues[PlayerButton.RUN.index]   =  1.0f;
+                         //TODO added UP and Pause as well
                          break;
 			case SNES_MAC_MK: //mk if you want this, set it next time you're on your macbook
 			case NONE:        
@@ -220,6 +223,12 @@ public class GamePad  extends PlayerControlBase{
   	setNextButton(PlayerButton.RUN);
   }
   
+
+  @Override
+  public void setPauseButton() {
+    setNextButton(PlayerButton.PAUSE);
+  }
+  
   /***************************************************
    * Helper method to determine if a button is pressed
    * @param button - the button being tested
@@ -261,6 +270,11 @@ public class GamePad  extends PlayerControlBase{
   }
   
   @Override
+  public boolean isPaused() {
+    return isPressed(PlayerButton.PAUSE);
+  }
+  
+  @Override
   public void poll(){
   	controller.poll();
   }
@@ -274,11 +288,6 @@ public class GamePad  extends PlayerControlBase{
   @Override
   public void release() {}
 
-  @Override
-  public boolean isPaused() {
-    // TODO - Assign pause button and use it!
-    return false;
-  }
 
   @Override
   public boolean isActionPressed() {

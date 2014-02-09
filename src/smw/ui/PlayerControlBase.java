@@ -15,9 +15,9 @@ public abstract class PlayerControlBase{
 	 *       the component index itself
 	 ***************************************************/
 	public enum PlayerButton{
-		LEFT(0), RIGHT(1), DOWN(2), UP(3), JUMP(4), RUN(5);
+		LEFT(0), RIGHT(1), DOWN(2), UP(3), JUMP(4), RUN(5), PAUSE(6);
 		
-		final static int NUM_BUTTONS_USED = 6;
+		final static int NUM_BUTTONS_USED = 7;
 		final int index;
 		PlayerButton(int i){
 			index = i;
@@ -93,6 +93,12 @@ public abstract class PlayerControlBase{
    * Store it as the run button
    ****************************************************/
   abstract public void setRunButton();
+  
+  /****************************************************
+   * This method will wait for a button to be pressed and
+   * Store it as the run button
+   ****************************************************/
+  abstract public void setPauseButton();
   
   /****************************************************
    * This methods is used to grab the current direction.

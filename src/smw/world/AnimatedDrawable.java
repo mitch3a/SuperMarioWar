@@ -7,7 +7,6 @@ import java.awt.image.ImageObserver;
 import smw.Collidable;
 import smw.Drawable;
 import smw.Updatable;
-import smw.world.Tile.TileType;
 
 //TODO I don't like this being collidable... need to fix this
 public class AnimatedDrawable extends Collidable.Solid implements Updatable, Drawable{

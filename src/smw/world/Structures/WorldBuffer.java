@@ -105,7 +105,7 @@ public class WorldBuffer {
   public Item getItem(){
     Item item = new Item();
     
-    item.type = Tile.getType(getInt());
+    item.type = Item.getType(getInt());
     item.x    = getInt();
     item.y    = getInt();
     
