@@ -317,7 +317,7 @@ public class World {
         }
         
         for(Collidable collidable : collidablesForAfter){
-          collidables[collidable.column][collidable.row] = collidable; 
+          collidables[collidable.x/Tile.SIZE][collidable.y/Tile.SIZE] = collidable; 
         }
         
         loadSwitches(buffer);

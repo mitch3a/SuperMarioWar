@@ -11,15 +11,15 @@ import smw.world.Tile;
  */
 public class SwitchBlock extends SolidBlock{
   boolean hidden;
-  final int subImageYHidden;
+  final int tileSheetYHidden;
 
   public SwitchBlock(int type, int x, int y) {
     super(x, y);
 
-    subImageX = type*Tile.SIZE;
-    subImageY =    0*Tile.SIZE;
+    tileSheetX = type*Tile.SIZE;
+    tileSheetY =    0*Tile.SIZE;
 
-    subImageYHidden = subImageY + Tile.SIZE;
+    tileSheetYHidden = tileSheetY + Tile.SIZE;
     this.hidden = false;
   }
   
@@ -65,6 +65,6 @@ public class SwitchBlock extends SolidBlock{
   
   @Override
   BufferedImage getImage(){
-    return tileSheet.getTileImg(subImageX, (hidden) ? subImageYHidden : subImageY);
+    return tileSheet.getTileImg(tileSheetX, (hidden) ? tileSheetYHidden : tileSheetY);
   }
 }

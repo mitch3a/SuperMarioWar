@@ -109,6 +109,23 @@ public class Player extends Rectangle implements Drawable, Updatable{
 			
 			return; //Do not want to do anything with someone who is crushed
 		}
+		
+		if(killed){
+		  physics.updateForDeath();
+		  setBounds(x, (int)(y + physics.getVelocityY()));
+		
+		  //TODO this is messy and should be a method called at the beginning
+      if(!score.isOut() && respawnTime < System.currentTimeMillis()){
+        killed = false;
+        setBounds(300, 100);
+        sprite.setJumping();
+      }
+      
+      //TODO should probably do some sort of max y else if the player is out and it keeps growing,
+      //     there might be some sort of issue
+      
+		  return;
+		}
     
     if(warpingOut){
 
@@ -213,11 +230,29 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		//Game.gameFrame.bump();
 		respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
 		sprite.crush();
+		Game.soundPlayer.sfxMip();
 	}
 	
 	public void superDeath() {
-		killed = true;
-		score.decreaseScore();
+    if(!killed){
+      killed = true;
+      sprite.death();
+      physics.death();
+      respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
+      score.decreaseScore();
+      Game.soundPlayer.sfxDeath();
+    }
+	}
+	
+	public void death() {
+	  if(!killed){
+  	  killed = true;
+  	  sprite.death();
+  	  physics.death();
+  	  respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
+  	  Game.soundPlayer.sfxDeath();
+  	  score.decreaseScore();
+	  }
 	}
 	
 	public void poll(){
@@ -266,10 +301,6 @@ public class Player extends Rectangle implements Drawable, Updatable{
 	    
 	    return result.get((int)(Math.random()*result.size()));	  
 	}
-	
-	public void land3ed() {
-	  sprite.clearAction();
-	}
 
   public boolean isOut() {
     return score.isOut();
@@ -283,6 +314,7 @@ public class Player extends Rectangle implements Drawable, Updatable{
   public void warp(Direction direction, WarpExit warpExit) {
     warpingIn = true;
     this.warpExit = warpExit;
+    Game.soundPlayer.sfxWarp();
     
     setWarpFactor(direction);
   }

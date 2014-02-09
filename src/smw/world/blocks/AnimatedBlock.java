@@ -38,12 +38,12 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
     if (elapsedTime_ms >= animationTime_ms) {
       elapsedTime_ms = 0;
       frameTime_ms = 0;
-      subImageX = 0;
+      tileSheetX = 0;
     }
     
     if (frameTime_ms >= updateRate_ms) {
       frameTime_ms = 0;
-      subImageX += Tile.SIZE;
+      tileSheetX += Tile.SIZE;
     }
   }
   
@@ -62,14 +62,14 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
   public static class WhiteNoteBlock extends AnimatedBlock{
     public WhiteNoteBlock(int x, int y){
       super(x, y, "noteblock.png");
-      this.subImageY += Tile.SIZE;
+      this.tileSheetY += Tile.SIZE;
     }
   }
   
   public static class RedNoteBlock extends AnimatedBlock{
     public RedNoteBlock(int x, int y){
       super(x, y, "noteblock.png");
-      this.subImageY += 2*Tile.SIZE;
+      this.tileSheetY += 2*Tile.SIZE;
     }
   }
   
@@ -82,14 +82,14 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
   public static class WhiteThrowBlock extends AnimatedBlock{
     public WhiteThrowBlock(int x, int y){
       super(x, y, "throwblock.png");
-      this.subImageY += Tile.SIZE;
+      this.tileSheetY += Tile.SIZE;
     }
   }
   
   public static class RedThrowBlock extends AnimatedBlock{
     public RedThrowBlock(int x, int y){
       super(x, y, "throwblock.png");
-      this.subImageY += 2*Tile.SIZE;
+      this.tileSheetY += 2*Tile.SIZE;
     }
   }
   

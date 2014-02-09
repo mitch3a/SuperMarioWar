@@ -52,10 +52,10 @@ public class Game implements Runnable {
       "tubesteak_lockout.map", //Spinning block, note box
       "cristomarquez_abovethedomes.map", //falling donuts, warps, clouds
       "MrMister_Airshipz.map",//TODO buffer gets overdrawn...
-      "Sgraff_Bewarehouse.map"
-      
+      "Sgraff_Bewarehouse.map",
+      "Peardian_arcterra gate.map" //lots of ice + ice spikes
     };   
-    //world = new World(worlds[21]);
+    //world = new World(worlds[22]);
     world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
     

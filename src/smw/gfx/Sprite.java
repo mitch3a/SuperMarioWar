@@ -105,7 +105,7 @@ public class Sprite {
           currentAction = (dx == 0) ? Action.NONE : Action.RUNNING_STEP;
   	    case CRUSHED: // do nothing
   	      break;
-  	    case DYING: // TODO
+  	    case DYING: // do nothing
   	      break;
       }
     }
@@ -155,4 +155,8 @@ public class Sprite {
 	public void clearAction() {
 	  currentAction = Action.NONE;
 	}
+
+  public void death() {
+    currentAction = Action.DYING;
+  }
 }

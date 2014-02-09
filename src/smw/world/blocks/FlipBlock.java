@@ -20,7 +20,7 @@ public  class FlipBlock extends AnimatedBlock{
     
     if(timeAnimationRunning > ANIMATION_LENGTH){
       running = false;
-      subImageX = 0;
+      tileSheetX = 0;
     }
     
     super.update(timeDif_ms);

@@ -1,5 +1,6 @@
 package smw.world.blocks;
 
+import smw.Game;
 import smw.entity.Player;
 import smw.world.Tile;
 
@@ -22,8 +23,8 @@ public class QuestionBlock extends AnimatedBlock{
       
       if(timeRunning > ANIMATION_LENGTH){
         running = true;
-        subImageX = 0;
-        subImageY = 0;
+        tileSheetX = 0;
+        tileSheetY = 0;
       }
     }
 
@@ -34,9 +35,10 @@ public class QuestionBlock extends AnimatedBlock{
   public int collideWithBottom(Player player, int newY) {    
     if(running){
       running = false;
-      subImageX = 0;
-      subImageY = Tile.SIZE;
+      tileSheetX = 0;
+      tileSheetY = Tile.SIZE;
       timeRunning = 0;
+      Game.soundPlayer.sfxBump();
     }
     
     return super.collideWithBottom(player, newY);

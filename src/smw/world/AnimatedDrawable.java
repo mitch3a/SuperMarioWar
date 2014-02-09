@@ -10,7 +10,7 @@ import smw.Updatable;
 import smw.world.Tile.TileType;
 
 //TODO I don't like this being collidable... need to fix this
-public class AnimatedDrawable extends Collidable implements Updatable, Drawable{
+public class AnimatedDrawable extends Collidable.Solid implements Updatable, Drawable{
   /** Images used for each frame of animation. */
   protected BufferedImage[] images;
   /** Current image index in the animation. */
@@ -32,7 +32,7 @@ public class AnimatedDrawable extends Collidable implements Updatable, Drawable{
   private int x, y;
   
   public AnimatedDrawable(int x, int y){
-    super((short)1, x, y);
+    super(x, y);
     
     this.x = x;
     this.y = y;

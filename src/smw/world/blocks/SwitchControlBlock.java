@@ -10,15 +10,15 @@ import smw.world.Tile;
 
 public abstract class SwitchControlBlock extends SolidBlock {
   final List<SwitchBlock> blocksToChange;
-  final int subImageYOff;
+  final int tileSheetYOff;
   boolean blocksOff;
 
   public SwitchControlBlock(int colorType, int x, int y, List<SwitchBlock> blocksToChange) {
     super(x, y);
     
-    subImageX = colorType*Tile.SIZE;
-    subImageY =         0*Tile.SIZE;
-    subImageYOff = subImageY + Tile.SIZE;
+    tileSheetX = colorType*Tile.SIZE;
+    tileSheetY =         0*Tile.SIZE;
+    tileSheetYOff = tileSheetY + Tile.SIZE;
     
     this.blocksToChange = blocksToChange;
     blocksOff = false;
@@ -39,7 +39,7 @@ public abstract class SwitchControlBlock extends SolidBlock {
   
   @Override
   BufferedImage getImage(){
-    return tileSheet.getTileImg(subImageX, (blocksOff) ? subImageYOff : subImageY);
+    return tileSheet.getTileImg(tileSheetX, (blocksOff) ? tileSheetYOff : tileSheetY);
   }
   
   /**

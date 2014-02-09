@@ -73,6 +73,9 @@ public class PlayerPhysics {
 	
 	public static final float MAX_VELOCITY_Y = 15.0f;
 	
+  private static final float DEATH_ACCELERATION =.5f;
+  private static final float DEATH_STARTING_VELOCITY = -10;
+	
 	long previousTime_ms;
 	
 	float velocityX,     velocityY, remainderX, remainderY;
@@ -299,8 +302,25 @@ public class PlayerPhysics {
   }
   
   public void collideWithWall() {
-    this.velocityX = 0;
-    this.isSkidding = false;
+    velocityX = 0;
+    isSkidding = false;
+  }
+  
+  public void death(){
+    velocityX = 0;
+    velocityY = DEATH_STARTING_VELOCITY;
+    accelerationY = DEATH_ACCELERATION;
+  }
+  
+  public void updateForDeath(){
+    long currentTime_ms = System.currentTimeMillis();
+    float timeDif_ms = (float) ((currentTime_ms - previousTime_ms)/1000.0);
+    
+    //TODO not sure if this is the BEST way to do this
+    float newVelocity = velocityY + (accelerationY * timeDif_ms);
+    velocityY = (newVelocity > MAX_VELOCITY_Y) ? MAX_VELOCITY_Y : newVelocity;
+    
+    previousTime_ms = currentTime_ms;
   }
 
   public void poll(){
@@ -313,9 +333,7 @@ public class PlayerPhysics {
 		
 		//For first "move" call, it's safe to assume we're not moving
 		if(previousTime_ms != 0){
-		  //if (canX)
 		    updateX(timeDif);
-		  //if (canY)
 		    updateY(timeDif);
 		}
 				

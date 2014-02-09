@@ -54,7 +54,7 @@ public class WorldBuffer {
   
   public Collidable getCollidable(int x, int y) {
     short type =  getShort();
-    return new Collidable(type, x, y);
+    return Collidable.getCollideable(type, x, y);
   }
   
   public DrawArea getDrawArea(){
