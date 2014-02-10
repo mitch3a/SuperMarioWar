@@ -72,7 +72,7 @@ public abstract class Collidable {
       case 0:  return new NonSolid(x, y);
       case 1:  return new Solid(x, y);
       case 2:  return new SolidOnTop(x, y);
-      //case 3: result = TileType.ICE; break;
+      case 3:  return new Ice(x, y);
       case 4:  return new Death(x, y);
       case 5:  return new DeathOnTop(x, y);
       case 6:  return new DeathOnBottom(x, y);
@@ -172,6 +172,22 @@ public abstract class Collidable {
       }
       
       return newY;
+    }
+  }
+  
+  /**
+   * Ice
+   */
+  public static class Ice extends Solid{
+    public Ice(int x, int y) {
+      super(x, y);
+    }
+    
+    @Override
+    public int collideWithTop(Player player, int newY){
+      int result = super.collideWithTop(player, newY);
+      player.slipOnIce();
+      return result;
     }
   }
   

@@ -338,4 +338,8 @@ public class Player extends Rectangle implements Drawable, Updatable{
                   break;
     }
   }
+
+  public void slipOnIce() {
+    physics.slipOnIce();
+  }
 }

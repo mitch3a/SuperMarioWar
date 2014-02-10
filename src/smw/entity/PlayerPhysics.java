@@ -87,6 +87,7 @@ public class PlayerPhysics {
 	boolean isFalling;
 	boolean isSkidding;
 	boolean canJump;
+	boolean isSlippingOnIce;
 	
 	//TODO mk I don't like using the direction as an index... i think its slow, but I'm doing this
 	// for now becuase it's easier to read and speed might not be an issue
@@ -103,6 +104,7 @@ public class PlayerPhysics {
 		isJumping = false;
 		isFalling = false;
 		isSkidding = false;
+		isSlippingOnIce = true;
 		canJump = true;
 		currentVelocityDirection = Direction.RIGHT;
 		this.playerControl = playerControl;
@@ -142,7 +144,7 @@ public class PlayerPhysics {
 	}
 	
 	void passivelySlowDownX(float timeDif){
-		if(velocityX == 0){
+		if(velocityX == 0 || isSlippingOnIce){
 			return;
 		}
 		
@@ -180,9 +182,14 @@ public class PlayerPhysics {
 	
 	/** this method assumes the newDirection != currentVelocityDirection **/
 	void moveAgainstX(float timeDif, Direction newDirection){
+	  if(isSlippingOnIce){
+	    isSkidding = true;
+	    velocityX += SKIDDING_DECELERATION[currentVelocityDirection.index]*timeDif/2;
+	  }
+	  
 		//This part is a little confusing. Details from source listed above. Basically,
 		//if you're moving slow enough, you can instantly turn around, else you skid
-		if(speedLessThan(SKID_TURNAROUND_VELOCITY[currentVelocityDirection.index])){
+	  else if(speedLessThan(SKID_TURNAROUND_VELOCITY[currentVelocityDirection.index])){
 			velocityX = MIN_WALKING_VELOCITY[newDirection.index];
 			currentVelocityDirection = newDirection;
 		}
@@ -288,6 +295,8 @@ public class PlayerPhysics {
   	jumpingAccelerationX = 0;
     velocityY = 0;
     isJumping = false;
+    isSlippingOnIce = false;
+    
     //Don't want to allow a new jumping until we get a NEW
     //jump command
     if(!playerControl.isJumping()){
@@ -304,6 +313,11 @@ public class PlayerPhysics {
   public void collideWithWall() {
     velocityX = 0;
     isSkidding = false;
+  }
+  
+
+  public void slipOnIce() {
+    isSlippingOnIce = true;
   }
   
   public void death(){

@@ -62,7 +62,7 @@ public class Game implements Runnable {
       "Peardian_arcterra gate.map", //22 lots of ice + ice spikes
       "JJames_Clocks on Fire.map" // 23 lava, circular moving platform and 2 spinning hazards
     };   
-    world = new World(worlds[16]);
+    world = new World(worlds[22]);
     //world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
     
