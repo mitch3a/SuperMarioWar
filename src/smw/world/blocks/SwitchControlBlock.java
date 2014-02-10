@@ -5,13 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import smw.Game;
+import smw.Updatable;
 import smw.entity.Player;
 import smw.world.Tile;
 
-public abstract class SwitchControlBlock extends SolidBlock {
+public abstract class SwitchControlBlock extends SolidBlock implements Updatable {
   final List<SwitchBlock> blocksToChange;
   final int tileSheetYOff;
-  boolean blocksOff;
+  
+  final static float BUMP_LENGTH = 50; // 0.05 seconds
+  float timeRunning;
+  boolean bumped;
 
   public SwitchControlBlock(int colorType, int x, int y, List<SwitchBlock> blocksToChange) {
     super(x, y);
@@ -21,37 +25,59 @@ public abstract class SwitchControlBlock extends SolidBlock {
     tileSheetYOff = tileSheetY + Tile.SIZE;
     
     this.blocksToChange = blocksToChange;
-    blocksOff = false;
   }
 
   @Override
   public int collideWithBottom(Player player, int newY) {
-    Game.soundPlayer.sfxSwitchPress();
-    blocksOff = !blocksOff;
-    //TODO need to make sure it doesnt get called twice (same for other blocks as well)
-    
-    //TODO don't love this but works for now
-    for(SwitchBlock block : blocksToChange){
-      block.hidden = blocksOff;
+    if(!bumped){
+      bumped = true;
+      timeRunning = 0;
+      
+      Game.soundPlayer.sfxSwitchPress();
     }
     
     return super.collideWithBottom(player, newY);
   }
   
   @Override
-  BufferedImage getImage(){
-    return tileSheet.getTileImg(tileSheetX, (blocksOff) ? tileSheetYOff : tileSheetY);
+  public void update(float timeDif_ms) {
+    if(bumped){
+      timeRunning += timeDif_ms;
+      
+      if(timeRunning > BUMP_LENGTH){
+        bumped = false;
+      }
+    }
+  }
+  
+  void setBlocks(boolean blocksOff){
+    for(SwitchBlock block : blocksToChange){
+      block.hidden = blocksOff;
+    }
   }
   
   /**
    * Create a static class for each block switch and 
-   * give it its own list of blocks to update
+   * give it its own list of blocks to update.
    */
   public static class Red extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
+    static boolean blocksOn = false;
     
     public Red(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
+    }
+    
+    @Override
+    public int collideWithBottom(Player player, int newY){
+      blocksOn = !blocksOn;
+      setBlocks(blocksOn);
+      return super.collideWithBottom(player, newY);
+    }
+    
+    @Override
+    BufferedImage getImage(){
+      return tileSheet.getTileImg(tileSheetX, (blocksOn) ? tileSheetYOff : tileSheetY);
     }
     
     public static void registerBlock(SwitchBlock block){
@@ -61,9 +87,22 @@ public abstract class SwitchControlBlock extends SolidBlock {
   
   public static class Green extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
+    static boolean blocksOn = false;
     
     public Green(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
+    }
+    
+    @Override
+    public int collideWithBottom(Player player, int newY){
+      blocksOn = !blocksOn;
+      setBlocks(blocksOn);
+      return super.collideWithBottom(player, newY);
+    }
+    
+    @Override
+    BufferedImage getImage(){
+      return tileSheet.getTileImg(tileSheetX, (blocksOn) ? tileSheetYOff : tileSheetY);
     }
     
     public static void registerBlock(SwitchBlock block){
@@ -73,9 +112,22 @@ public abstract class SwitchControlBlock extends SolidBlock {
   
   public static class Yellow extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
+    static boolean blocksOn = false;
     
     public Yellow(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
+    }
+    
+    @Override
+    public int collideWithBottom(Player player, int newY){
+      blocksOn = !blocksOn;
+      setBlocks(blocksOn);
+      return super.collideWithBottom(player, newY);
+    }
+    
+    @Override
+    BufferedImage getImage(){
+      return tileSheet.getTileImg(tileSheetX, (blocksOn) ? tileSheetYOff : tileSheetY);
     }
     
     public static void registerBlock(SwitchBlock block){
@@ -85,9 +137,22 @@ public abstract class SwitchControlBlock extends SolidBlock {
   
   public static class Blue extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
+    static boolean blocksOn = false;
     
     public Blue(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
+    }
+    
+    @Override
+    public int collideWithBottom(Player player, int newY){
+      blocksOn = !blocksOn;
+      setBlocks(blocksOn);
+      return super.collideWithBottom(player, newY);
+    }
+    
+    @Override
+    BufferedImage getImage(){
+      return tileSheet.getTileImg(tileSheetX, (blocksOn) ? tileSheetYOff : tileSheetY);
     }
     
     public static void registerBlock(SwitchBlock block){

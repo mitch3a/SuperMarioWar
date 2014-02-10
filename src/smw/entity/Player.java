@@ -186,7 +186,7 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){
-				if(!p.crushed && p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+				if(p.isAlive()  && p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
 				  if(p.x > newX){
 				    newX = p.x - Sprite.IMAGE_WIDTH - 1;
 				  }
@@ -202,7 +202,7 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){
-				if(!p.crushed && p.intersects(x, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+				if(p.isAlive() && p.intersects(x, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
 					if(!xCollide){
 						if(p.getY() < newY){
 						  p.score.increaseScore();
@@ -221,6 +221,10 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		}
 
 		setBounds(newX, newY);					
+	}
+	
+	boolean isAlive(){
+	  return !crushed && !killed;
 	}
 		
 	protected void crush(){

@@ -53,7 +53,7 @@ public class Game implements Runnable {
       "Xijar_1986.map", //ICE
       "eeliottheking_not so cave.map",
       "Peardian_Tower of the Sun.map", // BUG - has some weird ball thing that floats away when it shouldn't
-      "sgraff_Buster_Beetle_s_Tower.map", // FEATURE - switches to turn on/off colored ! blocks
+      "sgraff_Buster_Beetle_s_Tower.map", //16 FEATURE - switches to turn on/off colored ! blocks
       "GG_Fire Fortress.map", //Animated blocks
       "tubesteak_lockout.map", //Spinning block, note box
       "cristomarquez_abovethedomes.map", //falling donuts, warps, clouds
@@ -62,7 +62,7 @@ public class Game implements Runnable {
       "Peardian_arcterra gate.map", //22 lots of ice + ice spikes
       "JJames_Clocks on Fire.map" // 23 lava, circular moving platform and 2 spinning hazards
     };   
-    world = new World(worlds[7]);
+    world = new World(worlds[16]);
     //world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
     

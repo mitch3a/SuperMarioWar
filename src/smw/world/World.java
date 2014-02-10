@@ -201,13 +201,21 @@ public class World {
                          break;
                          
                 /** Switch Control Blocks **/
-                case  7: block = new SwitchControlBlock.Red(type, w*Tile.SIZE, h*Tile.SIZE);
+                case  7: SwitchControlBlock temp7 = new SwitchControlBlock.Red(type, w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp7);
+                         block = temp7;
                          break;
-                case  8: block = new SwitchControlBlock.Green(type, w*Tile.SIZE, h*Tile.SIZE);
+                case  8: SwitchControlBlock temp8 = new SwitchControlBlock.Green(type, w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp8);
+                         block = temp8;
                          break;
-                case  9: block = new SwitchControlBlock.Yellow(type, w*Tile.SIZE, h*Tile.SIZE);
+                case  9: SwitchControlBlock temp9 = new SwitchControlBlock.Yellow(type, w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp9);
+                         block = temp9;
                          break;
-                case 10: block = new SwitchControlBlock.Blue(type, w*Tile.SIZE, h*Tile.SIZE);
+                case 10: SwitchControlBlock temp10 = new SwitchControlBlock.Blue(type, w*Tile.SIZE, h*Tile.SIZE);
+                         updatables.add(temp10);
+                         block = temp10;
                          break;
                          
                 /** Switch Blocks **/
