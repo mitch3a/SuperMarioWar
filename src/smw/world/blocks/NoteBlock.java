@@ -10,7 +10,7 @@ import smw.world.MovingPlatform.StraightSegmentPath;
 
 public class NoteBlock extends AnimatedBlock {
   static final float PIXELS_TO_MOVE = 16;
-  static final float HIT_BLOCK_STARTING_VELOCITY = 5.5f;
+  static final float HIT_BLOCK_STARTING_VELOCITY = 0.5f;
   boolean isHit;
   StraightSegmentPath path;
   float timeElapsed;
@@ -29,10 +29,8 @@ public class NoteBlock extends AnimatedBlock {
   
   @Override
   public void update(float timeDif_ms) {
-    //TODO
-    timeDif_ms = 1.0f;
-    
     if(isHit){
+      //TODO this should rely on the actual time
       timeElapsed += timeDif_ms;
       
       path.move(timeDif_ms);
