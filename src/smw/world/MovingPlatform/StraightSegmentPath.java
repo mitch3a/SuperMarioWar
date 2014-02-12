@@ -6,6 +6,8 @@ public class StraightSegmentPath extends Path{
   float[] startPos   = new float[2];
   float[] endPos     = new float[2];
   float[] velocity   = new float[2];
+  
+  public final float timeToCycle;
 
   public StraightSegmentPath(float velocity, float startX, float startY, float endX, float endY){
     this.currentPos[X] = startX;
@@ -16,6 +18,8 @@ public class StraightSegmentPath extends Path{
     float yLength = endY - startY;
     
     double angle = (xLength != 0) ? Math.atan(((float)yLength)/xLength) : (float) (Math.PI/2);
+    
+    timeToCycle = (float) (2*(Math.sqrt((xLength*xLength) + (yLength*yLength)))/velocity);
     
     if(angle == (float) (Math.PI/2)){
       this.velocity[X] = 0;

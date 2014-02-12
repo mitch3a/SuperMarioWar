@@ -35,6 +35,7 @@ import smw.world.Structures.WorldBuffer;
 import smw.world.Structures.Warp.Direction;
 import smw.world.blocks.AnimatedBlock;
 import smw.world.blocks.FlipBlock;
+import smw.world.blocks.NoteBlock;
 import smw.world.blocks.QuestionBlock;
 import smw.world.blocks.SolidBlock;
 import smw.world.blocks.SwitchBlock;
@@ -191,7 +192,7 @@ public class World {
                          updatables.add(temp3);
                          block = temp3;
                          break;
-                case  5: AnimatedBlock temp5 = new AnimatedBlock.WhiteNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
+                case  5: AnimatedBlock temp5 = new NoteBlock.WhiteNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
                           updatables.add(temp5);
                           block = temp5;
                           break;
@@ -237,15 +238,15 @@ public class World {
                          break;
                          
                 /** More Animated Blocks **/      
-                case 16: AnimatedBlock temp16 = new AnimatedBlock.RedThrowBlock(w*Tile.SIZE, h*Tile.SIZE);
+                case 16: AnimatedBlock temp16 = new NoteBlock.RedThrowBlock(w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp16);
                          block = temp16;
                          break;
-                case 17: AnimatedBlock temp17 = new AnimatedBlock.RedNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
+                case 17: AnimatedBlock temp17 = new NoteBlock.RedNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp17);
                          block = temp17;
                          break;
-                case 18: AnimatedBlock temp18 = new AnimatedBlock.BlueNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
+                case 18: AnimatedBlock temp18 = new NoteBlock.BlueNoteBlock(w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp18);
                          block = temp18;
                          break;

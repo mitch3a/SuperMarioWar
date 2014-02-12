@@ -361,4 +361,36 @@ public class PlayerPhysics {
 	public float getVelocityY() {
 		return velocityY;
 	}
+	
+  final static float noteHitVelocityX = 5.0f;
+  final static float noteHitVelocityY = 10.0f;
+  final static float noteHitJumpVelocityY = -8.0f;
+
+  public void collideWithNoteBlockTop() {
+    velocityY = noteHitVelocityY;
+    
+  }
+  
+  public void collideWithNoteBlockBottom() {
+    velocityY = -noteHitVelocityY;
+    accelerationY = JUMPING_STRONG_GRAVITY[2];
+    isFalling = true;
+    isJumping = false;
+    canJump = false;
+    
+    if(playerControl.isJumping()){
+      Game.soundPlayer.sfxSpringJump();
+      velocityY += noteHitJumpVelocityY;
+    }
+  }
+  
+  public void collideWithNoteBlockLeft() {
+    velocityX = noteHitVelocityX;
+    currentVelocityDirection = Direction.RIGHT;
+  }
+  
+  public void collideWithNoteBlockRight() {
+    velocityX = -noteHitVelocityX;
+    currentVelocityDirection = Direction.LEFT;
+  }
 }
