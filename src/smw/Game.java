@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import smw.entity.Player;
+import smw.menu.*;
 import smw.settings.Debug;
 import smw.sound.SoundPlayer;
 import smw.ui.GamePad;
@@ -17,6 +18,7 @@ import smw.world.World;
 public class Game implements Runnable {  
   private GameFrame gameFrame;
   private Player[] players;
+  public Menu menu;
   public static World world;
   public static SoundPlayer soundPlayer = new SoundPlayer();
   
@@ -33,7 +35,7 @@ public class Game implements Runnable {
   private int pausePlayer;
   
   public Game(final int numPlayers) {
-    
+    setMenu(new TitleMenu());
     // TODO - setup world selector or something, for now pick what you want to test code.
     // ALSO ADD DESCRIPTION (good for testing ____)
     String[] worlds = {
@@ -67,7 +69,7 @@ public class Game implements Runnable {
     //world = new World("mm64_as seen on tv.map");
     
     players = new Player[numPlayers];
-  	gameFrame = new GameFrame(players, world);
+  	gameFrame = new GameFrame(players, world, this);
   	
   	// When the window is closed do any needed cleanup.
   	// TODO - make sure we are cleaning up everything we need to and releasing native resources where applicable!
@@ -237,7 +239,10 @@ public class Game implements Runnable {
   }
 
   private void updateGame(double timeDelta_ns) { 	
-  	// Mitch - I set this up to just do the collision and if no collision, then allow the player in.
+  	if (menu != null) {
+  	  menu.update();
+  	}
+    // Mitch - I set this up to just do the collision and if no collision, then allow the player in.
   	// not only is this unfair (ie if 2 players are running at each other, player 1 will see the spot
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
@@ -249,5 +254,13 @@ public class Game implements Runnable {
   	  p.update(timeDelta_ms);
   		p.move(players);
   	}
+  }
+  
+  /**
+   * Sets the current menu to display.
+   * @param menu Menu to display.
+   */
+  public void setMenu(Menu menu) {
+    this.menu = menu;
   }
 }

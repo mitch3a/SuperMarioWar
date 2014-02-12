@@ -140,6 +140,22 @@ public class SoundPlayer {
     }
   }
   
+  // TODO - is this what we want? Should stop other stuff that's playing if any?
+  public void playMenuMusic() {
+    File f = new File("res/music/game/Standard/Menu/menu.ogg");
+    if (f.exists()) {
+      try {        
+        if (soundSystem.playing(BGM)) { // TODO - DO WE NEED THIS?
+          soundSystem.stop(BGM);
+        }
+        soundSystem.backgroundMusic(BGM, f.toURI().toURL(), "menu.ogg", true);
+        soundSystem.setVolume(BGM, 0.35f);        
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
   /** Pauses the sound. */
   public void pause() {
     soundSystem.pause(BGM);

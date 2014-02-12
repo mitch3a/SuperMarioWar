@@ -11,6 +11,7 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
+import smw.Game;
 import smw.entity.Player;
 import smw.gfx.Scoreboard;
 import smw.world.World;
@@ -36,8 +37,13 @@ public class GameFrame extends JFrame{
 	Scoreboard sB;
 	World world;
 	
-	public GameFrame(Player[] players, World world){
+	Game game;
+	
+	// TODO - RPG could just pass game obj and get all the stuff we want from it...
+	public GameFrame(Player[] players, World world, Game game){
 	  add(new GamePanel());
+	  
+	  this.game = game;
 	  
 		//This will get rid of all borders but locks up the keyboard/mouse so you are hosed setUndecorated(true);
 		setTitle(Title);
@@ -66,7 +72,7 @@ public class GameFrame extends JFrame{
       requestFocus();
       return;
     }
-
+    
     updateBumpFactor();
 
     try {
@@ -78,37 +84,41 @@ public class GameFrame extends JFrame{
       g2d.translate(insets.left, bumpFactor + insets.top);
       g2d.scale(scaleFactorWidth, scaleFactorHeight);
       
-      world.drawBackground(g2d, this);
-      boolean drewToBack = false;
-      
-      //Draw the warping guys behind everything
-      if (players != null && players.length > 0) {
-        for(Player p : players){
-          if (p != null) {
-            drewToBack |= p.drawToBack(g2d, this);
+      // TODO - RPG - If we have a menu then only draw that! (Although this won't work for pause menu!)
+      if (game.menu != null) {
+        game.menu.draw(g2d, this);
+      } else {
+        world.drawBackground(g2d, this);
+        boolean drewToBack = false;
+        
+        //Draw the warping guys behind everything
+        if (players != null && players.length > 0) {
+          for(Player p : players){
+            if (p != null) {
+              drewToBack |= p.drawToBack(g2d, this);
+            }
           }
         }
-      }
-
-      if(drewToBack){
-        //Only need to bother if there are players
-        //behind anything, else they are already on
-        //the background
-        world.drawLayer0(g2d, this);
-        world.drawLayer1(g2d, this);
-      }
-      
-      if (players != null && players.length > 0) {
-        for(Player p : players){
-          if (p != null) {
-            p.draw(g2d, this);
+  
+        if(drewToBack){
+          //Only need to bother if there are players
+          //behind anything, else they are already on
+          //the background
+          world.drawLayer0(g2d, this);
+          world.drawLayer1(g2d, this);
+        }
+        
+        if (players != null && players.length > 0) {
+          for(Player p : players){
+            if (p != null) {
+              p.draw(g2d, this);
+            }
           }
         }
+        world.drawLayer2(g2d, this);
+        world.drawLayer3(g2d, this);      
+        sB.draw(g2d, this);
       }
-      world.drawLayer2(g2d, this);
-      world.drawLayer3(g2d, this);
-      
-      sB.draw(g2d, this);
     } finally {
       // Free up graphics.
       g.dispose();
