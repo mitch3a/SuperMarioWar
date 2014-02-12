@@ -72,10 +72,4 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
       this.tileSheetY += 2*Tile.SIZE;
     }
   }
-  
-  public static class FallingDonutBlock extends AnimatedBlock{
-    public FallingDonutBlock(int x, int y){
-      super(x, y, "donutblock.png");
-    }
-  }
 }

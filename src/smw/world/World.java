@@ -34,6 +34,7 @@ import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
 import smw.world.Structures.Warp.Direction;
 import smw.world.blocks.AnimatedBlock;
+import smw.world.blocks.DonutBlock;
 import smw.world.blocks.FlipBlock;
 import smw.world.blocks.NoteBlock;
 import smw.world.blocks.QuestionBlock;
@@ -75,6 +76,7 @@ public class World {
   
   final List<Updatable> updatables  = new LinkedList<Updatable>();
   final List<MovingPlatform> movingPlatforms = new LinkedList<MovingPlatform>();
+
   //TODO this is temp... until there is a smarter way to update blocks on a change
   final static public List<SolidBlock> blocks = new LinkedList<SolidBlock>();
 
@@ -184,7 +186,7 @@ public class World {
                          updatables.add(temp1);
                          block = temp1;
                          break;
-                case  2: AnimatedBlock temp2 = new AnimatedBlock.FallingDonutBlock(w*Tile.SIZE, h*Tile.SIZE);
+                case  2: DonutBlock temp2 = new DonutBlock(w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp2);
                          block = temp2;
                          break;
