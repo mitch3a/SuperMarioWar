@@ -19,6 +19,7 @@ public class NoteBlock extends AnimatedBlock {
     super(x, y, tileSheet);
     
     //To avoid any other collide with grounds
+    //TODO mk might not need (all) of this with the ints->floats change
     left   -= 1;
     right  += 1;
     top    -= 1;
@@ -53,7 +54,7 @@ public class NoteBlock extends AnimatedBlock {
   }
   
   @Override
-  public int collideWithLeft(Player player, int newX) {
+  public float collideWithLeft(Player player, float newX) {
     if(!isHit){
       path = new StraightSegmentPath(HIT_BLOCK_STARTING_VELOCITY, x, y, x + PIXELS_TO_MOVE, y);
       timeElapsed = 0;
@@ -67,7 +68,7 @@ public class NoteBlock extends AnimatedBlock {
   }
 
   @Override
-  public int collideWithRight(Player player, int newX) {
+  public float collideWithRight(Player player, float newX) {
     if(!isHit){
       path = new StraightSegmentPath(HIT_BLOCK_STARTING_VELOCITY, x, y, x - PIXELS_TO_MOVE, y);
       timeElapsed = 0;
@@ -81,7 +82,7 @@ public class NoteBlock extends AnimatedBlock {
   }
 
   @Override
-  public int collideWithTop(Player player, int newY) {
+  public float collideWithTop(Player player, float newY) {
     if(!isHit){
       path = new StraightSegmentPath(HIT_BLOCK_STARTING_VELOCITY, x, y, x , y + PIXELS_TO_MOVE);
       timeElapsed = 0;
@@ -95,7 +96,7 @@ public class NoteBlock extends AnimatedBlock {
   }
 
   @Override
-  public int collideWithBottom(Player player, int newY) {
+  public float collideWithBottom(Player player, float newY) {
     if(!isHit){
       path = new StraightSegmentPath(HIT_BLOCK_STARTING_VELOCITY, x, y, x, y - PIXELS_TO_MOVE);
       timeElapsed = 0;

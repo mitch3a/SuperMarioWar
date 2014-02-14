@@ -328,7 +328,7 @@ public class World {
         }
         
         for(Collidable collidable : collidablesForAfter){
-          collidables[collidable.x/Tile.SIZE][collidable.y/Tile.SIZE] = collidable; 
+          collidables[(int) (collidable.x/Tile.SIZE)][(int) (collidable.y/Tile.SIZE)] = collidable; 
         }
         
         loadSwitches(buffer);
@@ -543,11 +543,11 @@ public class World {
     }
   }
   
-  public void testWarps(Player player, int newX, int newY){
+  public void testWarps(Player player, float newX, float newY){
       
     if(player.physics.playerControl.isDown()){
-      int yToCheck = (player.y + Tile.SIZE + 1)/Tile.SIZE;
-      Warp result = testWarps(player.x/Tile.SIZE, yToCheck, (player.x + Tile.SIZE - 1)/Tile.SIZE, yToCheck, Direction.DOWN);
+      int yToCheck = (int)((player.y + Tile.SIZE + 1)/Tile.SIZE);
+      Warp result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.DOWN);
       if(result != null){
         player.warp(Direction.DOWN, getWarpExit(result));
         return;
@@ -555,8 +555,8 @@ public class World {
     }
     
     if(player.physics.playerControl.isUp()){
-      int yToCheck = (player.y - 1)/Tile.SIZE;
-      Warp result = testWarps(player.x/Tile.SIZE, yToCheck, (player.x + Tile.SIZE - 1)/Tile.SIZE, yToCheck, Direction.UP);
+      int yToCheck = (int)((player.y - 1)/Tile.SIZE);
+      Warp result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.UP);
       
       if(result != null){
         player.warp(Direction.UP, getWarpExit(result));
@@ -565,16 +565,16 @@ public class World {
     }
     
     if(player.physics.playerControl.getDirection() < 0){
-      int XToCheck = (player.x - 1)/Tile.SIZE;
-      Warp result = testWarps(XToCheck, player.y/Tile.SIZE, XToCheck, (player.y + Tile.SIZE - 1)/Tile.SIZE, Direction.LEFT);
+      int XToCheck = (int)((player.x - 1)/Tile.SIZE);
+      Warp result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.LEFT);
       if(result != null){
         player.warp(Direction.LEFT, getWarpExit(result));
         return;
       }
     }
     else if(player.physics.playerControl.getDirection() > 0){
-      int XToCheck = (player.x + Tile.SIZE + 1)/Tile.SIZE;
-      Warp result = testWarps(XToCheck, player.y/Tile.SIZE, XToCheck, (player.y + Tile.SIZE - 1)/Tile.SIZE, Direction.RIGHT);
+      int XToCheck = (int)((player.x + Tile.SIZE + 1)/Tile.SIZE);
+      Warp result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.RIGHT);
       if(result != null){
         player.warp(Direction.RIGHT, getWarpExit(result));
         return;
@@ -627,7 +627,7 @@ public class World {
    * @return
    */
   //TODO mk for this and Y, replace Moving platforms with "movingCollidables". This will include fireballs, etc. For these we can't just index by position, we need to check all
-  public int getCollisionX(Player player, int newX) {
+  public float getCollisionX(Player player, float newX) {
     //This is to test the bottom of the sprite
     
     //Above everything
@@ -635,10 +635,10 @@ public class World {
       return newX;
     }
     
-    int lowestYTile = ((player.y + Sprite.IMAGE_HEIGHT - 1) % GameFrame.res_height)/Tile.SIZE;
+    int lowestYTile = (int)(((player.y + Sprite.IMAGE_HEIGHT - 1) % GameFrame.res_height)/Tile.SIZE);
     
     //If half of player is above the top, just check the bottom half of the player twice
-    int highestYTile = (player.y < 0) ? lowestYTile : player.y/Tile.SIZE;
+    int highestYTile = (player.y < 0) ? lowestYTile : (int)(player.y/Tile.SIZE);
 
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
@@ -655,14 +655,14 @@ public class World {
     if (player.x != newX){
       if (player.x < newX) {  
         //Moving Right so check the right side of the sprite with the left side of the object
-        int xCollision = ((newX + Sprite.IMAGE_HEIGHT)% GameFrame.res_width)/Tile.SIZE;
+        int xCollision = (int)(((newX + Sprite.IMAGE_HEIGHT)% GameFrame.res_width)/Tile.SIZE);
         
         newX = collidables[xCollision][highestYTile].collideWithLeft(player, newX);
         newX = collidables[xCollision][lowestYTile ].collideWithLeft(player, newX);
       }
       else{
         //Moving Left so check the left side of the sprite with the right side of the object
-        int xCollision = newX/Tile.SIZE;
+        int xCollision = (int)(newX/Tile.SIZE);
         
         newX = collidables[xCollision][highestYTile].collideWithRight(player, newX);
         newX = collidables[xCollision][lowestYTile ].collideWithRight(player, newX);
@@ -679,7 +679,7 @@ public class World {
    * @param newY
    * @return
    */
-  public int getCollisionY(Player player, int newX, int newY) {
+  public float getCollisionY(Player player, float newX, float newY) {
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
@@ -687,7 +687,7 @@ public class World {
       newY = platform.collideY(player, newX, newY);
     }
     
-    int rightmostXTile = ((newX + Sprite.IMAGE_WIDTH - 1)%GameFrame.res_width)/Tile.SIZE;
+    int rightmostXTile = (int)(((newX + Sprite.IMAGE_WIDTH - 1)%GameFrame.res_width)/Tile.SIZE);
     
     ///////////////////////////////////////////////////////////////
     // Objects
@@ -708,24 +708,24 @@ public class World {
         }
         
         //Moving down so check the bottom of the sprite with the top of the object
-        int yCollision = ((newY + Sprite.IMAGE_HEIGHT)% GameFrame.res_height)/Tile.SIZE;
+        int yCollision = (int)(((newY + Sprite.IMAGE_HEIGHT)% GameFrame.res_height)/Tile.SIZE);
         
         if(yCollision < 0){
           return newY;
         }
         
-        newY = collidables[newX/Tile.SIZE][yCollision].collideWithTop(player, newY);
+        newY = collidables[(int)(newX/Tile.SIZE)][yCollision].collideWithTop(player, newY);
         newY = collidables[rightmostXTile][yCollision].collideWithTop(player, newY);
       }
       else{
         //Moving up so check the top of the sprite with the bottom of the object
-        int yCollision = newY/Tile.SIZE;
+        int yCollision = (int)(newY/Tile.SIZE);
         
         if(yCollision < 0){
           return newY;
         }
         
-        newY = collidables[newX/Tile.SIZE][yCollision].collideWithBottom(player, newY);
+        newY = collidables[(int)(newX/Tile.SIZE)][yCollision].collideWithBottom(player, newY);
         newY = collidables[rightmostXTile][yCollision].collideWithBottom(player, newY);
       }
     }

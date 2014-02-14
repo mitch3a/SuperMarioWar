@@ -79,7 +79,15 @@ public class Scoreboard {
 	  else{
   	  long currentTime = System.currentTimeMillis();
   	  if(currentTime > timeLastWinnerBorn + WinnerText.TIME_BETWEEN_WINNERS_MS){
-  	    winnerTextList.add(new WinnerText(winningPlayer.x, winningPlayer.y));
+  	    WinnerText temp = new WinnerText((int)winningPlayer.x, winningPlayer.y);
+  	    winnerTextList.add(temp);
+  	    
+  	    if(temp.x < 0){
+  	      winnerTextList.add(new WinnerText((int)(winningPlayer.x + GameFrame.res_width), winningPlayer.y));
+  	    }
+  	    else if(temp.x + WinnerText.WINNER_TEXT_WIDTH > GameFrame.res_width){
+  	      winnerTextList.add(new WinnerText((int)(winningPlayer.x - GameFrame.res_width), winningPlayer.y));
+  	    }
   	    timeLastWinnerBorn = currentTime;
   	  }
   	    

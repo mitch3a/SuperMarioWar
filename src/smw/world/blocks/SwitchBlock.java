@@ -28,7 +28,7 @@ public class SwitchBlock extends SolidBlock{
   }
   
   @Override
-  public int collideWithLeft(Player player, int newX) {
+  public float collideWithLeft(Player player, float newX) {
     if(hidden){
       return newX;
     }
@@ -37,7 +37,7 @@ public class SwitchBlock extends SolidBlock{
   }
 
   @Override
-  public int collideWithRight(Player player, int newX) {
+  public float collideWithRight(Player player, float newX) {
     if(hidden){
       return newX;
     }
@@ -46,7 +46,7 @@ public class SwitchBlock extends SolidBlock{
   }
 
   @Override
-  public int collideWithTop(Player player, int newY) {
+  public float collideWithTop(Player player, float newY) {
     if(hidden){
       return newY;
     }
@@ -55,7 +55,7 @@ public class SwitchBlock extends SolidBlock{
   }
 
   @Override
-  public int collideWithBottom(Player player, int newY) {    
+  public float collideWithBottom(Player player, float newY) {    
     if(hidden){
       return newY;
     }

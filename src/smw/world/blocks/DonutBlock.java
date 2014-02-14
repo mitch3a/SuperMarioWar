@@ -50,24 +50,24 @@ public class DonutBlock extends SolidBlock implements Updatable{
 
   //TODO this won't kill anyone on the way down
   @Override
-  public int collideWithLeft(Player player, int newX){
+  public float collideWithLeft(Player player, float newX){
     return (isFalling) ? newX : super.collideWithLeft(player, newX);
   }
   
   @Override
-  public int collideWithRight(Player player, int newX){     
+  public float collideWithRight(Player player, float newX){     
     return (isFalling) ? newX : super.collideWithRight(player, newX);
   }
     
   @Override
-  public int collideWithTop(Player player, int newY){
+  public float collideWithTop(Player player, float newY){
     playerOnTop = true;
     
     return (isFalling) ? newY : super.collideWithTop(player, newY);
   }
     
   @Override
-  public int collideWithBottom(Player player, int newY){
+  public float collideWithBottom(Player player, float newY){
     return (isFalling) ? newY : super.collideWithBottom(player, newY);
   }
 }

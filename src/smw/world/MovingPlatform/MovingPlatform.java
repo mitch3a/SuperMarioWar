@@ -29,11 +29,11 @@ public class MovingPlatform implements Drawable, Updatable{
     }
   }
  
-  public int getX(){
+  public float getX(){
     return path.getX();
   }
   
-  public int getY(){
+  public float getY(){
     return path.getY();
   }
   
@@ -63,15 +63,15 @@ public class MovingPlatform implements Drawable, Updatable{
     }
   }
   
-  Collidable getCollidable(int x, int y){
-    int difX = x - path.getX();
-    int difY = y - path.getY(); 
+  Collidable getCollidable(float x, float y){
+    float difX = x - path.getX();
+    float difY = y - path.getY(); 
     
     difX = (difX + GameFrame.res_width) % GameFrame.res_width;
     difY = (difY + GameFrame.res_height) % GameFrame.res_height;
     
-    int indexX = (difX >= 0) ? difX/Tile.SIZE : -1;
-    int indexY = (difY >= 0) ? difY/Tile.SIZE : -1;
+    int indexX = (difX >= 0) ? (int)(difX/Tile.SIZE) : -1;
+    int indexY = (difY >= 0) ? (int)(difY/Tile.SIZE) : -1;
     
     if(indexX >= 0 && indexX < tiles.length){
       if(indexY >= 0 && indexY < tiles[indexX].length){
@@ -98,7 +98,7 @@ public class MovingPlatform implements Drawable, Updatable{
    * Helper method to check collision between right side of a player and
    * left side of a collidable
    */
-  int checkCollisionRight(Player player, int xToCheck, int yToCheck, int newX){
+  float checkCollisionRight(Player player, float xToCheck, float yToCheck, float newX){
     Collidable temp = getCollidable(xToCheck, yToCheck);
     
     if(temp != null){
@@ -112,7 +112,7 @@ public class MovingPlatform implements Drawable, Updatable{
    * Helper method to check collision between left side of a player and
    * right side of a collidable
    */
-  int checkCollisionLeft(Player player, int xToCheck, int yToCheck, int newX){
+  float checkCollisionLeft(Player player, float xToCheck, float yToCheck, float newX){
     Collidable temp = getCollidable(xToCheck, yToCheck);
     
     if(temp != null){
@@ -126,7 +126,7 @@ public class MovingPlatform implements Drawable, Updatable{
    * Helper method to check collision between left side of a player and
    * right side of a collidable
    */
-  boolean willDrag(int xToCheck, int yToCheck){
+  boolean willDrag(float xToCheck, float yToCheck){
     Collidable temp = getCollidable(xToCheck, yToCheck);
     
     if(temp != null){
@@ -136,11 +136,11 @@ public class MovingPlatform implements Drawable, Updatable{
     return false;
   }
   
-  public int collideX(Player player, int newX) {
-    int rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
-    int bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
+  public float collideX(Player player, float newX) {
+    float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
+    float bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
     
-    int justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1;
+    float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1;
     
     //If the platform underneath is moving, so should the player
     if(willDrag(newX,       justUnderPlayer) || 
@@ -160,7 +160,7 @@ public class MovingPlatform implements Drawable, Updatable{
    * Helper method to check collision between top of a player and
    * bottom of a collidable
    */
-  int checkCollisionTop(Player player, int xToCheck, int yToCheck, int newY){
+  float checkCollisionTop(Player player, float xToCheck, float yToCheck, float newY){
     Collidable temp = getCollidable(xToCheck, yToCheck);
     
     if(temp != null){
@@ -174,7 +174,7 @@ public class MovingPlatform implements Drawable, Updatable{
    * Helper method to check collision between bottom of a player and
    * top of a collidable
    */
-  int checkCollisionBottom(Player player, int xToCheck, int yToCheck, int newY){
+  float checkCollisionBottom(Player player, float xToCheck, float yToCheck, float newY){
     Collidable temp = getCollidable(xToCheck, yToCheck);
     
     if(temp != null){
@@ -184,12 +184,12 @@ public class MovingPlatform implements Drawable, Updatable{
     return newY;
   }
   
-  public int collideY(Player player, int newX, int newY) {
-    int rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
-    int bottomYPlayer = newY +Sprite.IMAGE_HEIGHT - 1;
+  public float collideY(Player player, float newX, float newY) {
+    float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
+    float bottomYPlayer = newY +Sprite.IMAGE_HEIGHT - 1;
     
     //TODO i think this (and X version) should probably be called before the collides?
-    int justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT + 1 + path.getYChange();
+    float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT + 1 + path.getYChange();
     //If the platform underneath is moving, so should the player
     if(willDrag(newX,       justUnderPlayer) || 
        willDrag(rightMostX, justUnderPlayer)){
