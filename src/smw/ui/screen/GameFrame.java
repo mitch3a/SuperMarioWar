@@ -96,11 +96,10 @@ public class GameFrame extends Canvas{
     updateBumpFactor();
     
     Graphics2D g2d = (Graphics2D)bs.getDrawGraphics();
-    //g2d.setClip(7, 30, res_width, res_height);
     g2d.fillRect(0, 0, getWidth(), getHeight());
 
-    //Insets insets = frame.getInsets();
-    //g2d.translate(insets.left, bumpFactor + insets.top);
+    // TODO - put this in an if statement if bump is needed?
+    g2d.translate(0, bumpFactor);
     //g2d.scale(scaleFactorWidth, scaleFactorHeight);
     
     // TODO - RPG - If we have a menu then only draw that! (Although this won't work for pause menu!)
@@ -148,9 +147,11 @@ public class GameFrame extends Canvas{
   
   void resetScalingFactors(){
     //TODO mk this is temporary. there has to be a better way of doing this
-    Insets insets = frame.getInsets();
-    scaleFactorWidth =  ((double)(getWidth() - insets.left - insets.right))/res_width;
-    scaleFactorHeight = ((double)(getHeight()- insets.top  - insets.bottom))/res_height;
+    //Insets insets = frame.getInsets();
+    //scaleFactorWidth =  ((double)(getWidth() - insets.left - insets.right))/res_width;
+    //scaleFactorHeight = ((double)(getHeight()- insets.top  - insets.bottom))/res_height;
+    scaleFactorWidth =  (double)(getWidth())/res_width;
+    scaleFactorHeight = (double)(getHeight())/res_height;
   }
   
   /********************************************
@@ -178,5 +179,9 @@ public class GameFrame extends Canvas{
         bumpUp = false;
       }
     }
+  }
+  
+  public JFrame getGameFrame() {
+    return this.frame;
   }
 }
