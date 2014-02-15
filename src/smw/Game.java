@@ -1,5 +1,6 @@
 package smw;
 
+import java.awt.Canvas;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -16,8 +17,9 @@ import smw.ui.screen.GameFrame;
 import smw.world.World;
 
 public class Game implements Runnable {  
+  private Thread thread;
   private GameFrame gameFrame;
-  private Player[] players;
+  private static Player[] players;
   public Menu menu;
   public static World world;
   public static SoundPlayer soundPlayer = new SoundPlayer();
@@ -35,7 +37,9 @@ public class Game implements Runnable {
   private int pausePlayer;
   
   public Game(final int numPlayers) {
-    setMenu(new TitleMenu());
+    // TODO - RPG work in progress
+    //setMenu(new TitleMenu());
+    
     // TODO - setup world selector or something, for now pick what you want to test code.
     // ALSO ADD DESCRIPTION (good for testing ____)
     String[] worlds = {
@@ -67,23 +71,10 @@ public class Game implements Runnable {
     world = new World(worlds[22]);
     //world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
-    
+        
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world, this);
   	
-  	// When the window is closed do any needed cleanup.
-  	// TODO - make sure we are cleaning up everything we need to and releasing native resources where applicable!
-  	gameFrame.addWindowListener(new WindowAdapter() {
-  	  @Override
-  	  public void windowClosing(WindowEvent we) { 
-  	    soundPlayer.shutDown();
-  	    for(Player p : players) {
-  	      p.physics.playerControl.release();
-  	    }
-  	    System.exit(0);
-  	  }
-  	});
-
   	soundPlayer.setTrackList(world.getMusicCategoryID());
   	soundPlayer.playBGM();
   	if (Debug.MUTE) {
@@ -104,6 +95,8 @@ public class Game implements Runnable {
       XboxGamePad controller = new XboxGamePad(1); // player 1 only - eventually check for multiple controllers
       if (controller.isConnected()) {
         pc[0] = controller;
+      } else {
+        controller.release();
       }
     }
     // No Xbox controller, so check for other game pad.
@@ -135,13 +128,33 @@ public class Game implements Runnable {
     }
   }
 
+  /** Starts the main game thread. */
   public synchronized void start() {    
-    running = true;
-    new Thread(this).start();
+    if (!running) {
+      running = true;
+      thread = new Thread(this);
+      thread.start();
+    }
   }
   
+  /** Stops the main game thread. */
   public synchronized void stop() {
-    running = false;
+    if (running) {
+      running = false;
+      try {
+        thread.join();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /** Performs cleanup at shutdown to release any needed resources. */
+  public static void shutdown() {
+    soundPlayer.shutDown();
+    for(Player p : players) {
+      p.physics.playerControl.release();
+    }
   }
   
   /** Main game loop method. */
@@ -176,7 +189,6 @@ public class Game implements Runnable {
       }
       
       if (needRender) {
-        
         for (Player p : players) {
           p.poll();
         }
@@ -234,13 +246,13 @@ public class Game implements Runnable {
   }
 
   private void render() {
-    // TODO - our drawing performance sucks this will need to change at some point
-    gameFrame.repaint();
+    gameFrame.render();
   }
 
   private void updateGame(double timeDelta_ns) { 	
   	if (menu != null) {
   	  menu.update();
+  	  return;
   	}
     // Mitch - I set this up to just do the collision and if no collision, then allow the player in.
   	// not only is this unfair (ie if 2 players are running at each other, player 1 will see the spot

@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import smw.Game;
 import smw.gfx.Font;
 import smw.gfx.Palette;
+import smw.ui.screen.GameFrame;
 
 public class TitleMenu extends Menu {
 
@@ -20,6 +21,10 @@ public class TitleMenu extends Menu {
   BufferedImage leftPipe;
   BufferedImage middlePipe;
   BufferedImage rightPipe;
+  
+  private int selection;
+  
+  
     
   public TitleMenu() {
     try {
@@ -48,10 +53,20 @@ public class TitleMenu extends Menu {
       middlePipe = selectFieldImg.getSubimage(32, 0, 32, 32);
       rightPipe = selectFieldImg.getSubimage(32 * 15, 0, 32, 32);
 
-      drawPipeField(g, "1", 1, 64, 32 * 10);
-      drawPipeField(g, "Test", 7, 64, 32 * 7);
+      /*
+      drawPipeField(g, "Start", 8, 137, 240);
+      drawPipeField(g, "Go!", 1, 457, 240);
       
+      drawPipeField(g, "Options", 10, 137, 353);
+      drawPipeField(g, "Controls", 10, 137, 393);
+      drawPipeField(g, "Exit", 10, 137, 432);
+      */
+      drawPipeField(g, "Start", 8, 137 - 7, 240 - 30);
+      drawPipeField(g, "Go!", 1, 457 - 7, 240 - 30);
       
+      drawPipeField(g, "Options", 10, 137 - 7, 353 - 30);
+      drawPipeField(g, "Controls", 10, 137 - 7, 393 - 30);
+      drawPipeField(g, "Exit", 10, 137 - 7, 432 - 30);
       
     } catch (IOException e) {
       e.printStackTrace();
@@ -79,12 +94,12 @@ public class TitleMenu extends Menu {
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     drawBackground(g, io);
-    Game.soundPlayer.playMenuMusic();
     // TODO - draw user selection?
   }
 
   @Override
   public void update() {
+    //Game.soundPlayer.playMenuMusic();
     // TODO - update based on user selection
   }
   

@@ -11,7 +11,7 @@ public class Debug {
   public static final boolean LOG_TILE_TYPE_INFO = false;
   public static final boolean MUTE = false;
   public static final boolean MUTE_SFX = false;
-  public static final boolean MUTE_MUSIC = false;
+  public static final boolean MUTE_MUSIC = true;
   
   /*
    * Prints the map name, version, and tilesets
