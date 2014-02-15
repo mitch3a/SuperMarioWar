@@ -7,19 +7,19 @@ import java.awt.image.ImageObserver;
 import smw.ui.screen.GameFrame;
 
 public class WinnerText {
-  public static final int WINNER_TEXT_WIDTH = 40;
   private static final float WINNER_TEXT_ACCELERATION =.5f;
   private static final float WINNER_TEXT_STARTING_VELOCITY = -10;
   public static final long TIME_BETWEEN_WINNERS_MS = 300;
   public static final String winningString = "Winner!";
   public static final BufferedImage winnerImage = Font.getInstance().getLargeText(winningString);
+  public static final int WINNER_TEXT_WIDTH = winnerImage.getWidth();
   float y;
   final int x;
   float velocityY;
   
-  public WinnerText(int x, int y){
+  public WinnerText(int x, float y){
     this.x = x - WINNER_TEXT_WIDTH/2;
-    this.y = (float)y;
+    this.y = y;
     velocityY = WINNER_TEXT_STARTING_VELOCITY;
   }
   

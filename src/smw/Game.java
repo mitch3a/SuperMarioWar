@@ -62,14 +62,15 @@ public class Game implements Runnable {
       "sgraff_Buster_Beetle_s_Tower.map", //16 FEATURE - switches to turn on/off colored ! blocks
       "GG_Fire Fortress.map", //Animated blocks
       "tubesteak_lockout.map", //Spinning block, note box
-      "cristomarquez_abovethedomes.map", //falling donuts, warps, clouds
+      "cristomarquez_abovethedomes.map", //19 falling donuts, warps, clouds
       "MrMister_Airshipz.map",//20 TODO buffer gets overdrawn...
       "Sgraff_Bewarehouse.map",
       "Peardian_arcterra gate.map", //22 lots of ice + ice spikes
-      "JJames_Clocks on Fire.map" // 23 lava, circular moving platform and 2 spinning hazards
+      "JJames_Clocks on Fire.map", // 23 lava, circular moving platform and 2 spinning hazards
+      "Peardian_alinos gate.map" //24 lava + noteblocks
     };   
-    world = new World(worlds[22]);
-    //world = new World(); // TODO - Starts a random world (for now).
+    //world = new World(worlds[23]);
+    world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
         
     players = new Player[numPlayers];

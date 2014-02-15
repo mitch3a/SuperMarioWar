@@ -37,7 +37,7 @@ public class SolidBlock extends Collidable.Solid implements Drawable{
 
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
-    g.drawImage(getImage(), x, y, io);
+    g.drawImage(getImage(), (int)x, (int)y, io);
   }
   
   BufferedImage getImage(){

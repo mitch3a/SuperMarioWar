@@ -28,7 +28,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   }
 
   @Override
-  public int collideWithBottom(Player player, int newY) {
+  public float collideWithBottom(Player player, float newY) {
     if(!bumped){
       bumped = true;
       timeRunning = 0;
@@ -69,7 +69,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       blocksOn = !blocksOn;
       setBlocks(blocksOn);
       return super.collideWithBottom(player, newY);
@@ -94,7 +94,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       blocksOn = !blocksOn;
       setBlocks(blocksOn);
       return super.collideWithBottom(player, newY);
@@ -119,7 +119,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       blocksOn = !blocksOn;
       setBlocks(blocksOn);
       return super.collideWithBottom(player, newY);
@@ -144,7 +144,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       blocksOn = !blocksOn;
       setBlocks(blocksOn);
       return super.collideWithBottom(player, newY);

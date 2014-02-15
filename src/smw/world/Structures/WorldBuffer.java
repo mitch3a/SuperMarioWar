@@ -9,7 +9,6 @@ import java.util.Map;
 
 import smw.Collidable;
 import smw.world.Tile;
-import smw.world.TileSheet;
 import smw.world.TileSheetManager;
 import smw.world.MovingPlatform.EllipticalPath;
 import smw.world.MovingPlatform.Path;

@@ -22,14 +22,20 @@ public class XboxGamePad extends PlayerControlBase {
    * @param player Player number.
    */
   public XboxGamePad(int player) {
-    setType(PlayerControlBase.ControllerType.XBOX);
-    // Create the controller and verify connection.
-    xboxController = new XboxController(Utilities.is64bit() ? "xboxcontroller64" : "xboxcontroller", player, 50, 50);
+    // Attempt to create the controller and verify connection.
+    try {
+      xboxController = new XboxController(Utilities.is64bit() ? "xboxcontroller64" : "xboxcontroller", player, 50, 50);
+    } catch (RuntimeException e) {
+      System.err.println("Error loading Xbox controller DLL!");
+      return;
+    }
+
     isConnected = xboxController.isConnected();
     if (!isConnected) { 
       xboxController.release();
       return;
     }
+    setType(PlayerControlBase.ControllerType.XBOX);
     xboxController.setLeftThumbDeadZone(0.25);
     // Setup the input listener.
     xboxController.addXboxControllerListener(new XboxControllerAdapter() {

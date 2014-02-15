@@ -42,7 +42,7 @@ public class QuestionBlock extends AnimatedBlock{
   }
 
   @Override
-  public int collideWithBottom(Player player, int newY) {    
+  public float collideWithBottom(Player player, float newY) {    
     if(!bumped && running){
       bumped = true;
       timeRunning = 0;
@@ -60,7 +60,7 @@ public class QuestionBlock extends AnimatedBlock{
   }
   
   @Override
-  public int collideWithTop(Player player, int newY) {    
+  public float collideWithTop(Player player, float newY) {    
     if(bumped){
       player.death();
       return newY;

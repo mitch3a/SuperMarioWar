@@ -11,12 +11,12 @@ public abstract class Collidable {
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
   static final short[] g_iTileTypeConversion = {0, 1, 2, 5, 121, 9, 17, 33, 65, 6, 21, 37, 69, 3961, 265, 529, 1057, 2113, 4096};
   
-  protected int left;
-  protected int right;
-  protected int top;
-  protected int bottom;
+  protected float left;
+  protected float right;
+  protected float top;
+  protected float bottom;
   
-  public int x, y;
+  public float x, y;
   
   public Collidable(int x, int y) {
     
@@ -30,7 +30,7 @@ public abstract class Collidable {
   }
   
 
-  public void move(int dx, int dy) {
+  public void move(float dx, float dy) {
     x += dx;
     y += dy;
     left = (left + dx + GameFrame.res_width) % GameFrame.res_width;
@@ -40,22 +40,22 @@ public abstract class Collidable {
   }
 
   /** by default, non-solid **/
-  public int collideWithLeft(Player player, int newX){
+  public float collideWithLeft(Player player, float newX){
     return newX;
   }
   
   /** by default, non-solid **/
-  public int collideWithRight(Player player, int newX){
+  public float collideWithRight(Player player, float newX){
     return newX;
   }
   
   /** by default, non-solid **/
-  public int collideWithTop(Player player, int newY){
+  public float collideWithTop(Player player, float newY){
     return newY;
   }
 
   /** by default, non-solid **/
-  public int collideWithBottom(Player player, int newY){
+  public float collideWithBottom(Player player, float newY){
     return newY;
   }
   
@@ -118,25 +118,25 @@ public abstract class Collidable {
     }
 
     @Override
-    public int collideWithLeft(Player player, int newX){
+    public float collideWithLeft(Player player, float newX){
       player.physics.collideWithWall();
       return left;
     }
     
     @Override
-    public int collideWithRight(Player player, int newX){
+    public float collideWithRight(Player player, float newX){
         player.physics.collideWithWall();
         return right;
       }
       
     @Override
-    public int collideWithTop(Player player, int newY){
+    public float collideWithTop(Player player, float newY){
       player.physics.collideWithFloor();
       return top;
     }
       
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       player.physics.collideWithCeiling();
       return bottom;
     }
@@ -156,13 +156,13 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithTop(Player player, int newY){
+    public float collideWithTop(Player player, float newY){
       if(!player.pushedDown && player.physics.playerControl.isDown()) {
         // If this is the first time we reached this then the player pushed down the first time to fall through.
         // Set the falling through flags and height.
         if (!player.isFallingThrough) {
           player.isFallingThrough = true;
-          player.fallHeight = player.y;
+          player.fallHeight = (int)player.y;
           player.pushedDown = true;
         }
       }
@@ -184,8 +184,8 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithTop(Player player, int newY){
-      int result = super.collideWithTop(player, newY);
+    public float collideWithTop(Player player, float newY){
+      float result = super.collideWithTop(player, newY);
       player.slipOnIce();
       return result;
     }
@@ -200,25 +200,25 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithTop(Player player, int newY){
+    public float collideWithTop(Player player, float newY){
       player.death();
       return newY;
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       player.death();
       return newY;
     }
     
     @Override
-    public int collideWithRight(Player player, int newX){
+    public float collideWithRight(Player player, float newX){
       player.death();
       return newX;
     }
     
     @Override
-    public int collideWithLeft(Player player, int newX){
+    public float collideWithLeft(Player player, float newX){
       player.death();
       return newX;
     }
@@ -233,7 +233,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithTop(Player player, int newY){
+    public float collideWithTop(Player player, float newY){
       player.death();
       return newY;
     }
@@ -248,7 +248,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       player.death();
       return newY;
     }
@@ -263,7 +263,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithRight(Player player, int newX){
+    public float collideWithRight(Player player, float newX){
       player.death();
       return newX;
     }
@@ -278,7 +278,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithLeft(Player player, int newY){
+    public float collideWithLeft(Player player, float newY){
       player.death();
       return newY;
     }
@@ -293,25 +293,25 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithTop(Player player, int newY){
+    public float collideWithTop(Player player, float newY){
       player.superDeath();
       return newY;
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       player.superDeath();
       return newY;
     }
     
     @Override
-    public int collideWithRight(Player player, int newX){
+    public float collideWithRight(Player player, float newX){
       player.superDeath();
       return newX;
     }
     
     @Override
-    public int collideWithLeft(Player player, int newX){
+    public float collideWithLeft(Player player, float newX){
       player.superDeath();
       return newX;
     }
@@ -326,7 +326,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithTop(Player player, int newY){
+    public float collideWithTop(Player player, float newY){
       player.superDeath();
       return newY;
     }
@@ -341,7 +341,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       player.superDeath();
       return newY;
     }
@@ -356,7 +356,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithRight(Player player, int newX){
+    public float collideWithRight(Player player, float newX){
       player.superDeath();
       return newX;
     }
@@ -371,7 +371,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithLeft(Player player, int newY){
+    public float collideWithLeft(Player player, float newY){
       player.superDeath();
       return newY;
     }
@@ -386,7 +386,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithBottom(Player player, int newY){
+    public float collideWithBottom(Player player, float newY){
       player.death(); //TODO verify this is correct (not super death or need its own) AND right/left same issue (next 2 classes)
       return newY;
     }
@@ -401,7 +401,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithRight(Player player, int newX){
+    public float collideWithRight(Player player, float newX){
       player.death();
       return newX;
     }
@@ -416,7 +416,7 @@ public abstract class Collidable {
     }
     
     @Override
-    public int collideWithLeft(Player player, int newY){
+    public float collideWithLeft(Player player, float newY){
       player.superDeath();
       return newY;
     }

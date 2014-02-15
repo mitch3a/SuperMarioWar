@@ -53,26 +53,6 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
     }
   }
   
-  public static class BlueNoteBlock extends AnimatedBlock{
-    public BlueNoteBlock(int x, int y){
-      super(x, y, "noteblock.png");
-    }
-  }
-  
-  public static class WhiteNoteBlock extends AnimatedBlock{
-    public WhiteNoteBlock(int x, int y){
-      super(x, y, "noteblock.png");
-      this.tileSheetY += Tile.SIZE;
-    }
-  }
-  
-  public static class RedNoteBlock extends AnimatedBlock{
-    public RedNoteBlock(int x, int y){
-      super(x, y, "noteblock.png");
-      this.tileSheetY += 2*Tile.SIZE;
-    }
-  }
-  
   public static class BlueThrowBlock extends AnimatedBlock{
     public BlueThrowBlock(int x, int y){
       super(x, y, "throwblock.png");
@@ -90,12 +70,6 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
     public RedThrowBlock(int x, int y){
       super(x, y, "throwblock.png");
       this.tileSheetY += 2*Tile.SIZE;
-    }
-  }
-  
-  public static class FallingDonutBlock extends AnimatedBlock{
-    public FallingDonutBlock(int x, int y){
-      super(x, y, "donutblock.png");
     }
   }
 }
