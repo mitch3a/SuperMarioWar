@@ -2,11 +2,8 @@ package smw.ui.screen;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -63,16 +60,11 @@ public class GameFrame extends Canvas{
     frame.setSize((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight));
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
-    frame.setResizable(true);
-    
-    // TODO - DELETE
-    // Set the content pane to desired resolution (game area inside of window borders).
-    //Container c = getContentPane();
-    //c.setPreferredSize(new Dimension((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight)));
-    
+    frame.setResizable(false);
     frame.add(this, BorderLayout.CENTER);
     frame.pack();
     
+    // If the window is closed perform any needed shutdown cleanup.
     frame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent we) { 
@@ -81,6 +73,7 @@ public class GameFrame extends Canvas{
       }
     });
     
+    // TODO - this is broken, I think we don't want to be able to resize the window anyway.
     frame.addComponentListener(new ComponentAdapter() {
         public void componentResized(ComponentEvent e) {
             resetScalingFactors();
@@ -92,6 +85,7 @@ public class GameFrame extends Canvas{
     bs = getBufferStrategy();
 	}
   
+	/** Main drawing method. */
   public void render() {    
     updateBumpFactor();
     
@@ -144,7 +138,7 @@ public class GameFrame extends Canvas{
   }
   
     
-  
+  // TODO - this is currently broken, probably only want to change screen size in settings anyway...
   void resetScalingFactors(){
     //TODO mk this is temporary. there has to be a better way of doing this
     //Insets insets = frame.getInsets();
@@ -181,6 +175,10 @@ public class GameFrame extends Canvas{
     }
   }
   
+  /**
+   * Returns the game JFrame.
+   * @return The main JFrame.
+   */
   public JFrame getGameFrame() {
     return this.frame;
   }
