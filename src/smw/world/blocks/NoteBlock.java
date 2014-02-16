@@ -15,6 +15,9 @@ public class NoteBlock extends AnimatedBlock {
   StraightSegmentPath path;
   float timeElapsed;
   
+  //TODO mk found a bug where if the floor is same height of block and you stand
+  //     on the right side (left half on the note and right half on the solid ground)
+  //     then something whacky happens. found in MrMister_Hill.map
   public NoteBlock(int x, int y, String tileSheet) {
     super(x, y, tileSheet);
     
@@ -91,6 +94,7 @@ public class NoteBlock extends AnimatedBlock {
     isHit = true;
     Game.soundPlayer.sfxBump();
     
+    //TODO dif sound/velocity for color note
     player.physics.collideWithNoteBlockBottom();
     return top;
   }

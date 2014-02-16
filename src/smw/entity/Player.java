@@ -62,21 +62,22 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		width = Sprite.IMAGE_WIDTH;
 		height = Sprite.IMAGE_HEIGHT;
 
+		this.width  = Sprite.IMAGE_WIDTH;
+		this.height = Sprite.IMAGE_HEIGHT;
 		this.playerIndex = playerIndex;
 	}
-
+	
 	public Image getImage(){
 		return sprite.getImage();
 	}
 	
-	public void init(int newX, int newY){
-	  init(newX, newY, getRandomSprite());
+	public void init(){
+	  init(getRandomSprite());
 	}
 	
-	public void init(int newX, int newY, String image){
-		x = newX;
-		y = newY;
-		
+
+	public void init(String image){
+	  Game.world.setSpawnPoint(this);
 		//TODO this is obviously not staying in
 		int i = (int)(4*Math.random());
 		ColorScheme color = ColorScheme.YELLOW;
@@ -93,6 +94,13 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		sprite.init(image, color);
 	}
 	
+	private void initForSpawn(){
+	  crushed = false;
+	  killed = false;
+    Game.world.setSpawnPoint(this);
+    sprite.setJumping();
+	}
+	
 	/*** This method is to get the state ready to move ***/
 	public void prepareToMove(){
 		physics.update();
@@ -102,10 +110,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		if(crushed){
 			//TODO this is messy and should be a method called at the beginning
 			if(!score.isOut() && respawnTime < System.currentTimeMillis()){
-				crushed = false;
-				x = 300;
-				y = 100;
-				sprite.setJumping();
+			  initForSpawn();
 			}
 			
 			return; //Do not want to do anything with someone who is crushed
@@ -113,14 +118,12 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		
 		if(killed){
 		  physics.updateForDeath();
+		  
 		  y += physics.getVelocityY();
 		  
 		  //TODO this is messy and should be a method called at the beginning
       if(!score.isOut() && respawnTime < System.currentTimeMillis()){
-        killed = false;
-        x = 300;
-        y = 100;
-        sprite.setJumping();
+        initForSpawn();
       }
       
       //TODO should probably do some sort of max y else if the player is out and it keeps growing,
@@ -132,6 +135,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
     if(warpingOut){
 
       warpingAnimationDistance += WARP_VELOCITY;
+      
       x += warpFactorX*WARP_VELOCITY;
       y += warpFactorY*WARP_VELOCITY;  
       
@@ -146,6 +150,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		if(warpingIn){
 
 		  warpingAnimationDistance += WARP_VELOCITY;
+
 		  x += warpFactorX*WARP_VELOCITY;
       y += warpFactorY*WARP_VELOCITY;
       

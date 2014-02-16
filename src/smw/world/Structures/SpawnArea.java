@@ -1,11 +1,11 @@
 package smw.world.Structures;
 
 public class SpawnArea {
-  short left;
-  short top;
-  short width;
-  short height;
-  short size;
+  public short left;
+  public short top;
+  public short width;
+  public short height;
+  public short size;
   
   public SpawnArea(){
     left = 0;

@@ -793,4 +793,19 @@ public class World {
   public int getMusicCategoryID() {
     return musicCategoryID;
   }
+  
+  //TODO mk this needs work but the original code is really confusing.
+  public void setSpawnPoint(Player player){
+    
+    int area = (int)(spawnAreas.length*Math.random());
+    int spawnPoint = (int)(spawnAreas[area].length*Math.random());
+    SpawnArea spawnArea = spawnAreas[area][spawnPoint];
+    
+    int offsetX = (int)((spawnArea.width)*Math.random())*Tile.SIZE;
+    int offsetY = (int)((spawnArea.height)*Math.random())*Tile.SIZE;
+    
+    //TODO, consider storing these with the factors in the first place
+    player.x = spawnArea.left*Tile.SIZE + offsetX;
+    player.y = spawnArea.top*Tile.SIZE  + offsetY;
+  }
 }
