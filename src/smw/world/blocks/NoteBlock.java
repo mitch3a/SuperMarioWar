@@ -90,6 +90,7 @@ public class NoteBlock extends AnimatedBlock {
     isHit = true;
     Game.soundPlayer.sfxBump();
     
+    //TODO dif sound/velocity for color note
     player.physics.collideWithNoteBlockBottom();
     return top;
   }

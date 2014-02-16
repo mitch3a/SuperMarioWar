@@ -58,24 +58,23 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		sprite  = new Sprite();
 		score   = new Score();
 
+		this.width  = Sprite.IMAGE_WIDTH;
+		this.height = Sprite.IMAGE_HEIGHT;
 		this.playerIndex = playerIndex;
 	}
+
 	
-	void setBounds(int newX, int newY){
-	  //TODO might be a faster way (width/height never change)
-		setBounds(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT);			
-	}
 	
 	public Image getImage(){
 		return sprite.getImage();
 	}
 	
-	public void init(int newX, int newY){
-	  init(newX, newY, getRandomSprite());
+	public void init(){
+	  init(getRandomSprite());
 	}
 	
-	public void init(int newX, int newY, String image){
-		setBounds(newX, newY);
+	public void init(String image){
+	  Game.world.setSpawnPoint(this);
 		
 		//TODO this is obviously not staying in
 		int i = (int)(4*Math.random());
@@ -93,6 +92,13 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		sprite.init(image, color);
 	}
 	
+	private void initForSpawn(){
+	  crushed = false;
+	  killed = false;
+    Game.world.setSpawnPoint(this);
+    sprite.setJumping();
+	}
+	
 	/*** This method is to get the state ready to move ***/
 	public void prepareToMove(){
 		physics.update();
@@ -102,9 +108,7 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		if(crushed){
 			//TODO this is messy and should be a method called at the beginning
 			if(!score.isOut() && respawnTime < System.currentTimeMillis()){
-				crushed = false;
-				setBounds(300, 100);
-				sprite.setJumping();
+			  initForSpawn();
 			}
 			
 			return; //Do not want to do anything with someone who is crushed
@@ -112,13 +116,11 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		
 		if(killed){
 		  physics.updateForDeath();
-		  setBounds(x, (int)(y + physics.getVelocityY()));
+		  y =  (int)(y + physics.getVelocityY());
 		
 		  //TODO this is messy and should be a method called at the beginning
       if(!score.isOut() && respawnTime < System.currentTimeMillis()){
-        killed = false;
-        setBounds(300, 100);
-        sprite.setJumping();
+        initForSpawn();
       }
       
       //TODO should probably do some sort of max y else if the player is out and it keeps growing,
@@ -130,7 +132,8 @@ public class Player extends Rectangle implements Drawable, Updatable{
     if(warpingOut){
 
       warpingAnimationDistance += WARP_VELOCITY;
-      setBounds((int)(x + warpFactorX*WARP_VELOCITY),(int)(y + warpFactorY*WARP_VELOCITY));  
+      x = (int)(x + warpFactorX*WARP_VELOCITY);
+      y = (int)(y + warpFactorY*WARP_VELOCITY);  
       
       if(warpingAnimationDistance >= MAX_WARPING_ANIMATION_DISTANCE){
         warpingAnimationDistance = 0;
@@ -143,12 +146,14 @@ public class Player extends Rectangle implements Drawable, Updatable{
 		if(warpingIn){
 
 		  warpingAnimationDistance += WARP_VELOCITY;
-		  setBounds((int)(x + warpFactorX*WARP_VELOCITY),(int)(y + warpFactorY*WARP_VELOCITY));  
+		  x = (int)(x + warpFactorX*WARP_VELOCITY);
+		  y = (int)(y + warpFactorY*WARP_VELOCITY);  
 		  
 		  if(warpingAnimationDistance >= MAX_WARPING_ANIMATION_DISTANCE){
 		    warpingAnimationDistance = 0;
 		    
-		    setBounds(warpExit.x, warpExit.y);
+		    x = warpExit.x;
+		    y = warpExit.y;
 		    setWarpFactor(warpExit.direction);
 		    
 		    warpingIn = false;
@@ -220,7 +225,8 @@ public class Player extends Rectangle implements Drawable, Updatable{
 			}
 		}
 
-		setBounds(newX, newY);					
+		x = newX;
+		y = newY;
 	}
 	
 	boolean isAlive(){

@@ -63,8 +63,8 @@ public class Game implements Runnable {
       "JJames_Clocks on Fire.map", // 23 lava, circular moving platform and 2 spinning hazards
       "Peardian_alinos gate.map" //24 lava + noteblocks
     };   
-    world = new World(worlds[19]);
-    //world = new World(); // TODO - Starts a random world (for now).
+    //world = new World(worlds[19]);
+    world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");
     
     players = new Player[numPlayers];
@@ -130,7 +130,7 @@ public class Game implements Runnable {
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);
-      players[i].init(50*(i + 2), 100);
+      players[i].init();
     }
   }
 
