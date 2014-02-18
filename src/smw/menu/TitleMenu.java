@@ -5,28 +5,58 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.RescaleOp;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import smw.Game;
 import smw.gfx.Font;
 import smw.gfx.Palette;
-import smw.ui.screen.GameFrame;
 
-public class TitleMenu extends Menu { 
-  private BufferedImage backgroundImg;
-  private BufferedImage selectFieldImg; // TODO - probably don't need this big img hanging around
+public class TitleMenu extends Menu {
   
+  /** Defines the type of menu items. */
+  public enum ItemType {PIPE, PLAYER_SELECT};
+  
+  /** Encapsulates all data needed for a menu item. */
+  final class MenuItem {
+    public ItemType type;
+    public String label;
+    public int length;
+    public int x;
+    public int y;
+
+    public MenuItem(ItemType type, String label, int length, int x, int y) {
+      this.type = type;
+      this.label = label;
+      this.length = length;
+      this.x = x;
+      this.y = y;
+    }
+  }
+  
+  private static final int PIPE_TILE_SIZE = 32;
+  private static final int PIPE_TEXT_OFFSET_X = 24;
+  private static final int PIPE_TEXT_OFFSET_Y = 4;
+  
+  private BufferedImage backgroundImg;
+  
+  // TODO - Should probably just load these puppies into one sprite sheet then manage it accordingly
   private BufferedImage leftPipe;
   private BufferedImage middlePipe;
   private BufferedImage rightPipe;
-  
+  private BufferedImage selectFieldImg;
   private BufferedImage leftField;
   private BufferedImage middleField;
   private BufferedImage rightField;
   
+  private List<MenuItem> menuItems = new ArrayList<MenuItem>();
+  
+  /** The current user selection. */
   private int selection;
   
+  /** Indicates if sound setup is needed for the menu. */
   private boolean setupSound = true; 
     
   public TitleMenu() {
@@ -56,11 +86,19 @@ public class TitleMenu extends Menu {
       middlePipe = selectFieldImg.getSubimage(32, 0, 32, 32);
       rightPipe = selectFieldImg.getSubimage(32 * 15, 0, 32, 32);
       
-      drawPipeField(g, "Start", 7, 120, 210, true);
-      drawPipeField(g, "Go!", 0, 440, 210, false);
-      drawPipeField(g, "Options", 10, 120, 323, true);
-      drawPipeField(g, "Controls", 10, 120, 363, true);
-      drawPipeField(g, "Exit", 10, 120, 402, true);
+      // TODO - do something with this data, probably use it for drawing and updating the selected field based on user input...
+      menuItems.add(new MenuItem(ItemType.PIPE, "Start", 310, 120, 210));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Go!", 80, 440, 210));
+      menuItems.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Options", 400, 120, 322));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Controls", 400, 120, 362));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Exit", 400, 120, 402));
+      
+      drawPipeField(g, "Start", 310, 120, 210);
+      drawPipeField(g, "Go!", 80, 440, 210);
+      drawPipeField(g, "Options", 400, 120, 322);
+      drawPipeField(g, "Controls", 400, 120, 362);
+      drawPipeField(g, "Exit", 400, 120, 402);
       
       // Read the sprite sheet for the player select menu field.
       tempImg = ImageIO.read(this.getClass().getClassLoader().getResource("menu/menu_player_select.png"));
@@ -79,33 +117,38 @@ public class TitleMenu extends Menu {
     }
   }
   
-  
-  // TODO - maybe add an enum value for pipe type to draw!
-  public void drawPipeField(Graphics2D g, String text, int length, int x, int y, boolean extra) {
-    int textX = x + 24;
-    int textY = y + 4;
+  /**
+   * Draws a pipe field at the specified length with the provided text if any.
+   * A pipe field will always be at least the start and end pipe segments.
+   * @param g The graphics to draw on.
+   * @param text The text to draw.
+   * @param length The length of the pipe field in pixels.
+   * @param x The graphics x pixel coordinate.
+   * @param y The graphics y pixel coordinate.
+   */
+  // TODO - probably need a way to specify if it's selected or not, that will change which pipe images we use from the sprite sheet!
+  public void drawPipeField(Graphics2D g, String text, int length, int x, int y) {
+    final int segments = (length / PIPE_TILE_SIZE) - 2;
+    final int leftOver = length % PIPE_TILE_SIZE;
+    final int textX = x + PIPE_TEXT_OFFSET_X;
+    final int textY = y + PIPE_TEXT_OFFSET_Y;
+    
     g.drawImage(leftPipe, x, y, null);
-    x+= leftPipe.getWidth();
-    for (int i = 0; i < length; i++) {
+    x += PIPE_TILE_SIZE;
+    for (int i = 0; i < segments; i++) {
       g.drawImage(middlePipe, x, y, null);
-      x += middlePipe.getWidth();
+      x += PIPE_TILE_SIZE;
     }
-    if (extra) { // TODO - this is awful, should really just be able to give a length in pixels for a field then just draw it!
-      x-=16;
+    if (leftOver > 0) {
       g.drawImage(middlePipe, x, y, null);
-      x += middlePipe.getWidth();
-    } else {
-      g.drawImage(middlePipe, x, y, null);
-      x +=16;
+      x += leftOver;
     }
-    
     g.drawImage(rightPipe, x, y, null);
-    
     if (text != null) {
       Font.getInstance().drawLargeText(g, text, textX, textY, null);
     }
   }
-  
+    
   // TODO
   public void drawPlayerSelectField(Graphics2D g) {
     int x = 120;
