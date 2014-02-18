@@ -25,11 +25,9 @@ public class TileSheet {
    * @param name
    * Currently the folder of the tile sheet, this could change in the future.
    */
-  public TileSheet(String name) {
+  public TileSheet(String path) {
     try {
-      //TODO obviously I hate this...
-      String fullName = "map/tilesheets/" + name + ((name.endsWith(".png")) ? "" : "/large.png");
-      BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource(fullName));
+      BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource(path));
 
       // Must convert to a BufferedImage that allows transparency (read above uses TYPE_3BYTE_BGR).
       image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -40,7 +38,7 @@ public class TileSheet {
       
       //TODO I dont think we are using this but it crashes for non "large" tilesheets readTileTypeFile(name);
     } catch (IOException e) {
-      System.out.println("Could not read spritesheet for: " + name);
+      System.out.println("Could not read spritesheet for: " + path);
       e.printStackTrace();
     }
   }
@@ -135,7 +133,11 @@ public class TileSheet {
 
   public int getWidth() {
     return image.getWidth();
+  }
+
+  //TODO mk Don't really love this but works for now
+  public TileSheet applyAlpha(int alpha) {
+    Palette.getInstance().applyAlpha(image, alpha);
+    return this;
   }  
-  
-  
 }

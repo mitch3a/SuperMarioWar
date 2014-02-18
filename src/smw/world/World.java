@@ -71,10 +71,10 @@ public class World {
   //and should only be called in order
   final List<Drawable> drawablesLayer0 = new LinkedList<Drawable>();
   final List<Drawable> drawablesLayer1 = new LinkedList<Drawable>();
-  final List<Drawable> drawablesLayer2 = new LinkedList<Drawable>();
-  final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
+  public final List<Drawable> drawablesLayer2 = new LinkedList<Drawable>();
+  public final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
   
-  final List<Updatable> updatables  = new LinkedList<Updatable>();
+  public final List<Updatable> updatables  = new LinkedList<Updatable>();
   final List<MovingPlatform> movingPlatforms = new LinkedList<MovingPlatform>();
 
   //TODO this is temp... until there is a smarter way to update blocks on a change
@@ -796,6 +796,11 @@ public class World {
   
   //TODO mk this needs work but the original code is really confusing.
   public void setSpawnPoint(Player player){
+    if(spawnAreas == null || spawnAreas.length == 0){
+      //TODO mk this is just to avoid crashes
+      player.x = (float) (Math.random()*(GameFrame.res_width - Sprite.IMAGE_WIDTH));
+      player.y = (float) (Math.random()*(GameFrame.res_height - Sprite.IMAGE_HEIGHT));
+    }
     
     int area = (int)(spawnAreas.length*Math.random());
     int spawnPoint = (int)(spawnAreas[area].length*Math.random());

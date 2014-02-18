@@ -70,7 +70,7 @@ public class Game implements Runnable {
       "Peardian_alinos gate.map" //24 lava + noteblocks
     };   
 
-    //world = new World(worlds[19]);
+    //world = new World(worlds[23]);
 
     world = new World(); // TODO - Starts a random world (for now).
     //world = new World("mm64_as seen on tv.map");

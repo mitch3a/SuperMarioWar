@@ -12,6 +12,7 @@ import smw.Drawable;
 import smw.Game;
 import smw.Updatable;
 import smw.gfx.Palette.ColorScheme;
+import smw.gfx.SpawnAnimation;
 import smw.gfx.Sprite;
 import smw.settings.Debug;
 import smw.ui.PlayerControlBase;
@@ -32,6 +33,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	public PlayerPhysics physics;
 	private Score score;
 	private final int playerIndex;
+	
+	private SpawnAnimation spawnAnimation;
 	///////////////////////////////////////////////////
 	// WARPING
 	///////////////////////////////////////////////////
@@ -47,6 +50,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	private boolean crushed = false;
 	private boolean killed = false;
 	private long respawnTime;
+	ColorScheme color;
 	
 	/** Indicates whether a player is falling through a tile by pressing down key. */
 	public boolean isFallingThrough = false;
@@ -78,9 +82,11 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 
 	public void init(String image){
 	  Game.world.setSpawnPoint(this);
+	  
 		//TODO this is obviously not staying in
 		int i = (int)(4*Math.random());
-		ColorScheme color = ColorScheme.YELLOW;
+		color = ColorScheme.YELLOW;
+		
 		if(i == 0){
 		  color = ColorScheme.RED;
 		}
@@ -90,14 +96,16 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		else if(i == 2){
       color = ColorScheme.BLUE;
     }
-		
+
 		sprite.init(image, color);
+		spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
 	}
 	
 	private void initForSpawn(){
 	  crushed = false;
 	  killed = false;
     Game.world.setSpawnPoint(this);
+    spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
     sprite.setJumping();
 	}
 	
@@ -107,6 +115,13 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	}
 		
 	public void move(Player[] players){	
+	  if(spawnAnimation != null && !spawnAnimation.isDone()){
+	    return;
+	  }
+	  else{
+	    spawnAnimation = null;
+	  }
+	  
 		if(crushed){
 			//TODO this is messy and should be a method called at the beginning
 			if(!score.isOut() && respawnTime < System.currentTimeMillis()){
@@ -291,7 +306,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	 }
 	
 	public void draw(Graphics2D graphics, ImageObserver observer){
-	  if(drawToBack()){
+	  if(drawToBack() || (spawnAnimation != null && !spawnAnimation.isDone())){
 	    return;
 	  }
 	  

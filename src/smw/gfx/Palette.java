@@ -82,6 +82,19 @@ public class Palette {
     }
 	}
 
+	public void applyAlpha(BufferedImage image, int alpha){
+	  for(int w = 0 ; w < image.getWidth() ; ++w){
+      for(int h = 0 ; h < image.getHeight(); ++h){
+        int currentColor = image.getRGB(w, h);
+        if(currentColor != Color.TRANSLUCENT){
+          currentColor = currentColor << 8;
+          currentColor = currentColor >> 8;
+          currentColor += (alpha << 24);
+          image.setRGB(w, h, currentColor);
+        }
+      }
+    }
+	}
 
 	/** This also removes megenta (into alpha zero) **/
 	public void colorSprite(ColorScheme color, BufferedImage image){

@@ -154,8 +154,8 @@ public class WorldBuffer {
     int id              = (int)(buffer.get());
     int tileSheetColumn = (int)(buffer.get());
     int tileSheetRow    = (int)(buffer.get());
-
-    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn, TileSheetManager.getInstance().getTileSheet(tileSheetMap.get(id)));
+    
+    return new Tile(x*Tile.SIZE, y*Tile.SIZE, id, tileSheetRow, tileSheetColumn, TileSheetManager.getInstance().getTileSheet("map/tilesheets/" + tileSheetMap.get(id) + "/large.png"));
   }
  
   public int getVersion() {

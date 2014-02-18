@@ -31,8 +31,7 @@ public class SolidBlock extends Collidable.Solid implements Drawable{
     //These default to Brick. The parent class should reassign these
     tileSheetX = 0;
     tileSheetY = 0;
-        
-    tileSheet = TileSheetManager.getInstance().getTileSheet(blockSheet);
+    tileSheet = TileSheetManager.getInstance().getTileSheet("map/tilesheets/" + blockSheet);
   }
 
   @Override

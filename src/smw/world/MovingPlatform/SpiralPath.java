@@ -7,6 +7,7 @@ public abstract class SpiralPath extends Path{
    * of the moving platform and NOT the center of the moving platform
    */
   float radius, totalAngle, centerX, centerY, angle, velocity, ratio, startingAngle;
+  public boolean isDone = false;
   
   //TODO mk Currently the velocity is angle speed. This means it slows down as it gets closer.
   //     might want that functionality as well
@@ -26,6 +27,11 @@ public abstract class SpiralPath extends Path{
   @Override
   void move(int axis, float timeDif){
     ratio = 1 - ((angle - startingAngle)/totalAngle);
+    
+    if(ratio < 0){
+      isDone = true;
+    }
+    
     updateAngle(timeDif);
     setPosition();
   }
