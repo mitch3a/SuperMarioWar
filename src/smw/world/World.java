@@ -800,6 +800,8 @@ public class World {
       //TODO mk this is just to avoid crashes
       player.x = (float) (Math.random()*(GameFrame.res_width - Sprite.IMAGE_WIDTH));
       player.y = (float) (Math.random()*(GameFrame.res_height - Sprite.IMAGE_HEIGHT));
+      
+      return;
     }
     
     int area = (int)(spawnAreas.length*Math.random());
