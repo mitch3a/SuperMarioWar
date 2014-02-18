@@ -18,7 +18,7 @@ public class WinnerText {
   float velocityY;
   
   public WinnerText(int x, float y){
-    this.x = x - WINNER_TEXT_WIDTH/2;
+    this.x = x - (WINNER_TEXT_WIDTH - Sprite.IMAGE_WIDTH)/2;
     this.y = y;
     velocityY = WINNER_TEXT_STARTING_VELOCITY;
   }
