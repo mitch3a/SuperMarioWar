@@ -27,7 +27,7 @@ public class TileSheetManager {
   Map<String, TileSheet> tileSheets = new HashMap<String, TileSheet>();
   
   public TileSheet getTileSheet(String tileSheet){
-    if(tileSheet == null || tileSheet == ""){
+    if(tileSheet == null || tileSheet == "" || tileSheet.contains("null")){
       return null; //TODO consider keeping a "valid tilesheets" list
     }
     
