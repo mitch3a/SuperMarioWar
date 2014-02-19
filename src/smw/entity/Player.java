@@ -258,7 +258,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	}
 	
 	boolean isAlive(){
-	  return !crushed && !killed;
+	  return !crushed && !killed && (spawnAnimation == null || spawnAnimation.shouldBeRemoved());
 	}
 		
 	protected void crush(){
