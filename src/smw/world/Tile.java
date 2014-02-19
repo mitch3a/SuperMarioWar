@@ -76,4 +76,9 @@ public class Tile implements Drawable {
   BufferedImage getImage(){
     return (hasImage) ? tileSheet.getTileImg(tileSheetX, tileSheetY) : null;
   }
+
+  @Override
+  public boolean shouldBeRemoved() {
+    return false;
+  }
 }

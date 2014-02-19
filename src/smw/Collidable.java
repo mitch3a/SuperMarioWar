@@ -29,7 +29,6 @@ public abstract class Collidable {
     bottom = (y + Tile.SIZE) % GameFrame.res_height;
   }
   
-
   public void move(float dx, float dy) {
     x += dx;
     y += dy;

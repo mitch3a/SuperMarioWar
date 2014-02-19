@@ -7,6 +7,8 @@ public abstract class SpiralPath extends Path{
    * of the moving platform and NOT the center of the moving platform
    */
   float radius, totalAngle, centerX, centerY, angle, velocity, ratio, startingAngle;
+  public float offsetX;
+  public float offsetY;
   public boolean isDone = false;
   
   //TODO mk Currently the velocity is angle speed. This means it slows down as it gets closer.
@@ -39,9 +41,40 @@ public abstract class SpiralPath extends Path{
   abstract void updateAngle(float timeDif);
   
   void setPosition(){
-    currentPos[X] = (float) (radius*ratio*Math.cos(angle) + centerX);
-    currentPos[Y] = (float) (radius*ratio*Math.sin(angle) + centerY);
+    offsetX = (float)(radius*ratio*Math.cos(angle));
+    offsetY = (float)(radius*ratio*Math.sin(angle));
+    
+    currentPos[X] = offsetX + centerX;
+    currentPos[Y] = offsetY + centerY;
   }
+  
+  //TODO this is a little hacky because it inherits the getX, getY.
+  //     made offsets public and stored for spawn animation to transpose
+  //     the one that starts at angle 0
+  public int getX90(){
+    return (int)(centerX + offsetY);
+  }
+  
+  public int getY90(){
+    return (int)(centerY - offsetX);
+  }
+  
+  public int getX180(){
+    return (int)(centerX - offsetX);
+  }
+  
+  public int getY180(){
+    return (int)(centerY - offsetY);
+  }
+  
+  public int getX270(){
+    return (int)(centerX - offsetY);
+  }
+  
+  public int getY270(){
+    return (int)(centerY + offsetX);
+  }
+  
   
   public static class AngularVelocity extends SpiralPath{
    

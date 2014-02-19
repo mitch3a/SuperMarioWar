@@ -1,16 +1,29 @@
 package smw.world.blocks;
 
+import java.awt.Graphics2D;
+import java.awt.image.ImageObserver;
+
+import smw.Game;
 import smw.Updatable;
 import smw.entity.Player;
+import smw.ui.screen.GameFrame;
+import smw.world.MovingCollidable;
 import smw.world.Tile;
+import smw.world.MovingPlatform.StraightSegmentPath;
 
-public class DonutBlock extends SolidBlock implements Updatable{
+public class DonutBlock extends SolidBlock implements Updatable, MovingCollidable{
   public boolean isFalling;
   boolean playerOnTop;
   float playerOnTopTime;
-  float MAX_TIME_PLAYER_ON_TOP_WITHOUT_FALLING = 2000f;//2 seconds
+  //TODO if the velocity goes higher the straight segment breaks
+  static final float SHAKE_VELOCITY = 0.05f;
+  final StraightSegmentPath path = new StraightSegmentPath(SHAKE_VELOCITY, x - 1, y, x + 1, y);
+  static final float MAX_TIME_PLAYER_ON_TOP_WITHOUT_FALLING = 1500f;//1.5 seconds
+
+  
   float fallVelocity = 0.0f;
-  final float FALL_ACCELERATION = 0.01f;
+  final float FALL_ACCELERATION = 0.004f;
+  
   
   public DonutBlock(int x, int y) {
     super(x, y);
@@ -35,10 +48,11 @@ public class DonutBlock extends SolidBlock implements Updatable{
     if(playerOnTopTime > MAX_TIME_PLAYER_ON_TOP_WITHOUT_FALLING){
       playerOnTop = false;
       isFalling = true;
+      Game.world.movingCollidables.add(this);
     }
     
     if(playerOnTop && !isFalling){
-      //TODO shake
+      path.move(timeDif_ms);
     }
     else if(isFalling){
       y += fallVelocity*timeDif_ms;
@@ -69,5 +83,40 @@ public class DonutBlock extends SolidBlock implements Updatable{
   @Override
   public float collideWithBottom(Player player, float newY){
     return (isFalling) ? newY : super.collideWithBottom(player, newY);
+  }
+  
+  @Override
+  public void draw(Graphics2D g, ImageObserver io) {
+    if(playerOnTop){
+      g.drawImage(getImage(), path.getX(),path.getY(), io);
+    }
+    else{
+      g.drawImage(getImage(), (int)x, (int)y, io);
+    }
+  }
+
+  //TODO mk these below are based on the players current position. Probably
+  //     not a big deal but worth noting here
+  @Override
+  public float collideX(Player player, float newX) {
+    if(player.intersects(x, y, Tile.SIZE, Tile.SIZE)){
+      player.death();
+    }
+    
+    return newX;
+  }
+
+  @Override
+  public float collideY(Player player, float newX, float newY) {
+    if(player.intersects(x, y, Tile.SIZE, Tile.SIZE)){
+      player.death();
+    }
+    
+    return newY;
+  }
+
+  @Override
+  public boolean shouldBeRemoved() {
+    return (y > GameFrame.res_height);
   }
 }

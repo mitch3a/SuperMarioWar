@@ -81,4 +81,9 @@ public class AnimatedDrawable extends Collidable.Solid implements Updatable, Dra
   public BufferedImage getImage(){
     return images[currentImg];
   }
+
+  @Override
+  public boolean shouldBeRemoved() {
+    return false;
+  }
 }

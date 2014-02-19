@@ -9,9 +9,10 @@ import smw.Updatable;
 import smw.entity.Player;
 import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
+import smw.world.MovingCollidable;
 import smw.world.Tile;
 
-public class MovingPlatform implements Drawable, Updatable{
+public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
   Path path;
   Tile[][] tiles;
   Collidable[][] collidables;
@@ -203,5 +204,10 @@ public class MovingPlatform implements Drawable, Updatable{
     newY = checkCollisionBottom(player, rightMostX, bottomYPlayer, newY);
     
     return newY;
+  }
+
+  @Override
+  public boolean shouldBeRemoved() {
+    return false;
   }
 }

@@ -17,7 +17,6 @@ import smw.world.MovingPlatform.SpiralPath;
 
 public class SpawnAnimation implements Updatable, Drawable{
   static final TileSheet tileSheet = TileSheetManager.getInstance().getTileSheet("gfx/packs/Classic/eyecandy/spawnsmoke.png").applyAlpha(120);
-  static final float[] angles = {0f, (float) (Math.PI/2.0f), (float) Math.PI, (float) (3*Math.PI/2.0f)};
   static final float TIME_BETWEEN_NEW_DOTS = 40.0f; 
   static final float VELOCITY = 1.0f;
   static final float NUM_ROTATIONS = 0.5f;
@@ -29,13 +28,8 @@ public class SpawnAnimation implements Updatable, Drawable{
   
   float timeSinceLastDotCreated = 0;
   float nextSize = 0.0f;
-  boolean isDone = false;
   
-  public SpawnAnimation(int x, int y, ColorScheme color){
-    //TODO mk not sure how we feel about this but works for now
-    Game.world.updatables.add(this);
-    Game.world.drawablesLayer2.add(this);
-    
+  public SpawnAnimation(int x, int y, ColorScheme color){   
     this.x = (float)(x);
     this.y = (float)(y);
     
@@ -48,26 +42,21 @@ public class SpawnAnimation implements Updatable, Drawable{
     nextSize += 0.5f;
     int sizeToUse = (int)nextSize;
     
-    for(float angle : angles){
-      spawnPairs.add(new SpawnAnimationPair(x, y, color, sizeToUse, angle));
-    }
+    spawnPairs.add(new SpawnAnimationPair(x, y, color, sizeToUse));
   }
   
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     for(SpawnAnimationPair pair : spawnPairs){
-      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX(), pair.path.getY(), io);
+      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX(),    pair.path.getY(),    io);
+      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX90(),  pair.path.getY90(),  io);
+      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX180(), pair.path.getY180(), io);
+      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX270(), pair.path.getY270(), io);
     }
   }
 
   @Override
-  public void update(float timeDif_ms) {
-    if(spawnPairs.size() == 0){
-      Game.world.updatables.remove(this);
-      Game.world.drawablesLayer3.remove(this);
-      isDone = true;
-    }
-    
+  public void update(float timeDif_ms) {    
     Iterator<SpawnAnimationPair> iter = spawnPairs.iterator();
     while(iter.hasNext()){
       SpawnAnimationPair temp = iter.next();
@@ -89,15 +78,15 @@ public class SpawnAnimation implements Updatable, Drawable{
     final int tileSheetX;
     final int tileSheetY;
     
-    public SpawnAnimationPair(float x, float y, ColorScheme color, int size, float angle){
-      path = new SpiralPath.RegularVelocity(VELOCITY, angle, NUM_ROTATIONS, RADIUS, x, y);
+    public SpawnAnimationPair(float x, float y, ColorScheme color, int size){
+      path = new SpiralPath.RegularVelocity(VELOCITY, 0, NUM_ROTATIONS, RADIUS, x, y);
       tileSheetX = Tile.SIZE*size;
       tileSheetY = Tile.SIZE*color.index;
     }
   }
 
-  public boolean isDone() {
-    return isDone;
+  @Override
+  public boolean shouldBeRemoved() {
+    return (spawnPairs.size() == 0);
   }
-
 }

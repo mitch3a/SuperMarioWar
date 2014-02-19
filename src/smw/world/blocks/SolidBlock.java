@@ -33,6 +33,13 @@ public class SolidBlock extends Collidable.Solid implements Drawable{
     tileSheetY = 0;
     tileSheet = TileSheetManager.getInstance().getTileSheet("map/tilesheets/" + blockSheet);
   }
+  
+
+  @Override
+  public boolean shouldBeRemoved() {
+    return false;
+  }
+  
 
   @Override
   public void draw(Graphics2D g, ImageObserver io) {

@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,13 +73,13 @@ public class World {
   final List<Drawable> drawablesLayer0 = new LinkedList<Drawable>();
   final List<Drawable> drawablesLayer1 = new LinkedList<Drawable>();
   public final List<Drawable> drawablesLayer2 = new LinkedList<Drawable>();
-  public final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
+  final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
   
   public final List<Updatable> updatables  = new LinkedList<Updatable>();
-  final List<MovingPlatform> movingPlatforms = new LinkedList<MovingPlatform>();
+  public final List<MovingCollidable> movingCollidables = new LinkedList<MovingCollidable>();
 
   //TODO this is temp... until there is a smarter way to update blocks on a change
-  final static public List<SolidBlock> blocks = new LinkedList<SolidBlock>();
+  final static List<SolidBlock> blocks = new LinkedList<SolidBlock>();
 
   Warp[][]   warps;
   SpawnArea[][] spawnAreas;  
@@ -477,7 +478,7 @@ public class World {
       Path path = buffer.getPath(pathType, width, height);
 
       MovingPlatform temp = new MovingPlatform(platformTiles, collidables, path);
-      movingPlatforms.add(temp);
+      movingCollidables.add(temp);
       
       addToLayer(temp, drawLayer);
       updatables.add(temp);
@@ -643,8 +644,8 @@ public class World {
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
-    for(MovingPlatform platform : movingPlatforms){
-      newX = platform.collideX(player, newX);
+    for(MovingCollidable movingCollidable : movingCollidables){
+      newX = movingCollidable.collideX(player, newX);
     }
     
     ///////////////////////////////////////////////////////////////
@@ -683,8 +684,8 @@ public class World {
     ///////////////////////////////////////////////////////////////
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
-    for(MovingPlatform platform : movingPlatforms){
-      newY = platform.collideY(player, newX, newY);
+    for(MovingCollidable movingCollidable : movingCollidables){
+      newY = movingCollidable.collideY(player, newX, newY);
     }
     
     int rightmostXTile = (int)(((newX + Sprite.IMAGE_WIDTH - 1)%GameFrame.res_width)/Tile.SIZE);
@@ -756,26 +757,31 @@ public class World {
   }
   
   public void drawLayer0(Graphics2D g, ImageObserver io){
-    for(Drawable drawables : drawablesLayer0){
-      drawables.draw(g, io);
-    }
+    drawLayer(drawablesLayer0, g, io);
   }
   
   public void drawLayer1(Graphics2D g, ImageObserver io){
-    for(Drawable drawables : drawablesLayer1){
-      drawables.draw(g, io);
-    }
+    drawLayer(drawablesLayer1, g, io);
   }
   
   public void drawLayer2(Graphics2D g, ImageObserver io){
-    for(Drawable drawables : drawablesLayer2){
-      drawables.draw(g, io);
-    }
+    drawLayer(drawablesLayer2, g, io);
   }
   
   public void drawLayer3(Graphics2D g, ImageObserver io){
-    for(Drawable drawables : drawablesLayer3){
-      drawables.draw(g, io);
+    drawLayer(drawablesLayer3, g, io);
+  }
+  
+  void drawLayer(List<Drawable> drawables, Graphics2D g, ImageObserver io){
+    Iterator<Drawable> iter = drawables.iterator();
+    while(iter.hasNext()){
+      Drawable temp = iter.next();
+      
+      temp.draw(g, io);
+      
+      if(temp.shouldBeRemoved()){
+        iter.remove();
+      }
     }
   }
 
@@ -784,8 +790,24 @@ public class World {
    * @param timeDelta_ms Game time passed in ms. 
    */
   public void update(float timeDelta_ms) {
-    for (Updatable updatable : updatables) {
-      updatable.update(timeDelta_ms);
+    Iterator<Updatable> iter = updatables.iterator();
+    while(iter.hasNext()){
+      Updatable temp = iter.next();
+      
+      temp.update(timeDelta_ms);
+      
+      if(temp.shouldBeRemoved()){
+        iter.remove();
+      }
+    }
+    
+    Iterator<MovingCollidable> iter2 = movingCollidables.iterator();
+    while(iter2.hasNext()){
+      MovingCollidable temp = iter2.next();
+      
+      if(temp.shouldBeRemoved()){
+        iter2.remove();
+      }
     }
   }
 

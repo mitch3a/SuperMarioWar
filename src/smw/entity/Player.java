@@ -99,13 +99,19 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 
 		sprite.init(image, color);
 		spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
+		//TODO mk not sure how i feel about this
+    Game.world.updatables.add(spawnAnimation);
+    Game.world.drawablesLayer2.add(spawnAnimation);
 	}
 	
 	private void initForSpawn(){
-	  crushed = false;
+    crushed = false;
 	  killed = false;
     Game.world.setSpawnPoint(this);
     spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
+    //TODO mk not sure how i feel about this
+    Game.world.updatables.add(spawnAnimation);
+    Game.world.drawablesLayer2.add(spawnAnimation);
     sprite.setJumping();
 	}
 	
@@ -115,7 +121,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	}
 		
 	public void move(Player[] players){	
-	  if(spawnAnimation != null && !spawnAnimation.isDone()){
+	  if(spawnAnimation != null && !spawnAnimation.shouldBeRemoved()){
 	    return;
 	  }
 	  else{
@@ -306,7 +312,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	 }
 	
 	public void draw(Graphics2D graphics, ImageObserver observer){
-	  if(drawToBack() || (spawnAnimation != null && !spawnAnimation.isDone())){
+	  if(drawToBack() || (spawnAnimation != null && !spawnAnimation.shouldBeRemoved())){
 	    return;
 	  }
 	  
@@ -366,5 +372,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 
   public void slipOnIce() {
     physics.slipOnIce();
+  }
+
+  @Override
+  public boolean shouldBeRemoved() {
+    return isOut();
   }
 }

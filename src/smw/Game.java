@@ -1,9 +1,6 @@
 package smw;
 
-import java.awt.Canvas;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import smw.entity.Player;
 import smw.menu.*;
@@ -70,10 +67,9 @@ public class Game implements Runnable {
       "Peardian_alinos gate.map" //24 lava + noteblocks
     };   
 
-    //world = new World(worlds[23]);
+    world = new World(worlds[19]);
 
-    world = new World(); // TODO - Starts a random world (for now).
-    //world = new World("mm64_as seen on tv.map");
+    //world = new World(); // TODO - Starts a random world (for now)
         
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world, this);
@@ -219,6 +215,7 @@ public class Game implements Runnable {
     if(!paused){
       for(int i = 0 ; i < players.length ; ++i){
         if(players[i].physics.playerControl.isPaused()){
+          soundPlayer.sfxPause();
           pausePlayer = i;
           paused = true;
           pauseState = 0;
@@ -242,6 +239,7 @@ public class Game implements Runnable {
       else if(pauseState == 2){
         //Unpaused pushed but must be released before end of pause
         if(!players[pausePlayer].physics.playerControl.isPaused()){
+          soundPlayer.sfxPause();
           pauseState = 0;
           paused = false;
         }

@@ -65,6 +65,8 @@ public class StraightSegmentPath extends Path{
     }
   }
   
+  //TODO mk this is broken if it is fast enough to go from one point to another
+  //     in one update. This is pretty unlikely but still....
   void move(int axis, float timeDif){
     
     currentPos[axis] += velocity[axis]*timeDif;
