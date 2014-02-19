@@ -124,11 +124,15 @@ public class TileSheet {
    * @return tile image
    */
   public BufferedImage getTileImg(int x, int y) {
+    return getTileImg(x, y, Tile.SIZE, Tile.SIZE);
+  }
+  
+  public BufferedImage getTileImg(int x, int y, int width, int height) {
     if(x < 0 || y < 0){//TODO check not TOO big
       return null;
     }
     
-    return image.getSubimage(x, y, Tile.SIZE, Tile.SIZE);
+    return image.getSubimage(x, y, width, height);
   }
 
   public int getWidth() {
@@ -139,5 +143,9 @@ public class TileSheet {
   public TileSheet applyAlpha(int alpha) {
     Palette.getInstance().applyAlpha(image, alpha);
     return this;
+  }
+
+  public int getHeight() {
+    return image.getHeight();
   }  
 }

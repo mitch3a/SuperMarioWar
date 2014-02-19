@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import smw.Drawable;
 import smw.Game;
 import smw.Updatable;
+import smw.gfx.AboveArrow;
 import smw.gfx.Palette.ColorScheme;
 import smw.gfx.SpawnAnimation;
 import smw.gfx.Sprite;
@@ -50,7 +51,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	private boolean crushed = false;
 	private boolean killed = false;
 	private long respawnTime;
-	ColorScheme color;
+	public ColorScheme color;
+	AboveArrow aboveArrow;
 	
 	/** Indicates whether a player is falling through a tile by pressing down key. */
 	public boolean isFallingThrough = false;
@@ -99,6 +101,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 
 		sprite.init(image, color);
 		spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
+		aboveArrow = new AboveArrow(this);
 		//TODO mk not sure how i feel about this
     Game.world.updatables.add(spawnAnimation);
     Game.world.drawablesLayer2.add(spawnAnimation);
@@ -319,6 +322,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	  graphics.drawImage(sprite.getImage(), (int)x, (int)y, observer);
 	  if(x > WRAP_AROUND_FACTOR) {
 	    graphics.drawImage(sprite.getImage(), (int)(x-GameFrame.res_width + 1), (int)y, observer);
+	  }
+	  
+	  if(!aboveArrow.shouldBeRemoved()){
+	    aboveArrow.draw(graphics, observer);
 	  }
 	}
 	

@@ -1,11 +1,13 @@
 package smw.world.blocks;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 import smw.Game;
 import smw.Updatable;
 import smw.entity.Player;
+import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingCollidable;
 import smw.world.Tile;
@@ -22,8 +24,9 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
 
   
   float fallVelocity = 0.0f;
-  final float FALL_ACCELERATION = 0.004f;
-  
+  final float FALL_ACCELERATION = 0.001f;
+  //TODO should be using path for all the falling
+  float lastDy = 0;
   
   public DonutBlock(int x, int y) {
     super(x, y);
@@ -55,7 +58,8 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
       path.move(timeDif_ms);
     }
     else if(isFalling){
-      y += fallVelocity*timeDif_ms;
+      lastDy = fallVelocity*timeDif_ms;
+      move(0, lastDy);
       fallVelocity += FALL_ACCELERATION*timeDif_ms;
     }
     
@@ -87,7 +91,7 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
-    if(playerOnTop){
+    if(playerOnTop && !isFalling){
       g.drawImage(getImage(), path.getX(),path.getY(), io);
     }
     else{
@@ -108,8 +112,17 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    if(player.intersects(x, y, Tile.SIZE, Tile.SIZE)){
-      player.death();
+    //TODO mk not efficient but i didnt have to use my brain!
+    Rectangle2D.Float temp = new Rectangle2D.Float(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT);
+    if(temp.intersects(x, y, Tile.SIZE, Tile.SIZE)){
+      temp.y = player.y;
+      if(temp.intersects(x, y, Tile.SIZE, Tile.SIZE)){
+        player.death();
+      }
+      else{
+        //Player is on top
+        return super.collideWithTop(player, newY + lastDy);
+      }
     }
     
     return newY;
@@ -118,5 +131,10 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   @Override
   public boolean shouldBeRemoved() {
     return (y > GameFrame.res_height);
+  }
+  
+  @Override
+  public boolean willDrag(){
+    return isFalling;
   }
 }
