@@ -73,7 +73,7 @@ public class World {
   final List<Drawable> drawablesLayer0 = new LinkedList<Drawable>();
   final List<Drawable> drawablesLayer1 = new LinkedList<Drawable>();
   public final List<Drawable> drawablesLayer2 = new LinkedList<Drawable>();
-  final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
+  public final List<Drawable> drawablesLayer3 = new LinkedList<Drawable>();
   
   public final List<Updatable> updatables  = new LinkedList<Updatable>();
   public final List<MovingCollidable> movingCollidables = new LinkedList<MovingCollidable>();

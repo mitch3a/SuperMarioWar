@@ -3,6 +3,7 @@ package smw;
 import java.awt.event.KeyEvent;
 
 import smw.entity.Player;
+import smw.gfx.PauseDisplay;
 import smw.menu.*;
 import smw.settings.Debug;
 import smw.sound.SoundPlayer;
@@ -26,7 +27,7 @@ public class Game implements Runnable {
   
   /** Indicates if main game loop is running. */
   private boolean running = false;
-  private boolean paused = false;
+  public static boolean paused = false;
   // 1: pause has been pressed but never released
   // 2: pause has been released after being pressed
   // 3: pause has been pushed again but not yet released
@@ -218,6 +219,7 @@ public class Game implements Runnable {
           soundPlayer.sfxPause();
           pausePlayer = i;
           paused = true;
+          world.drawablesLayer3.add(new PauseDisplay());
           pauseState = 0;
           break;
         }
