@@ -8,5 +8,5 @@ public abstract class Menu {
   
   public abstract void draw(Graphics2D g, ImageObserver io);
   
-  public abstract void update();
+  public abstract void update(boolean up, boolean down, boolean left, boolean right, boolean select, boolean esc);
 }

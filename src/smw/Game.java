@@ -21,6 +21,7 @@ public class Game implements Runnable {
   public Menu menu;
   public static World world;
   public static SoundPlayer soundPlayer = new SoundPlayer();
+  private static PlayerControlBase[] pc;
   
   /** The desired frames per second. */
   public double FPS = 60.0;
@@ -36,7 +37,7 @@ public class Game implements Runnable {
   
   public Game(final int numPlayers) {
     // TODO - RPG work in progress
-    //setMenu(new TitleMenu());
+    setMenu(new TitleMenu());
     
     // TODO - setup world selector or something, for now pick what you want to test code.
     // ALSO ADD DESCRIPTION (good for testing ____)
@@ -87,7 +88,7 @@ public class Game implements Runnable {
       soundPlayer.setSFXVolume(0);
     }
   	
-    PlayerControlBase[] pc = new PlayerControlBase[numPlayers]; 
+    pc = new PlayerControlBase[numPlayers]; 
 
     // TODO - check for game pads, then default to keyboard--probably allow the user to change this in settings later.
     // Start with checking for Xbox controller if running Windows.
@@ -255,7 +256,19 @@ public class Game implements Runnable {
 
   private void updateGame(double timeDelta_ns) { 	
   	if (menu != null) {
-  	  menu.update();
+  	  // TODO - this is actually broken, we need a way to get "toggle" keys from user input otherwise the menu selectio jumps a ton!
+  	  // TODO - this sucks, we should probably make the input handling more user friendly for menus...
+  	  if (pc[0] == null) {
+  	    return;
+  	  }
+  	  int direction = pc[0].getDirection();
+  	  boolean up = pc[0].isUp();
+      boolean down = pc[0].isDown();
+  	  boolean left = (direction == -1);
+  	  boolean right = (direction == 1);
+  	  boolean select = pc[0].isActionPressed(); // TODO - this is probably not setup
+  	  boolean esc = false; // TODO - get escape key from keyboard
+  	  menu.update(up, down, left, right, select, esc);
   	  return;
   	}
     // Mitch - I set this up to just do the collision and if no collision, then allow the player in.
@@ -278,5 +291,9 @@ public class Game implements Runnable {
    */
   public void setMenu(Menu menu) {
     this.menu = menu;
+  }
+  
+  public static PlayerControlBase[] getPlayerControl() {
+    return pc;
   }
 }

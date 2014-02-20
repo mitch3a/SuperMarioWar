@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import smw.Game;
 import smw.gfx.Font;
 import smw.gfx.Palette;
+import smw.ui.PlayerControlBase;
 
 public class TitleMenu extends Menu {
   
@@ -55,6 +56,7 @@ public class TitleMenu extends Menu {
   
   /** The current user selection. */
   private int selection;
+  private int veritcalOptionCount;
   
   /** Indicates if sound setup is needed for the menu. */
   private boolean setupSound = true; 
@@ -85,21 +87,7 @@ public class TitleMenu extends Menu {
       leftPipe = selectFieldImg.getSubimage(0, 0, 32, 32);
       middlePipe = selectFieldImg.getSubimage(32, 0, 32, 32);
       rightPipe = selectFieldImg.getSubimage(32 * 15, 0, 32, 32);
-      
-      // TODO - do something with this data, probably use it for drawing and updating the selected field based on user input...
-      menuItems.add(new MenuItem(ItemType.PIPE, "Start", 310, 120, 210));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Go!", 80, 440, 210));
-      menuItems.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Options", 400, 120, 322));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Controls", 400, 120, 362));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Exit", 400, 120, 402));
-      
-      drawPipeField(g, "Start", 310, 120, 210);
-      drawPipeField(g, "Go!", 80, 440, 210);
-      drawPipeField(g, "Options", 400, 120, 322);
-      drawPipeField(g, "Controls", 400, 120, 362);
-      drawPipeField(g, "Exit", 400, 120, 402);
-      
+            
       // Read the sprite sheet for the player select menu field.
       tempImg = ImageIO.read(this.getClass().getClassLoader().getResource("menu/menu_player_select.png"));
       BufferedImage playerSelect = new BufferedImage(tempImg.getWidth(), tempImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -110,7 +98,25 @@ public class TitleMenu extends Menu {
       middleField = playerSelect.getSubimage(32, 0, 16, 64);
       rightField = playerSelect.getSubimage(32 * 15 + 16, 0, 16, 64);
       
-      drawPlayerSelectField(g);
+      menuItems.add(new MenuItem(ItemType.PIPE, "Start", 310, 120, 210));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Go!", 80, 440, 210));
+      menuItems.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Options", 400, 120, 322));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Controls", 400, 120, 362));
+      menuItems.add(new MenuItem(ItemType.PIPE, "Exit", 400, 120, 402));
+      veritcalOptionCount = menuItems.size();
+      
+      // TODO - could make a menu item be responsible for drawing itself...
+      for (MenuItem m : menuItems) {
+        switch (m.type) {
+        case PIPE:
+          drawPipeField(g, m.label, m.length, m.x, m.y);
+          break;
+        case PLAYER_SELECT:
+          drawPlayerSelectField(g, m.label, m.x, m.y);
+          break;
+        }
+      }
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -150,9 +156,7 @@ public class TitleMenu extends Menu {
   }
     
   // TODO
-  public void drawPlayerSelectField(Graphics2D g) {
-    int x = 120;
-    int y = 250;
+  public void drawPlayerSelectField(Graphics2D g, String text, int x, int y) {
     Font font = Font.getInstance();
     
     g.drawImage(leftField, x, y, null);
@@ -163,7 +167,7 @@ public class TitleMenu extends Menu {
     }
     g.drawImage(rightField, x, y, null);
     x+= rightField.getWidth();
-    font.drawLargeText(g, "Players", 128+16, y+18, null);
+    font.drawLargeText(g, text, 128+16, y+18, null);
     
     x-=3; // Nudge player select up against first box.
     g.drawImage(leftField, x, y, null);
@@ -185,15 +189,36 @@ public class TitleMenu extends Menu {
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     drawBackground(g, io);
-    // TODO - draw user selection?
+
+    // TODO - this should be in a drawing method probably
+    MenuItem m = menuItems.get(selection);
+    switch (m.type) {
+    case PIPE:
+      // drawPipeField(g, m.label, m.length, m.x, m.y);
+      drawPipeField(g, "TEST TODO", m.length, m.x, m.y);
+      break;
+    case PLAYER_SELECT:
+      drawPlayerSelectField(g, m.label, m.x, m.y);
+      break;
+    }
   }
 
   @Override
-  public void update() {
+  public void update(boolean up, boolean down, boolean left, boolean right, boolean select, boolean esc) {
     if (setupSound) {
       Game.soundPlayer.playMenuMusic();
     }
-    // TODO - update based on user selection
+    
+    // TODO - update based on user selection, need to cleanup, and handle player select!
+    if (up)
+      selection++;
+    if (down)
+      selection--;
+    // Handle veritcal selection wrap.
+    if (selection < 0)
+      selection += veritcalOptionCount;
+    else if (selection >= veritcalOptionCount)
+      selection -= veritcalOptionCount;
   }
   
   public void drawBackground(Graphics2D g, ImageObserver io){
