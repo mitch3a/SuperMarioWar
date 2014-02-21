@@ -14,6 +14,7 @@ import smw.world.MovingPlatform.EllipticalPath;
 import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;
 import smw.world.MovingPlatform.StraightSegmentPath;
+import smw.world.hazards.AnimatedHazard;
 
 public class WorldBuffer {
 
@@ -80,7 +81,7 @@ public class WorldBuffer {
     return buffer.getFloat();
   }
 
-  public Hazard getHazard(){
+  public AnimatedHazard getHazard(){
     Hazard hazard = new Hazard();
     hazard.type = getShort();
     hazard.x    = getShort();
@@ -94,7 +95,7 @@ public class WorldBuffer {
       hazard.dparam[j] = getFloat();
     }
     
-    return hazard;
+    return hazard.getAnimatedHazard();
   }
   
   public int getInt(){

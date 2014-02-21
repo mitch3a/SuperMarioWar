@@ -26,7 +26,6 @@ import smw.world.MovingPlatform.MovingPlatform;
 import smw.world.MovingPlatform.Path;
 import smw.world.Structures.DrawArea;
 import smw.world.Structures.FlagBaseLocation;
-import smw.world.Structures.Hazard;
 import smw.world.Structures.Item;
 import smw.world.Structures.RaceGoalLocation;
 import smw.world.Structures.SpawnArea;
@@ -42,6 +41,7 @@ import smw.world.blocks.QuestionBlock;
 import smw.world.blocks.SolidBlock;
 import smw.world.blocks.SwitchBlock;
 import smw.world.blocks.SwitchControlBlock;
+import smw.world.hazards.AnimatedHazard;
 
 public class World {
     
@@ -54,7 +54,6 @@ public class World {
   BufferedImage backgroundImg;
 
   Item[]     items;
-  Hazard[]   hazards;
   WarpExit[] warpExits;
   DrawArea[] drawAreas;
   //This is a hardcoded value only used once. If you know why it  is 12, replace this comment with the reason
@@ -521,10 +520,15 @@ public class World {
    */
   void loadHazards(WorldBuffer buffer) {
     int numMapHazards = buffer.getInt();
-    hazards = new Hazard[numMapHazards];
 
     for(short i = 0; i < numMapHazards; ++i){
-      hazards[i] = buffer.getHazard();
+      AnimatedHazard temp = buffer.getHazard();
+      
+      if(temp != null){
+        drawablesLayer3.add(temp);
+        updatables.add(temp);
+        movingCollidables.add(temp);
+      }
     }
   }
 

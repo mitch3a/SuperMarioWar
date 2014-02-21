@@ -17,9 +17,13 @@ public abstract class Collidable extends Rectangle2D.Float{
   protected float right;
   protected float top;
   protected float bottom;
+  
+  public Collidable(int x, int y){
+    this(x, y, Tile.SIZE, Tile.SIZE);
+  }
 
-  public Collidable(int x, int y) {
-    super(x, y, Tile.SIZE, Tile.SIZE);
+  public Collidable(int x, int y, int width, int height) {
+    super(x, y, width, height);
     
     left   = (x - Tile.SIZE + GameFrame.res_width) % GameFrame.res_width;
     right  = (x + Tile.SIZE) % GameFrame.res_width;
@@ -191,7 +195,12 @@ public abstract class Collidable extends Rectangle2D.Float{
   /**
    * Death
    */
-  public static class Death extends Solid{
+  public static class Death extends Collidable{
+    
+    public Death(int x, int y, int width, int height){
+      super(x, y, width, height);
+    }
+    
     public Death(int x, int y) {
       super(x, y);
     }
@@ -284,7 +293,7 @@ public abstract class Collidable extends Rectangle2D.Float{
   /**
    * Super Death
    */
-  public static class SuperDeath extends Solid{
+  public static class SuperDeath extends Collidable{
     public SuperDeath(int x, int y) {
       super(x, y);
     }

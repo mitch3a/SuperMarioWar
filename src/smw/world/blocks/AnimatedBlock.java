@@ -5,25 +5,20 @@ import smw.world.Tile;
 
 public abstract class AnimatedBlock extends SolidBlock implements Updatable{
   /** The frame rate of the animation. */
-  protected int frameRate;
+  protected final int frameRate;
   /** The time per frame. */
-  protected int updateRate_ms;
-  /** Time it takes for a complete animation (all frames). */
-  protected int animationTime_ms;
-  /** The total time that has elapsed (for all frames). */
-  private int elapsedTime_ms;
+  protected final int updateRate_ms;
   /** The time that has elapsed for the current frame. */
-  private int frameTime_ms;
+  private int frameTime_ms = 0;
   /** Indicates if the animation is running. */
   protected boolean running = true;
+  
   
   public AnimatedBlock(int x, int y, String tileSheet) {
     super(x, y, tileSheet);
     
     frameRate = 4;
     updateRate_ms = 1000/frameRate;
-    
-    animationTime_ms = updateRate_ms*this.tileSheet.getWidth()/Tile.SIZE;
   }
 
   @Override
@@ -32,18 +27,11 @@ public abstract class AnimatedBlock extends SolidBlock implements Updatable{
       return;
     }
     
-    elapsedTime_ms += timeDif_ms;
     frameTime_ms += timeDif_ms;
-    
-    if (elapsedTime_ms >= animationTime_ms) {
-      elapsedTime_ms = 0;
-      frameTime_ms = 0;
-      tileSheetX = 0;
-    }
     
     if (frameTime_ms >= updateRate_ms) {
       frameTime_ms = 0;
-      tileSheetX += Tile.SIZE;
+      tileSheetX = (tileSheetX + Tile.SIZE) % tileSheet.getWidth();
     }
   }
   
