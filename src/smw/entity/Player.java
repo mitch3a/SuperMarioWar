@@ -219,16 +219,31 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		//This is definitely not right... but its kinda cool that it sort of works
 		for(Player p : players){
 			if(p.playerIndex != playerIndex){
-				if(p.isAlive()  && p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-				  if(p.x > newX){
-				    newX = p.x - Sprite.IMAGE_WIDTH - 1;
+				if(p.isAlive()){
+				  //Need some special logic to deal with players who are on the edge. This can probably be simplified
+				  if(p.intersects(newX, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+				    if(p.x > newX && (p.x - newX < 2*Sprite.IMAGE_WIDTH)){
+	            newX = p.x - Sprite.IMAGE_WIDTH - 1;
+	          }
+	          else{
+	            newX = p.x + Sprite.IMAGE_HEIGHT + 1;
+	          }
+	          
+	          xCollide = true;
+	          break;
 				  }
-				  else{
-				    newX = p.x + Sprite.IMAGE_HEIGHT + 1;
+				  else if((newX + Sprite.IMAGE_WIDTH > GameFrame.res_width) && p.intersects(newX - GameFrame.res_width, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+				    newX = p.x - Sprite.IMAGE_HEIGHT ;
+            
+            xCollide = true;
+            break;
 				  }
-				  
-					xCollide = true;
-					break;
+				  else if((p.x  + Sprite.IMAGE_WIDTH > GameFrame.res_width) && p.intersects(newX + GameFrame.res_width, y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+				    newX = p.x + Sprite.IMAGE_WIDTH;
+
+            xCollide = true;
+            break;
+				  }
 				}
 			}
 		}

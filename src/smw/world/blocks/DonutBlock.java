@@ -103,7 +103,7 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   //     not a big deal but worth noting here
   @Override
   public float collideX(Player player, float newX) {
-    if(player.intersects(x, y, Tile.SIZE, Tile.SIZE)){
+    if(this.intersects(player)){
       player.death();
     }
     
@@ -112,11 +112,8 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    //TODO mk not efficient but i didnt have to use my brain!
-    Rectangle2D.Float temp = new Rectangle2D.Float(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT);
-    if(temp.intersects(x, y, Tile.SIZE, Tile.SIZE)){
-      temp.y = player.y;
-      if(temp.intersects(x, y, Tile.SIZE, Tile.SIZE)){
+    if(this.intersects(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+      if(this.intersects(newX, player.y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
         player.death();
       }
       else{

@@ -1,12 +1,14 @@
 package smw;
 
+import java.awt.geom.Rectangle2D;
+
 import smw.entity.Player;
 import smw.ui.screen.GameFrame;
 import smw.world.Tile;
 
 //TODO mk as other objects are implemented, might want to replace Player with something generic
 //     ALSO this should probably be an abstract type
-public abstract class Collidable {
+public abstract class Collidable extends Rectangle2D.Float{
   //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
   static final short[] g_iTileTypeConversion = {0, 1, 2, 5, 121, 9, 17, 33, 65, 6, 21, 37, 69, 3961, 265, 529, 1057, 2113, 4096};
@@ -15,13 +17,9 @@ public abstract class Collidable {
   protected float right;
   protected float top;
   protected float bottom;
-  
-  public float x, y;
-  
+
   public Collidable(int x, int y) {
-    
-    this.x = x;
-    this.y = y;
+    super(x, y, Tile.SIZE, Tile.SIZE);
     
     left   = (x - Tile.SIZE + GameFrame.res_width) % GameFrame.res_width;
     right  = (x + Tile.SIZE) % GameFrame.res_width;
