@@ -35,6 +35,8 @@ public class Game implements Runnable {
   private int pauseState = 0;
   private int pausePlayer;
   
+  public static Keyboard keyboard;
+  
   public Game(final int numPlayers) {
     // TODO - RPG work in progress
     setMenu(new TitleMenu());
@@ -88,7 +90,10 @@ public class Game implements Runnable {
       soundPlayer.setSFXVolume(0);
     }
   	
-    pc = new PlayerControlBase[numPlayers]; 
+    pc = new PlayerControlBase[numPlayers];
+    
+    // TODO - should probably always create a keyboard regardless of gamepads
+    keyboard = new Keyboard(gameFrame.getGameFrame(), KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_J, KeyEvent.VK_SPACE);
 
     // TODO - check for game pads, then default to keyboard--probably allow the user to change this in settings later.
     // Start with checking for Xbox controller if running Windows.
@@ -112,7 +117,7 @@ public class Game implements Runnable {
       }
       // If still nothing just use the keyboard.
       if (pc[0] == null) {
-        pc[0] = new Keyboard(gameFrame.getGameFrame(), KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_J, KeyEvent.VK_SPACE);
+        pc[0] = keyboard;
       }
     }
     // TODO - temp setup player 2 with keyboard WASD
@@ -157,6 +162,7 @@ public class Game implements Runnable {
     for(Player p : players) {
       p.physics.playerControl.release();
     }
+    System.exit(0);
   }
   
   /** Main game loop method. */
@@ -255,20 +261,9 @@ public class Game implements Runnable {
   }
 
   private void updateGame(double timeDelta_ns) { 	
-  	if (menu != null) {
-  	  // TODO - this is actually broken, we need a way to get "toggle" keys from user input otherwise the menu selectio jumps a ton!
-  	  // TODO - this sucks, we should probably make the input handling more user friendly for menus...
-  	  if (pc[0] == null) {
-  	    return;
-  	  }
-  	  int direction = pc[0].getDirection();
-  	  boolean up = pc[0].isUp();
-      boolean down = pc[0].isDown();
-  	  boolean left = (direction == -1);
-  	  boolean right = (direction == 1);
-  	  boolean select = pc[0].isActionPressed(); // TODO - this is probably not setup
-  	  boolean esc = false; // TODO - get escape key from keyboard
-  	  menu.update(up, down, left, right, select, esc);
+    float timeDelta_ms = (int)(timeDelta_ns) / 1000000;
+    if (menu != null) {
+  	  menu.update(timeDelta_ms, keyboard); // TODO - for now just use keyboard
   	  return;
   	}
     // Mitch - I set this up to just do the collision and if no collision, then allow the player in.
@@ -276,7 +271,6 @@ public class Game implements Runnable {
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
-    float timeDelta_ms = (int)(timeDelta_ns) / 1000000;
     world.update(timeDelta_ms);
   	
   	for (Player p : players) {

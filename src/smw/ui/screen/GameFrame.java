@@ -69,7 +69,6 @@ public class GameFrame extends Canvas{
       @Override
       public void windowClosing(WindowEvent we) { 
         Game.shutdown();
-        System.exit(0);
       }
     });
     

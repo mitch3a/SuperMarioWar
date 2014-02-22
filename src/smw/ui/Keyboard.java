@@ -9,12 +9,12 @@ import java.util.HashMap;
 public class Keyboard extends PlayerControlBase implements KeyListener{
   //TODO this should probably tie into the PlayerControlBase
 	int left;
-  int right;
-  int down;
-  int up;
-  int jump;
-  int run;
-  int pause;
+	int right;
+	int down;
+	int up;
+	int jump;
+	int run;
+	int pause;
   
   //TODO this isn't the smartest way to do this. Maybe reconsider this
   //     and other PlayerControlBases for something better and similar
@@ -22,7 +22,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
   
   //TODO this is ending up with all keys. Could probably use an array. Didn't
   //     feel like changing it until we ruled out replacing it with actual polling
-  final HashMap<Integer, Boolean> keyMap = new HashMap<Integer, Boolean>();
+  public final HashMap<Integer, Boolean> keyMap = new HashMap<Integer, Boolean>();
 
   public Keyboard(Component component,
                 	int left,
@@ -50,8 +50,18 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     keyMap.put(this.pause, false);
   }
   
-  public void poll(){
-  	//TODO mk once keyboard actually polls (instead of just listening all the time) then this can be abstract
+  /**
+   * Returns whether the desired key was pressed.
+   * @param keyCode The desired key.
+   * @return true = pressed
+   */
+  public boolean getKeyPress(int keyCode) {
+    return (keyMap.containsKey(keyCode)) ? keyMap.get(keyCode) : false; 
+  }
+  
+  @Override
+  public void poll() {
+  	// Not used by keyboard.
   }
   
   @Override
@@ -101,31 +111,37 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     }
   }
 
+  @Override
   public void setLeftButton() {
     waitForNextKey();
     left = mostRecentlyPushed;
   }
 
+  @Override
   public void setRightButton() {
     waitForNextKey();
     right = mostRecentlyPushed;
   }
   
+  @Override
   public void setDownButton() {
     waitForNextKey();
     down = mostRecentlyPushed;
   }
   
+  @Override
   public void setUpButton() {
     waitForNextKey();
     up = mostRecentlyPushed;
   }
 
+  @Override
   public void setJumpButton() {
     waitForNextKey();
     jump = mostRecentlyPushed;
   }
 
+  @Override
   public void setRunButton() {
     waitForNextKey();
     run = mostRecentlyPushed;
@@ -137,6 +153,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     pause = mostRecentlyPushed;
   }
   
+  @Override
   public void keyPressed(KeyEvent e) {
     int code = e.getKeyCode();
     e.consume();
@@ -144,13 +161,14 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     keyMap.put(code, true);
   }
   
+  @Override
   public void keyReleased(KeyEvent e) {
     int code = e.getKeyCode();
     e.consume();
-    
     keyMap.put(code, false);
   }
 
+  @Override
   public void keyTyped(KeyEvent e) {
     e.consume();
   }

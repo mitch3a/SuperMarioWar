@@ -1,6 +1,7 @@
 package smw.menu;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.RescaleOp;
@@ -13,6 +14,7 @@ import javax.imageio.ImageIO;
 import smw.Game;
 import smw.gfx.Font;
 import smw.gfx.Palette;
+import smw.ui.Keyboard;
 import smw.ui.PlayerControlBase;
 
 public class TitleMenu extends Menu {
@@ -52,14 +54,19 @@ public class TitleMenu extends Menu {
   private BufferedImage middleField;
   private BufferedImage rightField;
   
-  private List<MenuItem> menuItems = new ArrayList<MenuItem>();
+  /** List of menu items (a list of lists because there can be varying numbers of options on the X axis). */
+  private List<List<MenuItem>> menuItems = new ArrayList<List<MenuItem>>();
   
   /** The current user selection. */
-  private int selection;
-  private int veritcalOptionCount;
+  private int selectionY;
+  private int selectionX;
+  private int verticalOptionCount;
   
   /** Indicates if sound setup is needed for the menu. */
   private boolean setupSound = true; 
+  
+  /** The last user input action. */
+  private int lastAction;
     
   public TitleMenu() {
     try {
@@ -98,26 +105,45 @@ public class TitleMenu extends Menu {
       middleField = playerSelect.getSubimage(32, 0, 16, 64);
       rightField = playerSelect.getSubimage(32 * 15 + 16, 0, 16, 64);
       
-      menuItems.add(new MenuItem(ItemType.PIPE, "Start", 310, 120, 210));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Go!", 80, 440, 210));
-      menuItems.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Options", 400, 120, 322));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Controls", 400, 120, 362));
-      menuItems.add(new MenuItem(ItemType.PIPE, "Exit", 400, 120, 402));
-      veritcalOptionCount = menuItems.size();
+      // TODO - get and store player, bot, none icons, also small menu text for font..., selection animations
+      
+      ArrayList<MenuItem> optionRow = new ArrayList<MenuItem>();
+      optionRow.add(new MenuItem(ItemType.PIPE, "Start", 310, 120, 210));
+      optionRow.add(new MenuItem(ItemType.PIPE, "Go!", 80, 440, 210));
+      menuItems.add(optionRow);
+      
+      optionRow = new ArrayList<MenuItem>();
+      optionRow.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250));
+      // TODO - add player select buttons
+      menuItems.add(optionRow);
+      
+      optionRow = new ArrayList<MenuItem>();
+      optionRow.add(new MenuItem(ItemType.PIPE, "Options", 400, 120, 322));
+      menuItems.add(optionRow);
+      
+      optionRow = new ArrayList<MenuItem>();
+      optionRow.add(new MenuItem(ItemType.PIPE, "Controls", 400, 120, 362));
+      menuItems.add(optionRow);
+      
+      optionRow = new ArrayList<MenuItem>();
+      optionRow.add(new MenuItem(ItemType.PIPE, "Exit", 400, 120, 402));
+      menuItems.add(optionRow);
+      
+      verticalOptionCount = menuItems.size();
       
       // TODO - could make a menu item be responsible for drawing itself...
-      for (MenuItem m : menuItems) {
-        switch (m.type) {
-        case PIPE:
-          drawPipeField(g, m.label, m.length, m.x, m.y);
-          break;
-        case PLAYER_SELECT:
-          drawPlayerSelectField(g, m.label, m.x, m.y);
-          break;
+      for (List<MenuItem> row : menuItems) {
+        for (MenuItem m : row) {
+          switch (m.type) {
+          case PIPE:
+            drawPipeField(g, m.label, m.length, m.x, m.y);
+            break;
+          case PLAYER_SELECT:
+            drawPlayerSelectField(g, m.label, m.x, m.y);
+            break;
+          }
         }
       }
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -155,7 +181,14 @@ public class TitleMenu extends Menu {
     }
   }
     
-  // TODO
+  /** 
+   * Draws the player select field.
+   * @param g
+   * @param text
+   * @param x
+   * @param y
+   */
+  // TODO - this method might need to be more "generic", also need a way to specify we selected the field.
   public void drawPlayerSelectField(Graphics2D g, String text, int x, int y) {
     Font font = Font.getInstance();
     
@@ -182,8 +215,6 @@ public class TitleMenu extends Menu {
     
     g.drawImage(rightField, x, y, null);
     x+= rightField.getWidth();
-    
-    // TODO - get and store player, bot, none icons, also small menu text for font..., selection animations
   }
   
   @Override
@@ -191,11 +222,13 @@ public class TitleMenu extends Menu {
     drawBackground(g, io);
 
     // TODO - this should be in a drawing method probably
-    MenuItem m = menuItems.get(selection);
+    List<MenuItem> row = menuItems.get(selectionY);
+    MenuItem m = row.get(selectionX);
+    //MenuItem m = menuItems.get(selection);
     switch (m.type) {
     case PIPE:
       // drawPipeField(g, m.label, m.length, m.x, m.y);
-      drawPipeField(g, "TEST TODO", m.length, m.x, m.y);
+      drawPipeField(g, "TEST TODO", m.length, m.x, m.y); // TODO - don't change the string, just draw the other colored field OR animation, etc
       break;
     case PLAYER_SELECT:
       drawPlayerSelectField(g, m.label, m.x, m.y);
@@ -204,25 +237,92 @@ public class TitleMenu extends Menu {
   }
 
   @Override
-  public void update(boolean up, boolean down, boolean left, boolean right, boolean select, boolean esc) {
+  public void update(double deltaTime_ms, Keyboard kb) {
     if (setupSound) {
       Game.soundPlayer.playMenuMusic();
+      setupSound = false;
     }
     
-    // TODO - update based on user selection, need to cleanup, and handle player select!
-    if (up)
-      selection++;
-    if (down)
-      selection--;
-    // Handle veritcal selection wrap.
-    if (selection < 0)
-      selection += veritcalOptionCount;
-    else if (selection >= veritcalOptionCount)
-      selection -= veritcalOptionCount;
+    if (kb.getKeyPress(KeyEvent.VK_ESCAPE)) {
+      Game.shutdown();
+    }
+    
+    // Get the menu relevant controls.
+    boolean up = kb.getKeyPress(KeyEvent.VK_UP);
+    boolean down = kb.getKeyPress(KeyEvent.VK_DOWN);
+    boolean left = kb.getKeyPress(KeyEvent.VK_LEFT);
+    boolean right = kb.getKeyPress(KeyEvent.VK_RIGHT);
+    boolean select = kb.getKeyPress(KeyEvent.VK_ENTER);
+    
+    // Reset last action if last key is no longer pressed.
+    switch (lastAction) {
+    case KeyEvent.VK_UP:
+      if (!up)
+        lastAction = -1;
+      break;
+    case KeyEvent.VK_DOWN:
+      if (!down)
+        lastAction = -1;
+      break;
+    case KeyEvent.VK_LEFT:
+      if (!left)
+        lastAction = -1;
+      break;
+    case KeyEvent.VK_RIGHT:
+      if (!right)
+        lastAction = -1;
+      break;
+    case KeyEvent.VK_ENTER:
+      if (!select)
+        lastAction = -1;
+      break;
+    }
+        
+    // If a key press is detected make sure it's different from the last action then adjust selection.
+    if (up && lastAction != KeyEvent.VK_UP) {
+      lastAction = KeyEvent.VK_UP;
+      selectionY--;
+    }
+    if (down && lastAction != KeyEvent.VK_DOWN) { // TODO - this should probably be else if to avoid multi keypresses
+      lastAction = KeyEvent.VK_DOWN;
+      selectionY++;
+    }
+    if (select && lastAction != KeyEvent.VK_ENTER) {
+      // TODO - select stuff
+    }
+    // Handle vertical selection wrap.
+    if (selectionY < 0) {
+      selectionY += verticalOptionCount;
+    } else if (selectionY >= verticalOptionCount) {
+      selectionY -= verticalOptionCount;
+    }
+    
+    int size = menuItems.get(selectionY).size();
+    if (size > 1) {
+      if (left && lastAction != KeyEvent.VK_LEFT) {
+        lastAction = KeyEvent.VK_LEFT;
+        selectionX--;
+      }
+      if (right && lastAction != KeyEvent.VK_RIGHT) {
+        lastAction = KeyEvent.VK_RIGHT;
+        selectionX++;
+      }
+      // Handle horizontal selection wrap.
+      if (selectionX < 0) {
+        selectionX += size;
+      } else if (selectionX >= size) {
+        selectionX -= size;
+      }
+    }
+  }
+  
+  @Override
+  public void update(boolean up, boolean down, boolean left, boolean right, boolean select, boolean esc) {
+    // TODO - PROBABLY DELETE THIS METHOD
   }
   
   public void drawBackground(Graphics2D g, ImageObserver io){
     g.drawImage(backgroundImg, 0, 0, io);
   }
-
+  
 }
