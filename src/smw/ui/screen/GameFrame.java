@@ -25,8 +25,8 @@ public class GameFrame extends Canvas{
 	// TODO - RPG - should figure out how to setup resolution options w/ scaling...
 	public static int res_width = 640;
 	public static int res_height = 480;
-	public static double scaleFactorWidth = 1.0f;
-	public static double scaleFactorHeight = 1.0f;
+	public static double scaleFactorWidth = 1.5f;
+	public static double scaleFactorHeight = 1.5f;
 	public static int bumpFactor = 0;
 	private boolean bumpUp = false;
 	private boolean bumpDown = false;
@@ -60,7 +60,7 @@ public class GameFrame extends Canvas{
     frame.setSize((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight));
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
-    frame.setResizable(false);
+    frame.setResizable(true);
     frame.add(this, BorderLayout.CENTER);
     frame.pack();
     
@@ -94,7 +94,7 @@ public class GameFrame extends Canvas{
 
     // TODO - put this in an if statement if bump is needed?
     g2d.translate(0, bumpFactor);
-    //g2d.scale(scaleFactorWidth, scaleFactorHeight);
+    g2d.scale(scaleFactorWidth, scaleFactorHeight);
     
     // TODO - RPG - If we have a menu then only draw that! (Although this won't work for pause menu!)
     if (game.menu != null) {
@@ -138,12 +138,12 @@ public class GameFrame extends Canvas{
   }
   
     
-  // TODO - this is currently broken, probably only want to change screen size in settings anyway...
+  // TODO - probably only want to change screen size in settings anyway...
+  // mk - I disagree. I kind of hate how the regular game will only let you 
+  //      go full screen or tiny screen. I think it needs work like maintaining
+  //      aspect ratio, but at the very least should be in there for now because
+  //      it can help for debuggin
   void resetScalingFactors(){
-    //TODO mk this is temporary. there has to be a better way of doing this
-    //Insets insets = frame.getInsets();
-    //scaleFactorWidth =  ((double)(getWidth() - insets.left - insets.right))/res_width;
-    //scaleFactorHeight = ((double)(getHeight()- insets.top  - insets.bottom))/res_height;
     scaleFactorWidth =  (double)(getWidth())/res_width;
     scaleFactorHeight = (double)(getHeight())/res_height;
   }

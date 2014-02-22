@@ -119,8 +119,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	}
 	
 	/*** This method is to get the state ready to move ***/
-	public void prepareToMove(){
-		physics.update();
+	public void prepareToMove(float timeDif){
+		physics.update(timeDif);
 	}
 		
 	public void move(Player[] players){	
@@ -365,7 +365,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 
   @Override
   public void update(float timeDif_ms) {
-    prepareToMove();//TODO this should probably include moving but didnt want to mess with player collision
+    prepareToMove(timeDif_ms);//TODO this should probably include moving but didnt want to mess with player collision
   }
 
   public void warp(Direction direction, WarpExit warpExit) {
