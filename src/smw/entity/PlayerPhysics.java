@@ -6,10 +6,6 @@ import smw.ui.PlayerControlBase;
 
 public class PlayerPhysics {
 	
-	
-	//These values (actual Velocity/Acceleration) are courtesy of http://s276.photobucket.com/user/jdaster64/media-full//smb_playerphysics.png.html
-	//They are represented as (one hex value per the following): 0x (Blocks) (Pixels) (Subpixels) (Subsubpixels) (Subsubsubpixels) for 1/60 seconds per frame
-	
 	//TODO these values haven't been implemented yet.
 	/*
 	#define VELMOVING_CHICKEN 2.9f    //speed of the chicken in the gamemode capturethechicken
@@ -38,30 +34,55 @@ public class PlayerPhysics {
    * SMW Source was distance/frame and this is distance/millisecond, some
    * values had to be converted.
    */
-  //TODO I don't like this layout of left/right. Maybe a struct to hold them all
-	static final float[] MOVING_X_ADD = { 0.03125f, -0.03125f};         // .5/16
-	
-	static final float[] SLOW_DOWN_X =  {-0.0125f,   0.0125f};  // .2/16
-	static final float[] MAX_MOVING_X_SLOW = {4.0f, -4.0f};
-	static final float[] MAX_MOVING_X_FAST = {5.5f, -5.5f};
-	
-	static final float[] MOVING_X_ADD_ICE = { 0.0078125f, -0.0078125f}; // (.5/16)/4
-  static final float[] SLOW_DOWN_X_ICE =  {-0.00375f,    0.00375f};   // .06/16
-  static final float[] SLOW_DOWN_X_AIR =  {-0.00375f,    0.00375f};   // .06/16
-   
-	static final float JUMPING_VELOCITY = -9.0f;
-	static final float GRAVITY = 0.40f/16f;
-	
-	static final float MAX_VELOCITY_Y = 20.0f;
-	
-  static final float DEATH_ACCELERATION =.5f;
-  static final float DEATH_STARTING_VELOCITY = -10;
+
+  static class PhysicsValues{
+    //Constant for either direction
+    static final float JUMPING_VELOCITY = -9.0f;
+    static final float GRAVITY = 0.40f/16f;
+    
+    static final float MAX_VELOCITY_Y = 20.0f;
+    
+    static final float DEATH_ACCELERATION =.5f;
+    static final float DEATH_STARTING_VELOCITY = -10;
+    
+    static final float NOTE_BLOCK_BOUNCE = 3.0f;
+    static final float NOTE_BLOCK_BOUNCE_JUMP_POWER = -8.1f;
+    
+    //Varies by direction
+    final float MOVING_X_ADD; 
+    
+    final float SLOW_DOWN_X;
+    final float MAX_MOVING_X_SLOW;
+    final float MAX_MOVING_X_FAST;
+    
+    final float MOVING_X_ADD_ICE;
+    final float SLOW_DOWN_X_ICE;
+    final float SLOW_DOWN_X_AIR;
+    
+    final float NOTE_BLOCK_REPEL_X;
+    
+    PhysicsValues(Direction direction){
+      int factor = (direction == Direction.RIGHT) ? 1 : -1; 
+      
+      MOVING_X_ADD = factor*0.03125f;        // .5/16
+      
+      SLOW_DOWN_X =  factor*-0.0125f;          // .2/16
+      MAX_MOVING_X_SLOW = factor*4.0f;
+      MAX_MOVING_X_FAST = factor*5.5f;
+      
+      MOVING_X_ADD_ICE = factor*0.0078125f;    //(.5/16)/4
+      SLOW_DOWN_X_ICE =  factor*(-0.00375f);   // .06/16
+      SLOW_DOWN_X_AIR =  factor*(-0.00375f);   // .06/16
+      
+      NOTE_BLOCK_REPEL_X = factor*5.0f;
+    }
+  }
   
-  static final float NOTE_BLOCK_REPEL_X = 5.0f;
-  static final float NOTE_BLOCK_BOUNCE = 3.0f;
-  static final float NOTE_BLOCK_BOUNCE_JUMP_POWER = -8.1f;
+  static final PhysicsValues leftPhysicsValues  = new PhysicsValues(Direction.LEFT);
+  static final PhysicsValues rightPhysicsValues = new PhysicsValues(Direction.RIGHT);
+  private PhysicsValues currentPhysicsValues = rightPhysicsValues;
 		
-	float velocityX, velocityY, dx, dy;
+	float velocityX, velocityY;
 	float jumpingAccelerationX, accelerationY;
 	
 	//private Player player;
@@ -79,16 +100,14 @@ public class PlayerPhysics {
 	public PlayerPhysics(PlayerControlBase playerControl, Player player){
 		velocityX = 0;
 		velocityY = 0;
-		dx = 0;
-		dy = 0;
 		jumpingAccelerationX = 0;
-		accelerationY = GRAVITY;
+		accelerationY = PhysicsValues.GRAVITY;
 		isJumping = false;
 		isFalling = false;
 		isSkidding = false;
 		isSlippingOnIce = true;
 		canJump = true;
-		currentVelocityDirection = Direction.RIGHT;
+		setDirection(Direction.RIGHT);
 		this.playerControl = playerControl;
 	}
 	
@@ -115,13 +134,13 @@ public class PlayerPhysics {
 		}
 		
 		if(this.isFalling || this.isJumping){
-		  velocityX += SLOW_DOWN_X_AIR[currentVelocityDirection.index]*timeDif;
+		  velocityX += currentPhysicsValues.SLOW_DOWN_X_AIR*timeDif;
 		}
 		else if(isSlippingOnIce){
-		  velocityX += SLOW_DOWN_X_ICE[currentVelocityDirection.index]*timeDif;
+		  velocityX += currentPhysicsValues.SLOW_DOWN_X_ICE*timeDif;
 		}
 		else{
-		  velocityX += SLOW_DOWN_X[currentVelocityDirection.index]*timeDif;
+		  velocityX += currentPhysicsValues.SLOW_DOWN_X*timeDif;
 		}
 		
 		if(velocityDeceleratedTooFar()){
@@ -138,66 +157,26 @@ public class PlayerPhysics {
 	  }
     else{
       //Move in the direction
-    	currentVelocityDirection = (direction > 0) ? Direction.RIGHT : Direction.LEFT;      
-      float maxVelocity = (playerControl.isRunning()) ? MAX_MOVING_X_FAST[currentVelocityDirection.index] :
-                                                        MAX_MOVING_X_SLOW[currentVelocityDirection.index];
+    	setDirection((direction > 0) ? Direction.RIGHT : Direction.LEFT);      
+      float maxVelocity = (playerControl.isRunning()) ? currentPhysicsValues.MAX_MOVING_X_FAST :
+                                                        currentPhysicsValues.MAX_MOVING_X_SLOW;
       
-      velocityX += MOVING_X_ADD[currentVelocityDirection.index]*timeDif;
+      velocityX += currentPhysicsValues.MOVING_X_ADD*timeDif;
       velocityX = (currentVelocityDirection == Direction.RIGHT) ? Math.min(maxVelocity, velocityX) :
                                                                   Math.max(maxVelocity, velocityX);
     }
   }
-	
-	//TODO mk close but not quite there?
-	void setJumpingAccelerationX(){
-	  /* TODO
-		int direction = playerControl.getDirection();
-		if( direction == 0){
-			if(isSkidding){
-				jumpingAccelerationX = SKIDDING_DECELERATION[currentVelocityDirection.index];
-		  }
-		  else {
-		  	jumpingAccelerationX = RELEASE_DECELERATION[currentVelocityDirection.index];
-		  }
-		}
-		else{
-			boolean holdingForward = (direction > 0) ? (velocityX > 0) : (velocityX < 0);
-			float speed = Math.abs(velocityX);
-			
-			if(holdingForward){
-				if(speed < MAX_WALKING_VELOCITY_TEMP ){
-					jumpingAccelerationX = AIR_ACCELERATION_SLOW[currentVelocityDirection.index];
-				}
-				else{
-					jumpingAccelerationX = AIR_ACCELERATION_FAST[currentVelocityDirection.index];
-				}
-			}
-			else { //Holding Backwards
-				if(speed < MAX_WALKING_VELOCITY_TEMP ){
-					jumpingAccelerationX = AIR_DECELERATION_SLOW[currentVelocityDirection.index];
-				}
-				else if(speed < THRESHOLD_FOR_JUMPING_SPEED ){
-					jumpingAccelerationX = AIR_DECELERATION_MIDDLE[currentVelocityDirection.index];
-				}
-				else{
-					jumpingAccelerationX = AIR_DECELERATION_FAST[currentVelocityDirection.index];
-				}
-			}
-		}
-		*/
-	}
-  
+	 
   void updateY(float timeDif_ms){
     if(!isFalling && !isJumping && playerControl.isJumping() && canJump){
-    	velocityY = JUMPING_VELOCITY;
-    	setJumpingAccelerationX();
+    	velocityY = PhysicsValues.JUMPING_VELOCITY;
     	isJumping = true;
     	Game.soundPlayer.sfxJump();
     	canJump = false;
     }
     
     if(isJumping){
-    	accelerationY = GRAVITY;
+    	accelerationY = PhysicsValues.GRAVITY;
     }
     else{
       //The assumption is that if we are not jumping,
@@ -207,12 +186,10 @@ public class PlayerPhysics {
     }
     
     float newVelocity = velocityY + (accelerationY * timeDif_ms);
-    velocityY = (newVelocity > MAX_VELOCITY_Y) ? MAX_VELOCITY_Y : newVelocity;
-    dy = velocityY*timeDif_ms/1000;
+    velocityY = (newVelocity > PhysicsValues.MAX_VELOCITY_Y) ? PhysicsValues.MAX_VELOCITY_Y : newVelocity;
   }
   
   public void collideWithCeiling(){
-    //TODO not sure if we even need to do anything here
     velocityY = 0;
   }
   
@@ -247,8 +224,8 @@ public class PlayerPhysics {
   
   public void death(){
     velocityX = 0;
-    velocityY = DEATH_STARTING_VELOCITY;
-    accelerationY = DEATH_ACCELERATION;
+    velocityY = PhysicsValues.DEATH_STARTING_VELOCITY;
+    accelerationY = PhysicsValues.DEATH_ACCELERATION;
   }
   
   public void updateForDeath(){
@@ -273,34 +250,39 @@ public class PlayerPhysics {
 	}
 	
 	public float getVelocityY() {
-		return velocityY;//dy;
+		return velocityY;
 	}
 	
   public void collideWithNoteBlockTop() {
-    velocityY = NOTE_BLOCK_BOUNCE;
+    velocityY = PhysicsValues.NOTE_BLOCK_BOUNCE;
     
   }
   
   public void collideWithNoteBlockBottom() {
-    velocityY = -NOTE_BLOCK_BOUNCE;
-    accelerationY = GRAVITY;
+    velocityY = -PhysicsValues.NOTE_BLOCK_BOUNCE;
+    accelerationY = PhysicsValues.GRAVITY;
     isFalling = true;
     isJumping = false;
     canJump = false;
     
     if(playerControl.isJumping()){
       Game.soundPlayer.sfxSpringJump();
-      velocityY += NOTE_BLOCK_BOUNCE_JUMP_POWER;
+      velocityY += PhysicsValues.NOTE_BLOCK_BOUNCE_JUMP_POWER;
     }
   }
   
   public void collideWithNoteBlockLeft() {
-    velocityX = NOTE_BLOCK_REPEL_X;
-    currentVelocityDirection = Direction.RIGHT;
+    setDirection(Direction.RIGHT);
+    velocityX = currentPhysicsValues.NOTE_BLOCK_REPEL_X;
   }
   
   public void collideWithNoteBlockRight() {
-    velocityX = -NOTE_BLOCK_REPEL_X;
-    currentVelocityDirection = Direction.LEFT;
+    setDirection(Direction.LEFT);
+    velocityX = currentPhysicsValues.NOTE_BLOCK_REPEL_X;
+  }
+  
+  private void setDirection(Direction newDirection){
+    currentVelocityDirection = newDirection;
+    currentPhysicsValues = (currentVelocityDirection == Direction.RIGHT) ? rightPhysicsValues : leftPhysicsValues;
   }
 }
