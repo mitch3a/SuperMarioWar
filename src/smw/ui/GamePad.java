@@ -45,7 +45,21 @@ public class GamePad  extends PlayerControlBase{
                          pressedValues[PlayerButton.RUN.index]   =  1.0f;
                          //TODO added UP and Pause as well
                          break;
-			case SNES_MAC_MK: //mk if you want this, set it next time you're on your macbook
+			case SNES_MAC_MK: buttonToComponentMap[PlayerButton.LEFT.index]  =  13;
+                        buttonToComponentMap[PlayerButton.RIGHT.index] =  13;
+                        buttonToComponentMap[PlayerButton.DOWN.index]  =  14;
+                        buttonToComponentMap[PlayerButton.UP.index]    =  14;
+                        buttonToComponentMap[PlayerButton.JUMP.index]  =  2;
+                        buttonToComponentMap[PlayerButton.RUN.index]   =  3;
+                        buttonToComponentMap[PlayerButton.PAUSE.index] =  9;
+                        pressedValues[PlayerButton.LEFT.index]  = -1.0f;
+                        pressedValues[PlayerButton.RIGHT.index] =  1.0f;
+                        pressedValues[PlayerButton.UP.index]    = -1.0f;
+                        pressedValues[PlayerButton.DOWN.index]  =  1.0f;
+                        pressedValues[PlayerButton.JUMP.index]  =  1.0f;
+                        pressedValues[PlayerButton.RUN.index]   =  1.0f;
+                        pressedValues[PlayerButton.PAUSE.index] =  1.0f;
+                        break;
 			case NONE:        
 			default:          setup();             
 												break;
@@ -178,6 +192,8 @@ public class GamePad  extends PlayerControlBase{
         	pressedValues[index] = value;
         	buttonToComponentMap[index] = i;
         	buttonSet = true;
+        	
+        	System.out.println("Set button: " + buttonToSet + " aka component: " + i + " to value " + value);
         	
           //wait until they release the button
           while(comps[i].getPollData() == value){ 

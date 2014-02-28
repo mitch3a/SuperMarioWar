@@ -49,6 +49,8 @@ public abstract class PlayerControlBase{
     setJumpButton();
     System.out.println("Set your run button");
     setRunButton();
+    System.out.println("Set your pause button");
+    setPauseButton();
   }
   
   /******************************************************
