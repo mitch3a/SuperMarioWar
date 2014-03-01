@@ -139,9 +139,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 			return; //Do not want to do anything with someone who is crushed
 		}
 		
-		if(killed){
-		  physics.updateForDeath();
-		  
+		if(killed){		    
 		  y += physics.getVelocityY();
 		  
 		  //TODO this is messy and should be a method called at the beginning
@@ -361,6 +359,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
   @Override
   public void update(float timeDif_ms) {
     prepareToMove(timeDif_ms);//TODO this should probably include moving but didnt want to mess with player collision
+    
+    if((spawnAnimation == null || spawnAnimation.shouldBeRemoved()) && !crushed && killed){
+      physics.updateForDeath(timeDif_ms);
+    }
   }
 
   public void warp(Direction direction, WarpExit warpExit) {
