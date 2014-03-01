@@ -63,8 +63,6 @@ public class World {
   //This is a hardcoded value only used once. If you know why it  is 12, replace this comment with the reason
   boolean[]  autoFilter = new boolean[12];
   
-  //TODO this should not be visible
-
   RaceGoalLocation[] raceGoalLocations;
   FlagBaseLocation[] flagBaseLocation;
   
@@ -84,13 +82,10 @@ public class World {
   //TODO this is temp... until there is a smarter way to update blocks on a change
   final static List<SolidBlock> blocks = new LinkedList<SolidBlock>();
 
-  Warp[][]   warps;
+  Warp[][] warps;
   SpawnArea[][] spawnAreas;  
   
   final boolean[][][] nospawn;
-
-  /** Animated tile list used for updating animations during world update. */
-  private ArrayList<Tile> animatedTileList = new ArrayList<Tile>();
 
   /** The music category ID as defined in the world file. */
   private int musicCategoryID;
@@ -358,8 +353,7 @@ public class World {
           collidables[(int) (collidable.x/Tile.SIZE)][(int) (collidable.y/Tile.SIZE)] = collidable; 
         }
         
-        System.out.println("load switches");
-        loadSwitches(buffer);
+        loadSwitchBlocks(buffer);
         
         ///////////////////////////////////////////////////////////////
         //Load Warp Exits
@@ -452,22 +446,17 @@ public class World {
   }
   
   /**
-   * Loads switches.
+   * Reads switch block data from the file. 
+   * This implementation of SMW does not need to use this data because 
+   * each switchable block is setup based on the ON/OFF status of the control block ahead of time.
    * @param buffer
    */
-  void loadSwitches(WorldBuffer buffer) {
-    //Read switch block state data
+  void loadSwitchBlocks(WorldBuffer buffer) {
     int iNumSwitchBlockData = buffer.getInt();
     for(short iBlock = 0; iBlock < iNumSwitchBlockData; iBlock++) {
-        short iCol = (short) buffer.getByte();
-        short iRow = (short) buffer.getByte();
-
-        // TODO - RPG 
-        //SwitchControlBlock sb = (SwitchControlBlock)collidables[iCol][iRow];
-        short waste = (short) buffer.getByte();
-        
-        //TODO what does this dobackgroundTiles[iCol][iRow][0].settings[0] = 
-       //short waste = (short) buffer.getByte();
+      buffer.getByte(); // column
+      buffer.getByte(); // row
+      buffer.getByte(); // setting
     }
   }
 
