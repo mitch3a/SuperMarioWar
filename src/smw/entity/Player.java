@@ -48,7 +48,6 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	private boolean killed = false;
 	private long respawnTime;
 	public ColorScheme color;
-  private boolean isFalling = false;
   private boolean canFall = true;
   
 	public Player(PlayerControlBase playerControl, int playerIndex){	
@@ -258,11 +257,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		x = newX;
 		
 		if(y < newY){
-		  isFalling = true;
 		  canFall = false;
-		}
-		else{
-		  isFalling = false;
 		}
 		
 		canFall |= !physics.playerControl.isDown();
