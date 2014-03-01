@@ -16,7 +16,8 @@ import smw.world.World;
 
 public class Game implements Runnable {  
   private Thread thread;
-  private GameFrame gameFrame;
+  //TODO don't like this but not sure how player should tell Game to bump screen
+  private static GameFrame gameFrame;
   private static Player[] players;
   public Menu menu;
   public static World world;
@@ -70,7 +71,7 @@ public class Game implements Runnable {
       "LKA_Burn Yourself.map" //25 fire cannons
     };   
 
-    world = new World(worlds[25]);
+    world = new World(worlds[24]);
 
     //world = new World(); // TODO - Starts a random world (for now)
         
@@ -296,5 +297,9 @@ public class Game implements Runnable {
   
   public static PlayerControlBase[] getPlayerControl() {
     return pc;
+  }
+  
+  public static void bump(){
+    gameFrame.bump();
   }
 }

@@ -26,11 +26,13 @@ public class AboveArrow implements Drawable{
 
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
-    g.drawImage(tileSheet.getTileImg(tileSheetX, tileSheetY, Tile.SIZE, ARROW_IMAGE_HEIGHT), (int)(player.x), y, io);
+    if(player.y <= -Sprite.IMAGE_HEIGHT){
+      g.drawImage(tileSheet.getTileImg(tileSheetX, tileSheetY, Tile.SIZE, ARROW_IMAGE_HEIGHT), (int)(player.x), y, io);
+    }
   }
 
   @Override
   public boolean shouldBeRemoved() {
-    return player.y > -Sprite.IMAGE_HEIGHT;
+    return false;
   }
 }

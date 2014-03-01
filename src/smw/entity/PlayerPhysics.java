@@ -42,7 +42,7 @@ public class PlayerPhysics {
     
     static final float MAX_VELOCITY_Y = 20.0f;
     
-    static final float DEATH_ACCELERATION =.5f;
+    static final float DEATH_ACCELERATION =.5f/16f;
     static final float DEATH_STARTING_VELOCITY = -10;
     
     static final float NOTE_BLOCK_BOUNCE = 3.0f;
@@ -117,11 +117,6 @@ public class PlayerPhysics {
 	
 	boolean velocityDeceleratedTooFar(){
 		return (currentVelocityDirection == Direction.RIGHT) ? (velocityX < 0) : (velocityX > 0);
-	}
-	
-	/** This method assumes the threshold and velocity have the same sign **/
-	boolean speedLessThan(float threshold){
-		return (currentVelocityDirection == Direction.RIGHT) ? (velocityX < threshold) : (velocityX > threshold);
 	}
 	
 	boolean velocityAcceleratedTooFar(float threshold){
@@ -228,12 +223,9 @@ public class PlayerPhysics {
     accelerationY = PhysicsValues.DEATH_ACCELERATION;
   }
   
-  public void updateForDeath(){
-    //TODO not sure if this is the BEST way to do this
-    /*
+  public void updateForDeath(float timeDif_ms){
     float newVelocity = velocityY + (accelerationY * timeDif_ms);
-    velocityY = (newVelocity > MAX_VELOCITY_Y) ? MAX_VELOCITY_Y : newVelocity;
-    */
+    velocityY = (newVelocity > PhysicsValues.MAX_VELOCITY_Y) ? PhysicsValues.MAX_VELOCITY_Y : newVelocity;
   }
 
   public void poll(){

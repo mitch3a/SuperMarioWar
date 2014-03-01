@@ -52,7 +52,6 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	private boolean killed = false;
 	private long respawnTime;
 	public ColorScheme color;
-	AboveArrow aboveArrow;
 	
 	/** Indicates whether a player is falling through a tile by pressing down key. */
 	public boolean isFallingThrough = false;
@@ -101,8 +100,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 
 		sprite.init(image, color);
 		spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
-		aboveArrow = new AboveArrow(this);
-		//TODO mk not sure how i feel about this
+    //TODO mk not sure how i feel about this
+		Game.world.drawablesLayer3.add(new AboveArrow(this));
     Game.world.updatables.add(spawnAnimation);
     Game.world.drawablesLayer2.add(spawnAnimation);
 	}
@@ -140,9 +139,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 			return; //Do not want to do anything with someone who is crushed
 		}
 		
-		if(killed){
-		  physics.updateForDeath();
-		  
+		if(killed){		    
 		  y += physics.getVelocityY();
 		  
 		  //TODO this is messy and should be a method called at the beginning
@@ -279,8 +276,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	protected void crush(){
 		crushed = true;
 		score.decreaseScore();
-		//TODO mk didn't like this but if you want to play with it, make gameFrame static and this works 
-		//Game.gameFrame.bump();
+		Game.bump();
 		respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
 		sprite.crush();
 		Game.soundPlayer.sfxMip();
@@ -338,10 +334,6 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	  if(x > WRAP_AROUND_FACTOR) {
 	    graphics.drawImage(sprite.getImage(), (int)(x-GameFrame.res_width + 1), (int)y, observer);
 	  }
-	  
-	  if(!aboveArrow.shouldBeRemoved()){
-	    aboveArrow.draw(graphics, observer);
-	  }
 	}
 	
 	public int getScore(){
@@ -366,6 +358,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
   @Override
   public void update(float timeDif_ms) {
     prepareToMove(timeDif_ms);//TODO this should probably include moving but didnt want to mess with player collision
+    
+    if((spawnAnimation == null || spawnAnimation.shouldBeRemoved()) && !crushed && killed){
+      physics.updateForDeath(timeDif_ms);
+    }
   }
 
   public void warp(Direction direction, WarpExit warpExit) {
