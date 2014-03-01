@@ -52,11 +52,11 @@ public class Game implements Runnable {
       "Pikablu_Mushroom Kingdom.map",//6 moving platform + spikes + warps
       "MrMister_Azul Montana.map", //7 circular platform + donut blocks
       "GG_Angry angels.map", //8 clouds, sideways platform, pipe with plant
-      "coolman13714_green greens.map", 
-      "Link901_MileHigh Madness.map", 
-      "Xijar_Boo is Back.map",
+      "coolman13714_green greens.map", //9 circular platforms
+      "Link901_MileHigh Madness.map", //10 tons of moving platforms (CLOUDS)
+      "Xijar_Boo is Back.map",// 11 spikes
       "MrMister_Snow Top.map",
-      "Xijar_1986.map", //ICE
+      "Xijar_1986.map", //13 ICE
       "eeliottheking_not so cave.map",
       "Peardian_Tower of the Sun.map", // BUG - has some weird ball thing that floats away when it shouldn't
       "sgraff_Buster_Beetle_s_Tower.map", //16 FEATURE - switches to turn on/off colored ! blocks
@@ -71,7 +71,7 @@ public class Game implements Runnable {
       "LKA_Burn Yourself.map" //25 fire cannons
     };   
 
-    world = new World(worlds[0]);
+    world = new World(worlds[9]);
 
     //world = new World(); // TODO - Starts a random world (for now)
         
