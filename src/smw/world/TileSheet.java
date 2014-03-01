@@ -2,15 +2,8 @@ package smw.world;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-
 import javax.imageio.ImageIO;
-
 import smw.gfx.Palette;
-import smw.settings.Debug;
 
 /**
  *  Stores the tile sheet of a given style.

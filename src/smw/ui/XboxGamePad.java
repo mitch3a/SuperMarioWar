@@ -22,6 +22,8 @@ public class XboxGamePad extends PlayerControlBase {
    * @param player Player number.
    */
   public XboxGamePad(int player) {
+    Utilities.disableOutput();
+    Utilities.disableErrOut();
     // Attempt to create the controller and verify connection.
     try {
       xboxController = new XboxController(Utilities.is64bit() ? "xboxcontroller64" : "xboxcontroller", player, 50, 50);
@@ -140,6 +142,9 @@ public class XboxGamePad extends PlayerControlBase {
       }
       */
     });
+    
+    Utilities.enableOutput();
+    Utilities.enableErrOut();
   }
 
   @Override

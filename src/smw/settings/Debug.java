@@ -1,11 +1,15 @@
 package smw.settings;
 
 import java.io.File;
-
 import smw.world.Structures.WorldBuffer;
 
-/** Provides flags to indicate whether a given function/area of code is being debugged for logging purposes. */
+/**
+ * Provides flags to indicate whether a given function/area of code is being debugged.
+ * This includes enabling logging and disabling certain features of the game.
+ * There are also some miscellaneous utilities in this class.
+ */
 public class Debug {
+  // Debug settings.
   public static final boolean LOG_FRAMERATE = false;
   public static final boolean LOG_WORLD_INFO = true;
   public static final boolean LOG_TILE_TYPE_INFO = false;
@@ -15,9 +19,7 @@ public class Debug {
   public static boolean PLAYER_DEATH_IDLE = false;
   public static boolean PLAYER_DEATH_OFFSCREEN_TIMER = false;
   
-  /*
-   * Prints the map name, version, and tilesets
-   */
+  /** Prints the map name, version, and tilesets */
   public static void printAllMapsAndVersions(){
     File folder = new File(Debug.class.getClassLoader().getResource("map/").getFile());
     File[] listOfFiles = folder.listFiles();
@@ -29,7 +31,7 @@ public class Debug {
     }
   }
   
-  /*
+  /**
    * This is a helper method to print all the map information. It skips
    * through the buffer to the information its looking for. For more
    * information, see the Level class on how a map is actually loaded
@@ -68,4 +70,5 @@ public class Debug {
     
     return result;
   }
+
 }
