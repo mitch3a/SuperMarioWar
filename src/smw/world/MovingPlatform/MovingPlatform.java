@@ -122,7 +122,7 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
     return false;
   }
   
-  public float collideX(Player player, float newX, float newY) {
+  public float collideX(Player player, float newX) {
     float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
     float bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
     

@@ -109,7 +109,7 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   //TODO mk these below are based on the players current position. Probably
   //     not a big deal but worth noting here
   @Override
-  public float collideX(Player player, float newX, float newY) {
+  public float collideX(Player player, float newX) {
     if(this.intersects(player)){
       player.death();
     }

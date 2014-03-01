@@ -632,7 +632,7 @@ public class World {
    * @return
    */
   //TODO mk for this and Y, replace Moving platforms with "movingCollidables". This will include fireballs, etc. For these we can't just index by position, we need to check all
-  public float getCollisionX(Player player, float newX, float newY) {
+  public float getCollisionX(Player player, float newX) {
     //This is to test the bottom of the sprite
     
     //Above everything
@@ -649,7 +649,7 @@ public class World {
     // Moving Platforms
     ///////////////////////////////////////////////////////////////
     for(MovingCollidable movingCollidable : movingCollidables){
-      newX = movingCollidable.collideX(player, newX, newY);
+      newX = movingCollidable.collideX(player, newX);
     }
     
     ///////////////////////////////////////////////////////////////

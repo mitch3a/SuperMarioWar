@@ -193,7 +193,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
     
     Game.world.testWarps(this, newX, newY);
 		
-    newX = Game.world.getCollisionX(this, newX, newY);
+    newX = Game.world.getCollisionX(this, newX);
     newX = newX % GameFrame.res_width;
     
     newY = Game.world.getCollisionY(this, newX, newY);
