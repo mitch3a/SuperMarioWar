@@ -6,6 +6,7 @@ import java.awt.image.ImageObserver;
 import smw.Drawable;
 import smw.Updatable;
 import smw.entity.Player;
+import smw.settings.Debug;
 import smw.world.Tile;
 import smw.world.TileSheet;
 import smw.world.TileSheetManager;
@@ -50,11 +51,13 @@ public class AboveArrow implements Drawable, Updatable {
 	public void update(float timeDif_ms) {
 	  // If player is off screen, count down, if expired, kill player and reset timer.
 		if (!player.isDead() && (player.y <= -Sprite.IMAGE_HEIGHT)) {
-			countDown_ms -= timeDif_ms;
-			if (countDown_ms <= 0) {
-			  countDown_ms = KILL_TIME_MS;
-				player.death();
-			}
+		  if (Debug.PLAYER_DEATH_OFFSCREEN_TIMER) {
+  			countDown_ms -= timeDif_ms;
+  			if (countDown_ms <= 0) {
+  			  countDown_ms = KILL_TIME_MS;
+  				player.death();
+  			}
+		  }
 		}
 	}
 	
