@@ -101,7 +101,9 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		sprite.init(image, color);
 		spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
     //TODO mk not sure how i feel about this
-		Game.world.drawablesLayer3.add(new AboveArrow(this));
+		AboveArrow arrow = new AboveArrow(this);
+		Game.world.drawablesLayer3.add(arrow);
+		Game.world.updatables.add(arrow);
     Game.world.updatables.add(spawnAnimation);
     Game.world.drawablesLayer2.add(spawnAnimation);
 	}
@@ -395,5 +397,13 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
   @Override
   public boolean shouldBeRemoved() {
     return isOut();
+  }
+  
+  /**
+   * Returns if this player is dead.
+   * @return true = dead
+   */
+  public boolean isDead() {
+	  return this.killed;
   }
 }

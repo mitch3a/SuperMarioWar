@@ -1,6 +1,5 @@
 package smw.gfx;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -13,9 +12,30 @@ import smw.ui.screen.GameFrame;
 
 public class Font {
   private static Font instance;
+  private static final int NUM_FONTS = 94;
+  private static final int NUM_NUMBERS = 10;
+  private static final int NUMBER_HEIGHT = 16;
+  private static final int NUMBER_WIDTH = 16;
+  private static final int NUM_COLORS = 4;
+  
+  private final BufferedImage[] largeFont = new BufferedImage[NUM_FONTS];
+  private final BufferedImage[] smallFont = new BufferedImage[NUM_FONTS];
+  private final BufferedImage[] raceNumbers = new BufferedImage[NUM_NUMBERS];
+  private final BufferedImage[][] scoreNumbers = new BufferedImage[ScoreType.NUM_SCORE_TYPES][NUM_NUMBERS];
+  private final BufferedImage[][] boxedNumbers = new BufferedImage[NUM_COLORS][NUM_NUMBERS];
+  
+  enum ScoreType {
+    COLOR(0), GRAY(1);
+    
+    public static final int NUM_SCORE_TYPES = 2;
+    public final int index;
+    ScoreType(int i) {
+      index = i;
+    }
+  }
 
   static {
-      instance = new Font();
+    instance = new Font();
   }
 
   private Font() { 
@@ -31,31 +51,10 @@ public class Font {
   	setupFont(smallFont, "fonts/font_small.png");
   	setupRace();
   	setupScore();
+  	setupBoxedNumers();
   }
-  
-  // TODO - Need a font class that can use a font "sprite sheet" to output letters
-  // I'm guessing we will need this for the score, menus, and whatever else has writing...
-	final int NUM_FONTS = 94;
-	final int NUM_NUMBERS = 10; //I couldn't resist
-	final int NUMBER_HEIGHT = 16;
-	final int NUMBER_WIDTH = 16;
-	
-	enum ScoreType{
-		COLOR(0), GRAY(1);
-		
-		public static final int NUM_SCORE_TYPES = 2;
-		public final int index;
-		ScoreType(int i){
-			index = i;
-		}
-	}
-	
-	final BufferedImage[] largeFont = new BufferedImage[NUM_FONTS];
-	final BufferedImage[] smallFont = new BufferedImage[NUM_FONTS];
-	final BufferedImage[] raceNumbers = new BufferedImage[NUM_NUMBERS];
-	final BufferedImage[][] scoreNumbers = new BufferedImage[ScoreType.NUM_SCORE_TYPES][NUM_NUMBERS];
-	
-	void setupFont(BufferedImage[] font, String fileName){
+
+  void setupFont(BufferedImage[] font, String fileName){
 		try {		
 	    BufferedImage imageBuffer = ImageIO.read(getClass().getClassLoader().getResource(fileName));
 	    //The large font file seperates each different character by putting
@@ -116,10 +115,28 @@ public class Font {
         scoreNumbers[ScoreType.GRAY.index ][i] = convertedImg.getSubimage(i * NUMBER_WIDTH, NUMBER_HEIGHT, NUMBER_WIDTH, NUMBER_HEIGHT);
       }
     } catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
     }   	
 	}
+	
+	/** Reads boxed number image, applies transparency, stores sub-image of each number. */
+	private void setupBoxedNumers() {
+	  final int SIZE_PX = 16;
+	  try {
+	    BufferedImage imageBuffer = ImageIO.read(getClass().getClassLoader().getResource("gfx/packs/Classic/menu/menu_boxed_numbers.png"));
+      BufferedImage convertedImg = new BufferedImage(imageBuffer.getWidth(), imageBuffer.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+      convertedImg.getGraphics().drawImage(imageBuffer, 0, 0, null);
+      Palette p = Palette.getInstance();
+      p.implementTransparent(convertedImg);
+      for (int colorIndex = 0; colorIndex < NUM_COLORS; colorIndex++) {
+        for (int numberIndex = 0; numberIndex < NUM_NUMBERS; numberIndex++) {
+          boxedNumbers[colorIndex][numberIndex] = convertedImg.getSubimage(numberIndex * SIZE_PX, colorIndex * SIZE_PX, SIZE_PX, SIZE_PX);
+        }
+      }
+	  } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   //TODO not sure if this is the most efficient way to do things
   BufferedImage getChar(BufferedImage[] font, char character) {
@@ -132,6 +149,12 @@ public class Font {
   	}
   	
   	return null;
+  }
+  
+  public void drawBoxedNumber(Graphics2D graphics, int number, int color, int x, int y, ImageObserver observer) {
+    if ((color >= 0 && color < 4) && (number >= 0 && number < 10)) { 
+      graphics.drawImage(boxedNumbers[color][number], x, y, observer);
+    }
   }
 	
 	//TODO decide who should be handling the numbers, but put both kinds in just in case
