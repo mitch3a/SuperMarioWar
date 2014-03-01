@@ -49,7 +49,7 @@ public class NoteBlock extends AnimatedBlock {
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     if(isHit){
-      g.drawImage(getImage(), path.getX(), path.getY(), io);
+      g.drawImage(getImage(), (int)path.getX(), (int)path.getY(), io);
     }
     else{
       super.draw(g, io);

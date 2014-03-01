@@ -48,7 +48,7 @@ public class SpawnAnimation implements Updatable, Drawable{
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     for(SpawnAnimationPair pair : spawnPairs){
-      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX(),    pair.path.getY(),    io);
+      g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), (int)pair.path.getX(),    (int)pair.path.getY(),    io);
       g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX90(),  pair.path.getY90(),  io);
       g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX180(), pair.path.getY180(), io);
       g.drawImage(tileSheet.getTileImg(pair.tileSheetX, pair.tileSheetY), pair.path.getX270(), pair.path.getY270(), io);

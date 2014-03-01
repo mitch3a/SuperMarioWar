@@ -40,9 +40,11 @@ public class StraightContinuousPath extends Path{
     
     if(currentPos[axis] < 0){
       currentPos[axis] += max;
+      prev[axis] += max;
     }
     else{
       currentPos[axis] = currentPos[axis] % max;
+      prev[axis]  = prev[axis] % max;
     }
   }
 }

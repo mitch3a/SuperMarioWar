@@ -6,7 +6,7 @@ public abstract class Path{
   static final int Y = 1;
   
   protected float[] currentPos = new float[2];
-  protected int[] prev = new int[2];
+  protected float[] prev = new float[2];
   
   abstract void move(int axis, float timeDif);
   
@@ -18,23 +18,26 @@ public abstract class Path{
     move(Y, timeDif);
   }
   
-  public int getX(){
+  public float getX(){
     return get(X);
   }
   
-  public int getY(){
+  public float getY(){
     return get(Y);
   }
 
-  public int getXChange(){
-    return getX() - prev[X];
+  public float getXChange(){
+    return currentPos[X] - prev[X];
   }
   
-  public int getYChange(){
-    return getY() - prev[Y];
+  public float getYChange(){
+    if(currentPos[Y] - prev[Y] > 100){
+      int todo = 0;
+    }
+    return currentPos[Y] - prev[Y];
   }
   
-  int get(int i){
-    return (int) currentPos[i];
+  float get(int i){
+    return currentPos[i];
   }
 }

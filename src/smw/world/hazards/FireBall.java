@@ -11,7 +11,7 @@ public class FireBall extends AnimatedHazard{
   }
 
   @Override
-  public float collideX(Player player, float newX) {
+  public float collideX(Player player, float newX, float newY) {
     //Let CollideY take care of it
     return newX;
   }

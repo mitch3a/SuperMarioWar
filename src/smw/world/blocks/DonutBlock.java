@@ -38,6 +38,13 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
     playerOnTop = false;
     playerOnTopTime = 0;
   }
+  
+  @Override
+  public void move(float dx, float dy) {
+    x = (x + dx + GameFrame.res_width) % GameFrame.res_width;
+    y += dy;
+    calculateReturnValues();
+  }
 
   @Override
   public void update(float timeDif_ms) {
@@ -92,7 +99,7 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     if(playerOnTop && !isFalling){
-      g.drawImage(getImage(), path.getX(),path.getY(), io);
+      g.drawImage(getImage(), (int)path.getX(),(int)path.getY(), io);
     }
     else{
       g.drawImage(getImage(), (int)x, (int)y, io);
@@ -102,7 +109,7 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   //TODO mk these below are based on the players current position. Probably
   //     not a big deal but worth noting here
   @Override
-  public float collideX(Player player, float newX) {
+  public float collideX(Player player, float newX, float newY) {
     if(this.intersects(player)){
       player.death();
     }
@@ -112,14 +119,15 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    if(this.intersects(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-      if(this.intersects(newX, player.y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
-        player.death();
-      }
-      else{
-        //Player is on top
-        return super.collideWithTop(player, newY + lastDy);
-      }
+    if(this.intersects(newX, newY,     Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT) &&
+       this.intersects(newX, player.y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+      player.death();
+    }
+    //TODO this isn't perfect
+    else if( this.intersects(newX, newY + lastDy,     Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT) &&
+            !this.intersects(newX, player.y + lastDy, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+      //pull player down on top
+      return super.collideWithTop(player, newY);
     }
     
     return newY;

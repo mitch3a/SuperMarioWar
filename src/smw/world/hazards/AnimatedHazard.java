@@ -62,7 +62,7 @@ public abstract class AnimatedHazard extends Collidable.Death implements Drawabl
   }
   
   @Override
-  public float collideX(Player player, float newX) {
+  public float collideX(Player player, float newX, float newY) {
     if(isAnimating && intersects(newX, player.y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
       player.death();
     }

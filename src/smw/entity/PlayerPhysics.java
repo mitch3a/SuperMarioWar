@@ -97,7 +97,7 @@ public class PlayerPhysics {
 	// for now becuase it's easier to read and speed might not be an issue
 	Direction currentVelocityDirection;
 	
-	public PlayerPhysics(PlayerControlBase playerControl, Player player){
+	public PlayerPhysics(PlayerControlBase playerControl){
 		velocityX = 0;
 		velocityY = 0;
 		jumpingAccelerationX = 0;
