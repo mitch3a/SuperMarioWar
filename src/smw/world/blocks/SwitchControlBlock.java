@@ -50,7 +50,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
     }
   }
   
-  void setBlocks(boolean blocksOff){
+  public void setBlocks(boolean blocksOff){
     for(SwitchBlock block : blocksToChange){
       block.hidden = blocksOff;
     }
@@ -62,7 +62,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
    */
   public static class Red extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
-    static boolean blocksOn = false;
+    public static boolean blocksOn = false;
     
     public Red(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
@@ -87,7 +87,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   
   public static class Green extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
-    static boolean blocksOn = false;
+    public static boolean blocksOn = false;
     
     public Green(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
@@ -112,7 +112,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   
   public static class Yellow extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
-    static boolean blocksOn = false;
+    public static boolean blocksOn = false;
     
     public Yellow(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);
@@ -137,7 +137,7 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   
   public static class Blue extends SwitchControlBlock{
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
-    static boolean blocksOn = false;
+    public static boolean blocksOn = false;
     
     public Blue(int colorType, int x, int y) {
       super(colorType, x, y, blocksToChange);

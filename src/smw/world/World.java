@@ -41,6 +41,10 @@ import smw.world.blocks.QuestionBlock;
 import smw.world.blocks.SolidBlock;
 import smw.world.blocks.SwitchBlock;
 import smw.world.blocks.SwitchControlBlock;
+import smw.world.blocks.SwitchControlBlock.Blue;
+import smw.world.blocks.SwitchControlBlock.Green;
+import smw.world.blocks.SwitchControlBlock.Red;
+import smw.world.blocks.SwitchControlBlock.Yellow;
 import smw.world.hazards.AnimatedHazard;
 
 public class World {
@@ -149,6 +153,12 @@ public class World {
           }
         }
         
+        // Need switch control block references created up front so we can update them after the tiles.
+        SwitchControlBlock redSwitch = null;
+        SwitchControlBlock greenSwitch = null;
+        SwitchControlBlock yellowSwitch = null;
+        SwitchControlBlock blueSwitch = null;
+       
         ///////////////////////////////////////////////////////////////
         // Load background tiles
         ///////////////////////////////////////////////////////////////
@@ -207,18 +217,22 @@ public class World {
                 case  7: SwitchControlBlock temp7 = new SwitchControlBlock.Red(type, w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp7);
                          block = temp7;
+                         redSwitch = temp7;
                          break;
                 case  8: SwitchControlBlock temp8 = new SwitchControlBlock.Green(type, w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp8);
                          block = temp8;
+                         greenSwitch = temp8;
                          break;
                 case  9: SwitchControlBlock temp9 = new SwitchControlBlock.Yellow(type, w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp9);
                          block = temp9;
+                         yellowSwitch = temp9;
                          break;
                 case 10: SwitchControlBlock temp10 = new SwitchControlBlock.Blue(type, w*Tile.SIZE, h*Tile.SIZE);
                          updatables.add(temp10);
                          block = temp10;
+                         blueSwitch = temp10;
                          break;
                          
                 /** Switch Blocks **/
@@ -279,11 +293,24 @@ public class World {
         backgroundImg = ImageIO.read(this.getClass().getClassLoader().getResource("map/backgrounds/" + backgroundFile)); 
         
         ///////////////////////////////////////////////////////////////
-        //TODO mk not using this so not storing it for now...
-        ///////////////////////////////////////////////////////////////
-        int[] switches = new int[4];
-        for(int switchIndex = 0 ; switchIndex < switches.length ; ++switchIndex){
-          switches[switchIndex] = buffer.getInt();
+        // Read in color switch settings
+        ///////////////////////////////////////////////////////////////        
+        Red.blocksOn = buffer.getInt() == 0;
+        Green.blocksOn = buffer.getInt() == 0;
+        Yellow.blocksOn = buffer.getInt() == 0;
+        Blue.blocksOn = buffer.getInt() == 0;
+        // Apply setting if a switch block for that color exists.
+        if (redSwitch != null) {
+          redSwitch.setBlocks(Red.blocksOn);
+        }
+        if (greenSwitch != null) {
+          greenSwitch.setBlocks(Green.blocksOn);
+        }
+        if (yellowSwitch != null) {
+          yellowSwitch.setBlocks(Yellow.blocksOn);	
+        }
+        if (blueSwitch != null) {
+          blueSwitch.setBlocks(Blue.blocksOn);	
         }
         
         drawTilesToBackground();
@@ -331,6 +358,7 @@ public class World {
           collidables[(int) (collidable.x/Tile.SIZE)][(int) (collidable.y/Tile.SIZE)] = collidable; 
         }
         
+        System.out.println("load switches");
         loadSwitches(buffer);
         
         ///////////////////////////////////////////////////////////////
@@ -434,8 +462,12 @@ public class World {
         short iCol = (short) buffer.getByte();
         short iRow = (short) buffer.getByte();
 
+        // TODO - RPG 
+        //SwitchControlBlock sb = (SwitchControlBlock)collidables[iCol][iRow];
+        short waste = (short) buffer.getByte();
+        
         //TODO what does this dobackgroundTiles[iCol][iRow][0].settings[0] = 
-            short waste = (short) buffer.getByte();
+       //short waste = (short) buffer.getByte();
     }
   }
 
