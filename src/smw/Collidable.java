@@ -3,6 +3,7 @@ package smw;
 import java.awt.geom.Rectangle2D;
 
 import smw.entity.Player;
+import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
 import smw.world.Tile;
 
@@ -25,19 +26,24 @@ public abstract class Collidable extends Rectangle2D.Float{
   public Collidable(int x, int y, int width, int height) {
     super(x, y, width, height);
     
-    left   = (x - Tile.SIZE + GameFrame.res_width) % GameFrame.res_width;
-    right  = (x + Tile.SIZE) % GameFrame.res_width;
-    top    = (y - Tile.SIZE) % GameFrame.res_height;
-    bottom = (y + Tile.SIZE) % GameFrame.res_height;
+    calculateReturnValues();
   }
   
   public void move(float dx, float dy) {
-    x += dx;
+    x = (x + dx + GameFrame.res_width) % GameFrame.res_width;
     y += dy;
-    left = (left + dx + GameFrame.res_width) % GameFrame.res_width;
-    right = (right + dx + GameFrame.res_width) % GameFrame.res_width;
-    top += dy;
-    bottom += dy;
+    
+    if(y < -64){
+      y = (y + dy + GameFrame.res_height + 64) % GameFrame.res_height;
+    }
+    calculateReturnValues();
+  }
+  
+  protected void calculateReturnValues(){
+    left   = x - Tile.SIZE;
+    right  = x + Tile.SIZE;
+    top    = y - Tile.SIZE;
+    bottom = y + Tile.SIZE;
   }
 
   /** by default, non-solid **/
@@ -158,16 +164,12 @@ public abstract class Collidable extends Rectangle2D.Float{
     
     @Override
     public float collideWithTop(Player player, float newY){
-      if(!player.pushedDown && player.physics.playerControl.isDown()) {
-        // If this is the first time we reached this then the player pushed down the first time to fall through.
-        // Set the falling through flags and height.
-        if (!player.isFallingThrough) {
-          player.isFallingThrough = true;
-          player.fallHeight = (int)player.y;
-          player.pushedDown = true;
-        }
+      //TODO just want to get moving platforms working right
+      boolean wasAboveBefore = (player.y + Sprite.IMAGE_HEIGHT <= this.y + .01);//Rounding error
+      if(player.canFall() && wasAboveBefore && player.physics.playerControl.isDown()){
+        
       }
-      else{
+      else if(wasAboveBefore){
         player.physics.collideWithFloor();
         return top;
       }

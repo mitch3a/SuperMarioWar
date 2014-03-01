@@ -39,43 +39,29 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
   }
   
   public void draw(Graphics2D graphics, ImageObserver observer){
-    int startY = path.getY();
-    int x = path.getX();
-    
+    //TODO maybe the tiles/collidables should be combined??? if thats feasible
     for(int i = 0 ; i < tiles.length ; ++i){
-     int y = startY;
-    
      for(int j = 0 ; j < tiles[i].length ; ++j){
-       tiles[i][j].draw(graphics, x, y, observer);
-       
-       if(x > GameFrame.res_width - Tile.SIZE){
-         //Draw it if it overlaps
-         tiles[i][j].draw(graphics, x - GameFrame.res_width, y, observer);
+       tiles[i][j].draw(graphics, (int)collidables[i][j].x, (int)collidables[i][j].y, observer);
+       if(collidables[i][j].x > GameFrame.res_width - Tile.SIZE){
+         tiles[i][j].draw(graphics, ((int)collidables[i][j].x) - GameFrame.res_width, (int)collidables[i][j].y, observer);
        }
-       
-       y += Tile.SIZE;
-     }
-     
-     x += Tile.SIZE;
-     
-     if(x > GameFrame.res_width){
-       x = x % GameFrame.res_width;
      }
     }
   }
   
   Collidable getCollidable(float x, float y){
-    float difX = x - path.getX();
-    float difY = y - path.getY(); 
+    float difX = x - collidables[0][0].x;//path.getX();
+    float difY = y - collidables[0][0].y;//path.getY(); 
     
     difX = (difX + GameFrame.res_width) % GameFrame.res_width;
-    difY = (difY + GameFrame.res_height) % GameFrame.res_height;
+    difY = difY % GameFrame.res_height;
     
     int indexX = (difX >= 0) ? (int)(difX/Tile.SIZE) : -1;
     int indexY = (difY >= 0) ? (int)(difY/Tile.SIZE) : -1;
     
-    if(indexX >= 0 && indexX < tiles.length){
-      if(indexY >= 0 && indexY < tiles[indexX].length){
+    if(indexX >= 0 && indexX < collidables.length){
+      if(indexY >= 0 && indexY < collidables[indexX].length){
         return collidables[indexX][indexY];
       }
     }
@@ -85,7 +71,6 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
 
   @Override
   public void update(float timeDif_ms) {
-    timeDif_ms = 1.0f;//TODO
     path.move(timeDif_ms);
     
     for(Collidable[] collidableArray : collidables){
@@ -122,12 +107,12 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
     
     return newX;
   }
-  
+
   /**
    * Helper method to check collision between left side of a player and
    * right side of a collidable
    */
-  boolean willDrag(float xToCheck, float yToCheck){
+  boolean willDrag(float xToCheck, float yToCheck, float yToCheckAfter){
     Collidable temp = getCollidable(xToCheck, yToCheck);
     
     if(temp != null){
@@ -141,12 +126,13 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
     float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
     float bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
     
-    float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1;
-    
+    float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1 + path.getYChange();
+
     //If the platform underneath is moving, so should the player
-    if(willDrag(newX,       justUnderPlayer) || 
-       willDrag(rightMostX, justUnderPlayer)){
+    if(willDrag(newX,       justUnderPlayer, justUnderPlayer) || 
+       willDrag(rightMostX, justUnderPlayer, justUnderPlayer)){
       newX += path.getXChange();
+      player.x += path.getXChange();
     }
             
     newX = checkCollisionRight(player, rightMostX, player.y,      newX);
@@ -187,22 +173,25 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
   
   public float collideY(Player player, float newX, float newY) {
     float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
-    float bottomYPlayer = newY +Sprite.IMAGE_HEIGHT - 1;
+    
     
     //TODO i think this (and X version) should probably be called before the collides?
     float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT + 1 + path.getYChange();
+
     //If the platform underneath is moving, so should the player
-    if(willDrag(newX,       justUnderPlayer) || 
-       willDrag(rightMostX, justUnderPlayer)){
+    if(willDrag(newX,       justUnderPlayer, justUnderPlayer) || 
+       willDrag(rightMostX, justUnderPlayer, justUnderPlayer)){
+      player.y += path.getYChange();
       newY += path.getYChange();
     }
          
+    float bottomYPlayer = newY + Sprite.IMAGE_HEIGHT;
     
     newY = checkCollisionTop   (player, newX,       newY,      newY);
     newY = checkCollisionTop   (player, rightMostX, newY,      newY);
     newY = checkCollisionBottom(player, newX,       bottomYPlayer, newY);
     newY = checkCollisionBottom(player, rightMostX, bottomYPlayer, newY);
-    
+
     return newY;
   }
 

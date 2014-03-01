@@ -41,9 +41,8 @@ public class FireBallPole extends AnimatedHazard{
     
     float currentX = x;
     float currentY = y;
-    //TODO could use floats here but prolly no biggy
-    int xForBalls = path.getX();
-    int yForBalls = path.getY();
+    float xForBalls = path.getX();
+    float yForBalls = path.getY();
     
     for(int i = 0 ; i < numBalls ; ++i){
       if(temp.intersects(currentX, currentY, width, height)){
@@ -67,13 +66,13 @@ public class FireBallPole extends AnimatedHazard{
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     if(isAnimating){
-      int currentX = (int)x;
-      int currentY = (int)y;
-      int xForBalls = path.getX();
-      int yForBalls = path.getY();
+      float currentX = x;
+      float currentY = y;
+      float xForBalls = path.getX();
+      float yForBalls = path.getY();
       
       for(int i = 0 ; i < numBalls ; ++i){
-        g.drawImage(getImage(), currentX, currentY, io);
+        g.drawImage(getImage(), (int)currentX, (int)currentY, io);
         currentX += xForBalls;
         currentY += yForBalls;
       }

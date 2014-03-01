@@ -657,7 +657,7 @@ public class World {
     //This is to test the bottom of the sprite
     
     //Above everything
-    if(player.y < -31){
+    if(player.y <= -32){
       return newX;
     }
     
@@ -713,6 +713,9 @@ public class World {
       newY = movingCollidable.collideY(player, newX, newY);
     }
     
+    //Doesn't get returned 
+    newX = (newX + GameFrame.res_width) % GameFrame.res_width;
+    
     int rightmostXTile = (int)(((newX + Sprite.IMAGE_WIDTH - 1)%GameFrame.res_width)/Tile.SIZE);
     
     ///////////////////////////////////////////////////////////////
@@ -723,16 +726,6 @@ public class World {
     //TODO this >= 0 thing is to let us go above the screen... it needs a little more work tho
     if (player.y != newY){
       if (player.y < newY) {        
-        //TODO mk don't think this is where we want this
-        // If the player pushed the down key check to see if it was released.
-        if (player.pushedDown) {
-          player.pushedDown = player.physics.playerControl.isDown();
-        }
-        // If falling through a solid on top block then reset flag when the player has fallen at least one tile.
-        if (player.isFallingThrough && (player.y - player.fallHeight) >= Tile.SIZE) {
-          player.isFallingThrough = false;
-        }
-        
         //Moving down so check the bottom of the sprite with the top of the object
         int yCollision = (int)(((newY + Sprite.IMAGE_HEIGHT)% GameFrame.res_height)/Tile.SIZE);
         

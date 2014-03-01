@@ -55,15 +55,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	private boolean killed = false;
 	private long respawnTime;
 	public ColorScheme color;
-	
-	/** Indicates whether a player is falling through a tile by pressing down key. */
-	public boolean isFallingThrough = false;
-	/** The starting height of falling through a "solid on top" tile. */
-	public int fallHeight = 0;
-	public boolean pushedDown = false;
-	
+  private boolean canFall = true;
+  
 	public Player(PlayerControlBase playerControl, int playerIndex){	
-		physics = new PlayerPhysics(playerControl, this);
+		physics = new PlayerPhysics(playerControl);
 		sprite  = new Sprite();
 		score   = new Score();
 		
@@ -154,8 +149,6 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
       
       //TODO should probably do some sort of max y else if the player is out and it keeps growing,
       //     there might be some sort of issue
-      
-		  return;
 		}
     
     if(warpingOut){
@@ -271,6 +264,13 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		}
 
 		x = newX;
+		
+		if(y < newY){
+		  canFall = false;
+		}
+		
+		canFall |= !physics.playerControl.isDown();
+				
 		y = newY;
 	}
 	
@@ -428,12 +428,16 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
   public boolean shouldBeRemoved() {
     return isOut();
   }
-  
+
   /**
    * Returns if this player is dead.
    * @return true = dead
    */
   public boolean isDead() {
 	  return this.killed;
+  }
+
+  public boolean canFall() {
+    return canFall;
   }
 }

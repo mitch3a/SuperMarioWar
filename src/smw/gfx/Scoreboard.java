@@ -8,6 +8,7 @@ import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 import smw.entity.Player;
+import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 
 /**********************************************
@@ -78,7 +79,7 @@ public class Scoreboard {
 	  }
 	  else{
   	  long currentTime = System.currentTimeMillis();
-  	  if(currentTime > timeLastWinnerBorn + WinnerText.TIME_BETWEEN_WINNERS_MS){
+  	  if(Debug.WINNER_TEXT && currentTime > timeLastWinnerBorn + WinnerText.TIME_BETWEEN_WINNERS_MS){
   	    WinnerText temp = new WinnerText((int)winningPlayer.x, winningPlayer.y);
   	    winnerTextList.add(temp);
   	    

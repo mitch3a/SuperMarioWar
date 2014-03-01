@@ -203,7 +203,9 @@ public class WorldBuffer {
     
     ////////////////////////////////////////////////////////////////////////////////////
     //For some reason, original maps use a start/end based on the center of the object.
-    //In the case of a straight path, it makes no sense so correcting it here
+    //In the case of a straight path, it makes no sense so correcting it here. Also,
+    //the velocities are given per frame, but in this code, it should be kept
+    //in milliseconds (16 milliseconds a frame)
     int xOffset = (int)(width*Tile.SIZE)/2;
     int yOffset = (int)(height*Tile.SIZE)/2;
     
@@ -212,7 +214,7 @@ public class WorldBuffer {
       float startY = getFloat();
       float endX = getFloat();
       float endY = getFloat();
-      float velocity = getFloat();
+      float velocity = getFloat()/16f;
       
       result = new StraightSegmentPath(velocity, startX - xOffset, startY - yOffset, endX - xOffset, endY - yOffset);
     }
@@ -220,7 +222,7 @@ public class WorldBuffer {
       float startX = getFloat();
       float startY = getFloat();
       float angle = getFloat();
-      float velocity = getFloat();
+      float velocity = getFloat()/16f;
   
       result = new StraightContinuousPath(velocity, startX - xOffset, startY - yOffset, angle);
     }
@@ -230,7 +232,7 @@ public class WorldBuffer {
       float centerX = getFloat();
       float centerY = getFloat();
       float angle   = getFloat();
-      float velocity = getFloat();
+      float velocity = getFloat()/16f;
   
       result = new EllipticalPath(velocity, angle, radiusX, radiusY, centerX - xOffset, centerY - yOffset);
     }

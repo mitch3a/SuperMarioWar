@@ -43,14 +43,14 @@ public class Game implements Runnable {
     // TODO - setup world selector or something, for now pick what you want to test code.
     // ALSO ADD DESCRIPTION (good for testing ____)
     String[] worlds = {
-      "0smw.map", //0 
-      "4matsy_Evening Fracas.map",//1 
+      "0smw.map", //0 couple fall through squares, breakable blocks
+      "4matsy_Evening Fracas.map",//1 Night, note block, warp
       "NMcCoy_1-3.map",  //2 Plain with one moving platform (continuous only Y)
       "ym7_world1-2.map", //3 underground, bricks + two cont platforms on Y, dif directions
-      "two52_Up In The Hills.map", 
-      "tubesteak_coolnights.map", //segment platform, spikes
-      "Pikablu_Mushroom Kingdom.map",
-      "MrMister_Azul Montana.map", 
+      "two52_Up In The Hills.map", //4 Moving platforms both directions, question block
+      "tubesteak_coolnights.map", //5 segment platform, spikes
+      "Pikablu_Mushroom Kingdom.map",//6 moving platform + spikes + warps
+      "MrMister_Azul Montana.map", //7 circular platform + donut blocks
       "GG_Angry angels.map", //8 clouds, sideways platform, pipe with plant
       "coolman13714_green greens.map", 
       "Link901_MileHigh Madness.map", 
@@ -71,7 +71,7 @@ public class Game implements Runnable {
       "LKA_Burn Yourself.map" //25 fire cannons
     };   
 
-    world = new World(worlds[24]);
+    world = new World(worlds[0]);
 
     //world = new World(); // TODO - Starts a random world (for now)
         

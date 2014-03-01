@@ -18,6 +18,7 @@ public class Debug {
   public static final boolean MUTE_MUSIC = true;
   public static boolean PLAYER_DEATH_IDLE = false;
   public static boolean PLAYER_DEATH_OFFSCREEN_TIMER = false;
+  public static final boolean WINNER_TEXT = false;
   
   /** Prints the map name, version, and tilesets */
   public static void printAllMapsAndVersions(){
