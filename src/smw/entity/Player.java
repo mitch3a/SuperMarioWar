@@ -276,8 +276,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	protected void crush(){
 		crushed = true;
 		score.decreaseScore();
-		//TODO mk didn't like this but if you want to play with it, make gameFrame static and this works 
-		//Game.gameFrame.bump();
+		Game.bump();
 		respawnTime = System.currentTimeMillis() + RESPAWN_WAIT_MS;
 		sprite.crush();
 		Game.soundPlayer.sfxMip();
