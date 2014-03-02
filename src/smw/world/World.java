@@ -575,7 +575,7 @@ public class World {
       int yToCheck = (int)((player.y + Tile.SIZE + 1)/Tile.SIZE);
       Warp result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.DOWN);
       if(result != null){
-        player.warp(Direction.DOWN, getWarpExit(result));
+        player.warp(result, getWarpExit(result));
         return;
       }
     }
@@ -585,7 +585,7 @@ public class World {
       Warp result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.UP);
       
       if(result != null){
-        player.warp(Direction.UP, getWarpExit(result));
+        player.warp(result, getWarpExit(result));
         return;
       }
     }
@@ -594,7 +594,7 @@ public class World {
       int XToCheck = (int)((player.x - 1)/Tile.SIZE);
       Warp result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.LEFT);
       if(result != null){
-        player.warp(Direction.LEFT, getWarpExit(result));
+        player.warp(result, getWarpExit(result));
         return;
       }
     }
@@ -602,7 +602,7 @@ public class World {
       int XToCheck = (int)((player.x + Tile.SIZE + 1)/Tile.SIZE);
       Warp result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.RIGHT);
       if(result != null){
-        player.warp(Direction.RIGHT, getWarpExit(result));
+        player.warp(result, getWarpExit(result));
         return;
       }
     }
@@ -616,11 +616,11 @@ public class World {
     }
     Warp warp = warps[column1][row1];
     
-    if(warp.id >= 0 && warp.connection >= 0 && warp.direction == direction){
+    if(warp.id >= 0 && warp.connection >= 0){//TODO && warp.direction == direction){
       //Need both that the player is touching to be same warp
       Warp warp2 = warps[column2][row2];
       
-      if(warp2.id >= 0 && warp.id == warp2.id  && warp2.direction == direction){
+      if(warp2.id >= 0 && warp.id == warp2.id){//TODO  && warp2.direction == direction){
         return warp;
       }
     }

@@ -132,7 +132,7 @@ public class Sprite {
     }
   }
 
-  public Image getImage() {
+  public BufferedImage getImage() {
     return sprites[currentDirection.index][currentAction.index];
   }
 

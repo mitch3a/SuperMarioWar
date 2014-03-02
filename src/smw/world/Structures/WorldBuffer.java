@@ -169,11 +169,23 @@ public class WorldBuffer {
   }
   
   public Warp getWarp(int x, int y) {
-    Warp warp = new Warp(x, y);
     
-    warp.direction  = Warp.getDirection(getShort());
-    warp.connection = getShort();
-    warp.id         = getShort();
+    
+    short direction = getShort();
+    short connection = getShort();
+    short id         = getShort();
+    
+    Warp warp;
+    
+    switch(direction){
+      case 0:  warp = new Warp.Down(x, y, connection, id);
+               break;
+      case 1:  warp = new Warp.Left(x, y, connection, id);
+               break;
+      case 2:  warp = new Warp.Up(x, y, connection, id);
+               break;
+      default: warp = new Warp.Right(x, y, connection, id);
+    }
     
     return warp;
   }

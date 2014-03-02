@@ -101,25 +101,7 @@ public class GameFrame extends Canvas{
       game.menu.draw(g2d, this);
     } else {
       world.drawBackground(g2d, this);
-      boolean drewToBack = false;
-      
-      //Draw the warping guys behind everything
-      if (players != null && players.length > 0) {
-        for(Player p : players){
-          if (p != null) {
-            drewToBack |= p.drawToBack(g2d, this);
-          }
-        }
-      }
 
-      if(drewToBack){
-        //Only need to bother if there are players
-        //behind anything, else they are already on
-        //the background
-        world.drawLayer0(g2d, this);
-        world.drawLayer1(g2d, this);
-      }
-      
       if (players != null && players.length > 0) {
         for(Player p : players){
           if (p != null) {
@@ -127,6 +109,7 @@ public class GameFrame extends Canvas{
           }
         }
       }
+      
       world.drawLayer2(g2d, this);
       world.drawLayer3(g2d, this);      
       sB.draw(g2d, this);

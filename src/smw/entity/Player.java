@@ -3,6 +3,7 @@ package smw.entity;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import smw.gfx.Sprite;
 import smw.settings.Debug;
 import smw.ui.PlayerControlBase;
 import smw.ui.screen.GameFrame;
+import smw.world.Structures.Warp;
 import smw.world.Structures.Warp.Direction;
 import smw.world.Structures.WarpExit;
 
@@ -42,14 +44,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	///////////////////////////////////////////////////
 	// WARPING
 	///////////////////////////////////////////////////
+	private Warp warp;
 	private WarpExit warpExit;
 	private boolean warpingIn = false;
 	private boolean warpingOut = false;
-	private int warpFactorX = 0;
-	private int warpFactorY = 0;
-	private float warpingAnimationDistance;
-	private static final float WARP_VELOCITY = 1.0f;
-	private static final int MAX_WARPING_ANIMATION_DISTANCE = 32;
 	
 	private boolean crushed = false;
 	private boolean killed = false;
@@ -70,7 +68,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		this.playerIndex = playerIndex;
 	}
 	
-	public Image getImage(){
+	public BufferedImage getImage(){
 		return sprite.getImage();
 	}
 	
@@ -153,38 +151,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		}
     
     if(warpingOut){
-
-      warpingAnimationDistance += WARP_VELOCITY;
-      
-      x += warpFactorX*WARP_VELOCITY;
-      y += warpFactorY*WARP_VELOCITY;  
-      
-      if(warpingAnimationDistance >= MAX_WARPING_ANIMATION_DISTANCE){
-        warpingAnimationDistance = 0;
-        warpingOut = false;
-      }
-      
       return;
     }
     
 		if(warpingIn){
-
-		  warpingAnimationDistance += WARP_VELOCITY;
-
-		  x += warpFactorX*WARP_VELOCITY;
-      y += warpFactorY*WARP_VELOCITY;
-      
-		  if(warpingAnimationDistance >= MAX_WARPING_ANIMATION_DISTANCE){
-		    warpingAnimationDistance = 0;
-		    
-		    x = warpExit.x;
-		    y = warpExit.y;
-		    setWarpFactor(warpExit.direction);
-		    
-		    warpingIn = false;
-		    warpingOut = true;
-		  }
-		  
 		  return;
 		}
 			
@@ -314,29 +284,22 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		physics.poll();
 	}
 	
-	boolean drawToBack(){
-	  return warpingIn || warpingOut;
-	}
-	
-	 public boolean drawToBack(Graphics2D graphics, ImageObserver observer){
-	   if(drawToBack()){
-       graphics.drawImage(sprite.getImage(), (int)x, (int)y, observer);
-       if(x > WRAP_AROUND_FACTOR) {
-         graphics.drawImage(sprite.getImage(), (int)(x-GameFrame.res_width + 1), (int)y, observer);
-       }
-       
-       return true;
-	   }
-	   
-	   return false;
-	 }
-	
 	public void draw(Graphics2D graphics, ImageObserver observer){
-	  if(drawToBack() || (spawnAnimation != null && !spawnAnimation.shouldBeRemoved())){
+	  if(spawnAnimation != null && !spawnAnimation.shouldBeRemoved()){
 	    return;
 	  }
 	  
-	  graphics.drawImage(sprite.getImage(), (int)x, (int)y, observer);
+	  BufferedImage image = sprite.getImage();
+	  
+	  if(this.warpingIn){
+	    warp.draw(graphics, observer);
+	  }
+	  else if (warpingOut){
+	    warp.draw(graphics, observer);
+	  }
+	  else{
+	    graphics.drawImage(image, (int)x, (int)y, observer);
+	  }
 	  
 	  // Handle player idle time.
 	  Font font = Font.getInstance();
@@ -379,6 +342,14 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
   public void update(float timeDif_ms) {    
     prepareToMove(timeDif_ms);//TODO this should probably include moving but didnt want to mess with player collision
     
+    if(warpingOut){
+      //TODO
+    }
+    
+    if(warpingIn){
+      warp.update(timeDif_ms);
+    }
+    
     if ((spawnAnimation == null || spawnAnimation.shouldBeRemoved()) && !crushed && killed) {
       physics.updateForDeath(timeDif_ms);
     } else {
@@ -397,30 +368,14 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
     }
   }
 
-  public void warp(Direction direction, WarpExit warpExit) {
+  public void warp(Warp warp, WarpExit warpExit) {
     warpingIn = true;
     this.warpExit = warpExit;
     Game.soundPlayer.sfxWarp();
-    
-    setWarpFactor(direction);
+    warp.init(getImage());
+    this.warp = warp;
   }
   
-  void setWarpFactor(Direction direction){
-    warpFactorX = 0;
-    warpFactorY = 0;
-    
-    switch(direction){
-      case UP:    warpFactorY = -1;
-                  break;
-      case DOWN:  warpFactorY =  1;
-                  break;
-      case RIGHT: warpFactorX =  1;
-                  break;
-      case LEFT:  warpFactorX = -1;
-                  break;
-    }
-  }
-
   public void slipOnIce() {
     physics.slipOnIce();
   }
