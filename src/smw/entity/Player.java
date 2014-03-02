@@ -149,6 +149,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
       
       //TODO should probably do some sort of max y else if the player is out and it keeps growing,
       //     there might be some sort of issue
+      return;
 		}
     
     if(warpingOut){
