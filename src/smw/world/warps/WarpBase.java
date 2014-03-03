@@ -29,6 +29,14 @@ public abstract class WarpBase implements Updatable, Drawable{
     this.id = id;
   }
   
+  public float getX(){
+    return x + shiftX;
+  }
+  
+  public float getY(){
+    return y + shiftY;
+  }
+  
   public abstract void init(Player player);
   
   @Override

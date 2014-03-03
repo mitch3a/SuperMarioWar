@@ -20,6 +20,12 @@ public class Debug {
   public static boolean PLAYER_DEATH_OFFSCREEN_TIMER = false;
   public static final boolean WINNER_TEXT = false;
   
+  //FUN STUFF!!!!
+  public static boolean CLIP_MODE = true;
+  public static boolean CLIP_SHAPE_RECTANGLE = false;
+  public static boolean CLIP_SHAPE_KEEP_ASPECT_RATIO = true;
+  public static boolean CLIP_STRETCH = true;
+  
   /** Prints the map name, version, and tilesets */
   public static void printAllMapsAndVersions(){
     File folder = new File(Debug.class.getClassLoader().getResource("map/").getFile());
