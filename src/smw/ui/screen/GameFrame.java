@@ -12,6 +12,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.BufferStrategy;
@@ -122,15 +123,25 @@ public class GameFrame extends Canvas{
       game.menu.draw(g2d, this);
     } else {
       
-      if(Debug.CLIP_MODE){
-        int x = (int) Math.min(Math.max(players[0].x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
-        int y = (int) Math.min(Math.max(players[0].y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
-        
+      if(Debug.CLIP_MODE && Scoreboard.winningPlayer == null){
         if(!Debug.CLIP_ZOOM_STRETCH){
-          clipShape.setFrame(x, y, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
-          g2d.clip(clipShape);
+          Area a = new Area();
+          
+          for(Player p : players){
+            if(!p.isOut()){
+              int x = (int) Math.min(Math.max(p.x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
+              int y = (int) Math.min(Math.max(p.y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
+              
+              clipShape.setFrame(x, y, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
+              a.add(new Area(clipShape));
+            }
+          }
+          
+          g2d.setClip(a);
         }
         else{
+          int x = (int) Math.min(Math.max(players[0].x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
+          int y = (int) Math.min(Math.max(players[0].y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
           g2d.clip(clipShape);
           g2d.translate(-x, -y);
         }

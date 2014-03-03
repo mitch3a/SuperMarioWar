@@ -24,7 +24,7 @@ public class Scoreboard {
 	Color shadeColor;
 	ArrayList<WinnerText> winnerTextList = new ArrayList<WinnerText>();
 	long timeLastWinnerBorn;
-	Player winningPlayer = null;
+	public static Player winningPlayer = null;
 	
 	public Scoreboard(Player[] players){
 	  final int topY = 25; //Top of everything

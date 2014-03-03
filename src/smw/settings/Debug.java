@@ -24,7 +24,9 @@ public class Debug {
   public static boolean CLIP_MODE = false;
   public static boolean CLIP_SHAPE_RECTANGLE = false;
   public static boolean CLIP_SHAPE_KEEP_ASPECT_RATIO = false;
-  public static boolean CLIP_ZOOM_STRETCH = false;           //Zooms in (instead of just showing a spotlight around the screen)
+  //Zooms in (instead of just showing a spotlight around the screen). 
+  //Currently is only configured for 1 player but maybe do a splitscreen for more?
+  public static boolean CLIP_ZOOM_STRETCH = false;
   
   /** Prints the map name, version, and tilesets */
   public static void printAllMapsAndVersions(){
