@@ -2,13 +2,18 @@ package smw.ui.screen;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.RectangularShape;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -16,12 +21,14 @@ import javax.swing.JFrame;
 import smw.Game;
 import smw.entity.Player;
 import smw.gfx.Scoreboard;
+import smw.gfx.Sprite;
+import smw.settings.Debug;
 import smw.world.World;
 
 public class GameFrame extends Canvas{
 
   private static final long serialVersionUID = 1L;
-	
+
 	// TODO - RPG - should figure out how to setup resolution options w/ scaling...
 	public static int res_width = 640;
 	public static int res_height = 480;
@@ -30,6 +37,18 @@ public class GameFrame extends Canvas{
 	public static int bumpFactor = 0;
 	private boolean bumpUp = false;
 	private boolean bumpDown = false;
+	
+	//For doing zoom/clipping
+  private static final int CLIP_WINDOW_HEIGHT = 320; //if keeping aspect ratio, pick something doesn't leave a fractional width
+  private static final float HEIGHT_TO_WIDTH_FACTOR = Debug.CLIP_SHAPE_KEEP_ASPECT_RATIO ? (res_width/res_height) : 1.0f;
+  private static final int CLIP_WINDOW_WIDTH = (int)(CLIP_WINDOW_HEIGHT*HEIGHT_TO_WIDTH_FACTOR);
+  private static final int CLIP_WINDOW_SHIFT_X = CLIP_WINDOW_WIDTH/2 - Sprite.IMAGE_WIDTH/2;
+  private static final int CLIP_WINDOW_SHIFT_Y = CLIP_WINDOW_HEIGHT/2 - Sprite.IMAGE_HEIGHT/2;
+  private static final int CLIP_MAX_X = res_width - CLIP_WINDOW_WIDTH;
+  private static final int CLIP_MAX_Y = res_height - CLIP_WINDOW_HEIGHT;
+  
+  private static RectangularShape clipShape = Debug.CLIP_SHAPE_RECTANGLE ? new Rectangle(0, 0, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT) :
+                                                                           new Ellipse2D.Float(0, 0, CLIP_WINDOW_HEIGHT, CLIP_WINDOW_HEIGHT);
 	
 	private JFrame frame;
 	private BufferStrategy bs;
@@ -80,6 +99,8 @@ public class GameFrame extends Canvas{
         }
     });
     
+    resetScalingFactors();
+    
     // Now that frame is setup, create buffer strategy.
     this.createBufferStrategy(3);
     bs = getBufferStrategy();
@@ -93,13 +114,28 @@ public class GameFrame extends Canvas{
     g2d.fillRect(0, 0, getWidth(), getHeight());
 
     // TODO - put this in an if statement if bump is needed?
-    g2d.translate(0, bumpFactor);
+    g2d.translate(0, bumpFactor);  
     g2d.scale(scaleFactorWidth, scaleFactorHeight);
     
     // TODO - RPG - If we have a menu then only draw that! (Although this won't work for pause menu!)
     if (game.menu != null) {
       game.menu.draw(g2d, this);
     } else {
+      
+      if(Debug.CLIP_MODE){
+        int x = (int) Math.min(Math.max(players[0].x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
+        int y = (int) Math.min(Math.max(players[0].y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
+        
+        if(!Debug.CLIP_STRETCH){
+          clipShape.setFrame(x, y, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
+          g2d.clip(clipShape);
+        }
+        else{
+          g2d.clip(clipShape);
+          g2d.translate(-x, -y);
+        }
+      }
+      
       world.drawBackground(g2d, this);
 
       if (players != null && players.length > 0) {
@@ -127,8 +163,14 @@ public class GameFrame extends Canvas{
   //      aspect ratio, but at the very least should be in there for now because
   //      it can help for debuggin
   void resetScalingFactors(){
-    scaleFactorWidth =  (double)(getWidth())/res_width;
-    scaleFactorHeight = (double)(getHeight())/res_height;
+    if(Debug.CLIP_MODE && Debug.CLIP_STRETCH){
+      scaleFactorWidth =  (double)(getWidth())/CLIP_WINDOW_WIDTH;
+      scaleFactorHeight = (double)(getHeight())/CLIP_WINDOW_HEIGHT;
+    }
+    else{
+      scaleFactorWidth =  (double)(getWidth())/res_width;
+      scaleFactorHeight = (double)(getHeight())/res_height;
+    }
   }
   
   /********************************************

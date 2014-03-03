@@ -348,6 +348,9 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
         warpingIn = false;
         warpingOut = true;
       }
+      
+      x = warpEntrance.getX();
+      y = warpEntrance.getY();
     }
     
     if(warpingOut){
@@ -357,8 +360,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
         warpingOut = false;
       }
       
-      x = warpExit.x;
-      y = warpExit.y;
+      x = warpExit.getX();
+      y = warpExit.getY();
     }
     
     if ((spawnAnimation == null || spawnAnimation.shouldBeRemoved()) && !crushed && killed) {
