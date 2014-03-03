@@ -15,6 +15,8 @@ import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;
 import smw.world.MovingPlatform.StraightSegmentPath;
 import smw.world.hazards.AnimatedHazard;
+import smw.world.warps.WarpEntrance;
+import smw.world.warps.WarpExit;
 
 public class WorldBuffer {
 
@@ -168,48 +170,58 @@ public class WorldBuffer {
     return version;
   }
   
-  public Warp getWarp(int x, int y) {
+  public WarpEntrance getWarp(int x, int y) {
     
     
     short direction = getShort();
     short connection = getShort();
     short id         = getShort();
     
-    Warp warp;
+    WarpEntrance warp;
     
     switch(direction){
-      case 0:  warp = new Warp.Down(x, y, connection, id);
+      case 0:  warp = new WarpEntrance.Down(x, y, connection, id);
                break;
-      case 1:  warp = new Warp.Left(x, y, connection, id);
+      case 1:  warp = new WarpEntrance.Left(x, y, connection, id);
                break;
-      case 2:  warp = new Warp.Up(x, y, connection, id);
+      case 2:  warp = new WarpEntrance.Up(x, y, connection, id);
                break;
-      default: warp = new Warp.Right(x, y, connection, id);
+      default: warp = new WarpEntrance.Right(x, y, connection, id);
     }
     
     return warp;
   }
   
   public WarpExit getWarpExit(){
-    WarpExit warpExit = new WarpExit();
     
-    warpExit.direction = Warp.getOppositeDirection(getShort());
-    warpExit.connection = getShort();
+    short direction = getShort();
+    short connection = getShort();
     
-    warpExit.id = getShort();
-    warpExit.x  = getShort();
-    warpExit.y  = getShort();
+    short id = getShort();
+    short column = getShort();
+    short row    = getShort();
 
-    warpExit.lockx = getShort();
-    warpExit.locky = getShort();
-    warpExit.warpx = getShort();
-    warpExit.warpy = getShort();
+    short lockx = getShort();
+    short locky = getShort();
+    short warpx = getShort();
+    short warpy = getShort();
     
-    warpExit.numblocks = getShort();
+    short numblocks = getShort();
+    WarpExit warp;
     
-    return warpExit;
+    switch(direction){
+      case 0:  warp = new WarpExit.Up(connection, id, column, row, lockx, locky, warpx, warpy);
+               break;
+      case 1:  warp = new WarpExit.Right(connection, id, column, row, lockx, locky, warpx, warpy);
+               break;
+      case 2:  warp = new WarpExit.Down(connection, id, column, row, lockx, locky, warpx, warpy);
+               break;
+      default: warp = new WarpExit.Left(connection, id, column, row, lockx, locky, warpx, warpy);
+    }
+    
+    return warp;
   }
-  
+ 
   public Path getPath(int type, int width, int height){
     Path result = null;
     

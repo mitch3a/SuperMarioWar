@@ -9,6 +9,8 @@ import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
 import paulscode.sound.libraries.LibraryJavaSound;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
+import smw.Utilities;
+import smw.settings.Debug;
 import smw.world.World;
 
 /**
@@ -41,17 +43,22 @@ public class SoundPlayer {
   
   /** Constructs the sound player. */
   public SoundPlayer() {    
-    try {
-      soundSystem = new SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
+	  soundSystem = new SoundSystem();
+	  /*
+	  try {
+      soundSystem = SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
         LibraryLWJGLOpenAL.class : LibraryJavaSound.class);
       SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
       SoundSystemConfig.setCodec("wav", CodecWav.class);
+      */
       setMasterVolume(masterVol);
+      
       setupBGMList();
       setupSfx();
+    /*
     } catch (SoundSystemException e)  {
       System.err.println("Error linking sound plugins!");
-    }
+    }*/
   }
   
   /** Sets up the BGM track list for each music category number that exists in a map file. */
@@ -132,8 +139,12 @@ public class SoundPlayer {
     File f = new File("res/music/game/Standard/" + name);
     if (f.exists()) {
       try {        
+    	try {
         soundSystem.backgroundMusic(BGM, f.toURI().toURL(), name, true);
-        soundSystem.setVolume(BGM, 0.35f);        
+        soundSystem.setVolume(BGM, 0.35f);
+    	} catch (NullPointerException e) {
+          e.printStackTrace();
+    	}
       } catch (MalformedURLException e) {
         e.printStackTrace();
       }
@@ -201,7 +212,9 @@ public class SoundPlayer {
   /** This should be called when exiting the game. */
   public void shutDown() {
     if (soundSystem != null) {
+      Utilities.disableOutput();
       soundSystem.cleanup();
+      Utilities.enableOutput();
     }
   }
   

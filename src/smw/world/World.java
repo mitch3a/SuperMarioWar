@@ -29,10 +29,7 @@ import smw.world.Structures.FlagBaseLocation;
 import smw.world.Structures.Item;
 import smw.world.Structures.RaceGoalLocation;
 import smw.world.Structures.SpawnArea;
-import smw.world.Structures.Warp;
-import smw.world.Structures.WarpExit;
 import smw.world.Structures.WorldBuffer;
-import smw.world.Structures.Warp.Direction;
 import smw.world.blocks.AnimatedBlock;
 import smw.world.blocks.DonutBlock;
 import smw.world.blocks.FlipBlock;
@@ -46,6 +43,9 @@ import smw.world.blocks.SwitchControlBlock.Green;
 import smw.world.blocks.SwitchControlBlock.Red;
 import smw.world.blocks.SwitchControlBlock.Yellow;
 import smw.world.hazards.AnimatedHazard;
+import smw.world.warps.WarpEntrance;
+import smw.world.warps.WarpExit;
+import smw.world.warps.WarpBase.Direction;
 
 public class World {
     
@@ -82,7 +82,7 @@ public class World {
   //TODO this is temp... until there is a smarter way to update blocks on a change
   final static List<SolidBlock> blocks = new LinkedList<SolidBlock>();
 
-  Warp[][] warps;
+  WarpEntrance[][] warps;
   SpawnArea[][] spawnAreas;  
   
   final boolean[][][] nospawn;
@@ -115,7 +115,7 @@ public class World {
     //the "top" TileType. These collidables must be added after.
     Set<Collidable> collidablesForAfter = new HashSet<Collidable>();
     
-    warps = new Warp[MAP_WIDTH][MAP_HEIGHT];
+    warps = new WarpEntrance[MAP_WIDTH][MAP_HEIGHT];
     nospawn = new boolean[NUM_SPAWN_AREA_TYPES][MAP_WIDTH][MAP_HEIGHT];
     
     try {
@@ -573,7 +573,7 @@ public class World {
       
     if(player.physics.playerControl.isDown()){
       int yToCheck = (int)((player.y + Tile.SIZE + 1)/Tile.SIZE);
-      Warp result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.DOWN);
+      WarpEntrance result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.DOWN);
       if(result != null){
         player.warp(result, getWarpExit(result));
         return;
@@ -582,7 +582,7 @@ public class World {
     
     if(player.physics.playerControl.isUp()){
       int yToCheck = (int)((player.y - 1)/Tile.SIZE);
-      Warp result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.UP);
+      WarpEntrance result = testWarps((int)(player.x/Tile.SIZE), yToCheck, (int)((player.x + Tile.SIZE - 1)/Tile.SIZE), yToCheck, Direction.UP);
       
       if(result != null){
         player.warp(result, getWarpExit(result));
@@ -592,7 +592,7 @@ public class World {
     
     if(player.physics.playerControl.getDirection() < 0){
       int XToCheck = (int)((player.x - 1)/Tile.SIZE);
-      Warp result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.LEFT);
+      WarpEntrance result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.LEFT);
       if(result != null){
         player.warp(result, getWarpExit(result));
         return;
@@ -600,7 +600,7 @@ public class World {
     }
     else if(player.physics.playerControl.getDirection() > 0){
       int XToCheck = (int)((player.x + Tile.SIZE + 1)/Tile.SIZE);
-      Warp result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.RIGHT);
+      WarpEntrance result = testWarps(XToCheck, (int)(player.y/Tile.SIZE), XToCheck, (int)((player.y + Tile.SIZE - 1)/Tile.SIZE), Direction.RIGHT);
       if(result != null){
         player.warp(result, getWarpExit(result));
         return;
@@ -609,18 +609,18 @@ public class World {
   }
   
   //Returns a valid warp if hit warp
-  Warp testWarps(int column1, int row1, int column2, int row2, Direction direction){
+  WarpEntrance testWarps(int column1, int row1, int column2, int row2, Direction direction){
     if(row1 < 0 || column1 < 0 || row2 < 0 || column2 < 0 ||
        row1 >= warps[0].length || column1 >= warps.length || row2 >= warps[0].length || column2 >= warps.length){
       return null;//TODO there has got to be a smarter way to do this
     }
-    Warp warp = warps[column1][row1];
+    WarpEntrance warp = warps[column1][row1];
     
-    if(warp.id >= 0 && warp.connection >= 0){//TODO && warp.direction == direction){
+    if(warp.id >= 0 && warp.connection >= 0 && warp.direction == direction){
       //Need both that the player is touching to be same warp
-      Warp warp2 = warps[column2][row2];
+      WarpEntrance warp2 = warps[column2][row2];
       
-      if(warp2.id >= 0 && warp.id == warp2.id){//TODO  && warp2.direction == direction){
+      if(warp2.id >= 0 && warp.id == warp2.id && warp2.direction == direction){
         return warp;
       }
     }
@@ -628,7 +628,7 @@ public class World {
     return null;
   }
   
-  WarpExit getWarpExit(Warp warp){
+  WarpExit getWarpExit(WarpEntrance warp){
     //TODO WOW this is awful
     List<WarpExit> options = new ArrayList<WarpExit>();
     WarpExit sameAsWarp = null;
