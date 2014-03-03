@@ -2,11 +2,9 @@ package smw.ui.screen;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -35,6 +33,8 @@ public class GameFrame extends Canvas{
 	public static int res_height = 480;
 	public static double scaleFactorWidth = 1.5f;
 	public static double scaleFactorHeight = 1.5f;
+	 public static double scaleFactorScoreboardWidth = 1.5f;
+	  public static double scaleFactorScoreboardHeight = 1.5f;
 	public static int bumpFactor = 0;
 	private boolean bumpUp = false;
 	private boolean bumpDown = false;
@@ -56,7 +56,7 @@ public class GameFrame extends Canvas{
 	
 	
 	private Player[] players;
-	private Scoreboard sB;
+	private Scoreboard scoreboard;
 	private World world;
 	private Game game;
 	
@@ -70,7 +70,7 @@ public class GameFrame extends Canvas{
 	  this.game = game;
 	  this.players = players;
     this.world = world;
-    this.sB = new Scoreboard(this.players);
+    this.scoreboard = new Scoreboard(this.players);
     
     this.setSize(new Dimension((int)(res_width*scaleFactorWidth), (int)(res_height*scaleFactorHeight)));
     
@@ -158,8 +158,11 @@ public class GameFrame extends Canvas{
       }
       
       world.drawLayer2(g2d, this);
-      world.drawLayer3(g2d, this);      
-      sB.draw(g2d, this);
+      world.drawLayer3(g2d, this);   
+      
+      Graphics2D g2d2 = (Graphics2D)bs.getDrawGraphics();
+      g2d2.scale(scaleFactorScoreboardWidth, scaleFactorScoreboardHeight);
+      scoreboard.draw(g2d2, this);
     }
     g2d.dispose();
     // Display contents of buffer.
@@ -177,10 +180,14 @@ public class GameFrame extends Canvas{
     if(Debug.CLIP_MODE && Debug.CLIP_ZOOM_STRETCH){
       scaleFactorWidth =  (double)(getWidth())/CLIP_WINDOW_WIDTH;
       scaleFactorHeight = (double)(getHeight())/CLIP_WINDOW_HEIGHT;
+      scaleFactorScoreboardWidth = (double)(getWidth())/res_width;
+      scaleFactorScoreboardHeight = (double)(getHeight())/res_height;
     }
     else{
       scaleFactorWidth =  (double)(getWidth())/res_width;
       scaleFactorHeight = (double)(getHeight())/res_height;
+      scaleFactorScoreboardWidth = scaleFactorWidth;
+      scaleFactorScoreboardHeight = scaleFactorHeight;
     }
   }
   
