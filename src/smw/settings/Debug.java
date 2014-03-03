@@ -21,10 +21,10 @@ public class Debug {
   public static final boolean WINNER_TEXT = false;
   
   //FUN STUFF!!!!
-  public static boolean CLIP_MODE = true;
+  public static boolean CLIP_MODE = false;
   public static boolean CLIP_SHAPE_RECTANGLE = false;
-  public static boolean CLIP_SHAPE_KEEP_ASPECT_RATIO = true;
-  public static boolean CLIP_STRETCH = true;
+  public static boolean CLIP_SHAPE_KEEP_ASPECT_RATIO = false;
+  public static boolean CLIP_ZOOM_STRETCH = false;           //Zooms in (instead of just showing a spotlight around the screen)
   
   /** Prints the map name, version, and tilesets */
   public static void printAllMapsAndVersions(){

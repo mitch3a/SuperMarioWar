@@ -39,8 +39,8 @@ public class GameFrame extends Canvas{
 	private boolean bumpDown = false;
 	
 	//For doing zoom/clipping
-  private static final int CLIP_WINDOW_HEIGHT = 320; //if keeping aspect ratio, pick something doesn't leave a fractional width
-  private static final float HEIGHT_TO_WIDTH_FACTOR = Debug.CLIP_SHAPE_KEEP_ASPECT_RATIO ? (res_width/res_height) : 1.0f;
+  private static final int CLIP_WINDOW_HEIGHT = 160; //if keeping aspect ratio, pick something doesn't leave a fractional width
+  private static final float HEIGHT_TO_WIDTH_FACTOR = Debug.CLIP_SHAPE_KEEP_ASPECT_RATIO ? ((float)(res_width)/res_height) : 1.0f;
   private static final int CLIP_WINDOW_WIDTH = (int)(CLIP_WINDOW_HEIGHT*HEIGHT_TO_WIDTH_FACTOR);
   private static final int CLIP_WINDOW_SHIFT_X = CLIP_WINDOW_WIDTH/2 - Sprite.IMAGE_WIDTH/2;
   private static final int CLIP_WINDOW_SHIFT_Y = CLIP_WINDOW_HEIGHT/2 - Sprite.IMAGE_HEIGHT/2;
@@ -48,7 +48,7 @@ public class GameFrame extends Canvas{
   private static final int CLIP_MAX_Y = res_height - CLIP_WINDOW_HEIGHT;
   
   private static RectangularShape clipShape = Debug.CLIP_SHAPE_RECTANGLE ? new Rectangle(0, 0, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT) :
-                                                                           new Ellipse2D.Float(0, 0, CLIP_WINDOW_HEIGHT, CLIP_WINDOW_HEIGHT);
+                                                                           new Ellipse2D.Float(0, 0, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
 	
 	private JFrame frame;
 	private BufferStrategy bs;
@@ -126,7 +126,7 @@ public class GameFrame extends Canvas{
         int x = (int) Math.min(Math.max(players[0].x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
         int y = (int) Math.min(Math.max(players[0].y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
         
-        if(!Debug.CLIP_STRETCH){
+        if(!Debug.CLIP_ZOOM_STRETCH){
           clipShape.setFrame(x, y, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
           g2d.clip(clipShape);
         }
@@ -163,7 +163,7 @@ public class GameFrame extends Canvas{
   //      aspect ratio, but at the very least should be in there for now because
   //      it can help for debuggin
   void resetScalingFactors(){
-    if(Debug.CLIP_MODE && Debug.CLIP_STRETCH){
+    if(Debug.CLIP_MODE && Debug.CLIP_ZOOM_STRETCH){
       scaleFactorWidth =  (double)(getWidth())/CLIP_WINDOW_WIDTH;
       scaleFactorHeight = (double)(getHeight())/CLIP_WINDOW_HEIGHT;
     }
