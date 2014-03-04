@@ -168,16 +168,18 @@ public class Game implements Runnable {
     double timePerRender_ns = 1000000000.0 / FPS;
     long lastUpdateTime_ns = System.nanoTime();
     double neededUpdates = 0.0;
+    long currentTime_ns;
+    boolean needRender;
     
     // Record keeping to determine FPS and UPS.
     long secTimer = System.currentTimeMillis();
     int frames = 0;
     int updates = 0;
     while (running) {
-      final long currentTime_ns = System.nanoTime();
+      currentTime_ns = System.nanoTime();
       neededUpdates += (currentTime_ns - lastUpdateTime_ns) / timePerRender_ns;
       lastUpdateTime_ns = currentTime_ns;
-      boolean needRender = false; // TODO - need to figure out how we want our loop to work
+      needRender = false; // TODO - need to figure out how we want our loop to work
 
       updatePause();
       
