@@ -7,6 +7,10 @@ import smw.gfx.Sprite;
 import smw.world.Tile;
 
 public abstract class WarpExit extends WarpBase{
+  //TODO these values are only used because we currently expect a player to be 32x32. The original source
+  //     had players as w=22, h=25. Once that change goes in, this must be removed.
+  private final static int startOffSetY = 32 - 25;
+  private final static int startOffSetX = (32 - 22)/2;
   short lockx;
   short locky;
 
@@ -49,7 +53,7 @@ public abstract class WarpExit extends WarpBase{
 
     public Left(short connection, short id, short x, short y, 
                 short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, (short)(x - Tile.SIZE - (x % Tile.SIZE)), y, lockx, locky, warpx, warpy);
+      super(connection, id, (short)(x - Tile.SIZE - startOffSetX + 2), (short)(y - startOffSetY), lockx, locky, warpx, warpy);
       
     }
     
@@ -77,7 +81,7 @@ public abstract class WarpExit extends WarpBase{
 
     public Right(short connection, short id, short x, short y, 
                 short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, (short)(x + Tile.SIZE - (x % Tile.SIZE)), y, lockx, locky, warpx, warpy);
+      super(connection, id, (short)(x + Tile.SIZE - startOffSetX), (short)(y - startOffSetY), lockx, locky, warpx, warpy);
       
     }
     
@@ -105,7 +109,7 @@ public abstract class WarpExit extends WarpBase{
 
     public Up(short connection, short id, short x, short y, 
                 short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, x, (short)(y - Tile.SIZE - (y % Tile.SIZE)), lockx, locky, warpx, warpy);
+      super(connection, id, (short)(x - startOffSetX), (short)(y - Tile.SIZE-1), lockx, locky, warpx, warpy);
       
     }
     
@@ -134,7 +138,7 @@ public abstract class WarpExit extends WarpBase{
 
     public Down(short connection, short id, short x, short y, 
                 short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, x, (short)(y + Tile.SIZE - (y % Tile.SIZE)), lockx, locky, warpx, warpy);
+      super(connection, id, (short)(x - startOffSetX), (short)(y + Tile.SIZE - startOffSetY + 1), lockx, locky, warpx, warpy);
       
     }
     

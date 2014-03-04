@@ -123,7 +123,7 @@ public class GameFrame extends Canvas{
       game.menu.draw(g2d, this);
     } else {
       
-      if(Debug.CLIP_MODE && Scoreboard.winningPlayer == null){
+      if(Debug.CLIP_MODE && (Scoreboard.winningPlayer == null || Debug.CLIP_ZOOM_STRETCH)){
         if(!Debug.CLIP_ZOOM_STRETCH){
           Area a = new Area();
           
