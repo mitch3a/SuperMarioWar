@@ -175,12 +175,12 @@ public class Font {
 		graphics.drawImage(getSingleDigitScore(score%10, ScoreType.COLOR), x, y, observer);
 	}
 	
-	public void drawText(Graphics2D graphics, BufferedImage[] font, String text, int x, int y, ImageObserver observer){
+	public void drawText(Graphics2D graphics, BufferedImage[] font, char[] charArray, int x, int y, ImageObserver observer){
 	  if(x < 0){
 	    x += GameFrame.res_width;
 	  }
-		char[] array = text.toCharArray();
-		for(char c : array){
+
+		for(char c : charArray){
 			BufferedImage i = getChar(font, c);
 			if(i != null){
 				graphics.drawImage(i, x, y, observer);
@@ -199,12 +199,12 @@ public class Font {
 		}
 	}
 	
-	public void drawLargeText(Graphics2D graphics, String text, int x, int y, ImageObserver observer){
-		drawText(graphics, largeFont, text, x, y, observer);
+	public void drawLargeText(Graphics2D graphics, char[] charArray, int x, int y, ImageObserver observer){
+		drawText(graphics, largeFont, charArray, x, y, observer);
 	}
 	
-	public void drawSmallText(Graphics2D graphics, String text, int x, int y, ImageObserver observer){
-		drawText(graphics, smallFont, text, x, y, observer);
+	public void drawSmallText(Graphics2D graphics, char[] charArray, int x, int y, ImageObserver observer){
+		drawText(graphics, smallFont, charArray, x, y, observer);
 	}
 	
 	public Image getSingleDigitScore(int i, ScoreType type){
@@ -224,12 +224,10 @@ public class Font {
   }
 
   //TODO this is AWFUL but only called once at the beginning so not bad for now
-  public BufferedImage getLargeText(String string) {
+  public BufferedImage getLargeText(char[] charArray) {
     int width = 0;
     int height;
-    
-    char[] charArray = string.toCharArray();
-    
+        
     for(char c : charArray){
       width += getLarge(c).getWidth();
     }

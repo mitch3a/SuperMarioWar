@@ -10,7 +10,7 @@ public class WinnerText {
   private static final float WINNER_TEXT_ACCELERATION =.5f;
   private static final float WINNER_TEXT_STARTING_VELOCITY = -10;
   public static final long TIME_BETWEEN_WINNERS_MS = 300;
-  public static final String winningString = "Winner!";
+  public static final char[] winningString = {'W','i','n','n','e','r','!'};
   public static final BufferedImage winnerImage = Font.getInstance().getLargeText(winningString);
   public static final int WINNER_TEXT_WIDTH = winnerImage.getWidth();
   float y;

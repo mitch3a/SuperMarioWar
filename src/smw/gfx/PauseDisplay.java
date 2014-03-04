@@ -12,7 +12,7 @@ import smw.ui.screen.GameFrame;
 //     so that if sound was off, you'd still realize it was paused (and 
 //     not think everything was broken!
 public class PauseDisplay implements Drawable{
-  public static final String pauseString = "Paused";
+  public static final char[] pauseString = {'P','a','u','s','e','d'};
   public static final BufferedImage pauseImage = Font.getInstance().getLargeText(pauseString);
   public static final int X = (GameFrame.res_width - pauseImage.getWidth() )/2;
   public static final int Y = (GameFrame.res_height- pauseImage.getHeight())/2;

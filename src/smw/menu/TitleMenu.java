@@ -23,14 +23,14 @@ public class TitleMenu extends Menu {
   /** Encapsulates all data needed for a menu item. */
   final class MenuItem {
     public ItemType type;
-    public String label;
+    public char[] label;
     public int length;
     public int x;
     public int y;
 
     public MenuItem(ItemType type, String label, int length, int x, int y) {
       this.type = type;
-      this.label = label;
+      this.label = label.toCharArray();
       this.length = length;
       this.x = x;
       this.y = y;
@@ -133,7 +133,7 @@ public class TitleMenu extends Menu {
    * @param y The graphics y pixel coordinate.
    */
   // TODO - probably need a way to specify if it's selected or not, that will change which pipe images we use from the sprite sheet!
-  public void drawPipeField(Graphics2D g, String text, int length, int x, int y) {
+  public void drawPipeField(Graphics2D g, char[] text, int length, int x, int y) {
     final int segments = (length / PIPE_TILE_SIZE) - 2;
     final int leftOver = length % PIPE_TILE_SIZE;
     final int textX = x + PIPE_TEXT_OFFSET_X;
@@ -156,7 +156,7 @@ public class TitleMenu extends Menu {
   }
     
   // TODO
-  public void drawPlayerSelectField(Graphics2D g, String text, int x, int y) {
+  public void drawPlayerSelectField(Graphics2D g, char[] text, int x, int y) {
     Font font = Font.getInstance();
     
     g.drawImage(leftField, x, y, null);
@@ -195,7 +195,8 @@ public class TitleMenu extends Menu {
     switch (m.type) {
     case PIPE:
       // drawPipeField(g, m.label, m.length, m.x, m.y);
-      drawPipeField(g, "TEST TODO", m.length, m.x, m.y);
+      String temp = "TEST TODO";
+      drawPipeField(g, temp.toCharArray(), m.length, m.x, m.y);
       break;
     case PLAYER_SELECT:
       drawPlayerSelectField(g, m.label, m.x, m.y);
