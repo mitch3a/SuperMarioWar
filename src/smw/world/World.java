@@ -679,7 +679,8 @@ public class World {
     newX = (newX + GameFrame.res_width) % GameFrame.res_width;
     
     if (player.x != newX){
-      if (player.x < newX) {  
+      //TODO not the best way to check if its on the edge but good enough for now
+      if (player.x < newX && player.x + 500 > newX) {  
         //Moving Right so check the right side of the sprite with the left side of the object
         int xCollision = (int)(((newX + Sprite.IMAGE_HEIGHT)% GameFrame.res_width)/Tile.SIZE);
         
