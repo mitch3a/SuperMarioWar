@@ -288,8 +288,6 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	    return;
 	  }
 	  
-	  BufferedImage image = sprite.getImage();
-	  
 	  if(warpingIn){
 	    warpEntrance.draw(graphics, observer);
 	  }
@@ -297,7 +295,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	    warpExit.draw(graphics, observer);
 	  }
 	  else{
-	    graphics.drawImage(image, (int)x, (int)y, observer);
+	    graphics.drawImage(sprite.getImage(), (int)x, (int)y, observer);
 	  }
 	  
 	  // Handle player idle time.

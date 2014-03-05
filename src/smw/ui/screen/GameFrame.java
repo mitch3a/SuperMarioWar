@@ -53,13 +53,14 @@ public class GameFrame extends Canvas{
 	
 	private JFrame frame;
 	private BufferStrategy bs;
-	
+	private final Area area = new Area();
 	
 	private Player[] players;
 	private Scoreboard scoreboard;
 	private World world;
 	private Game game;
 	
+	private int tempX, tempY;
 	/**
 	 * Creates the frame to display the game.
 	 * @param players
@@ -125,25 +126,25 @@ public class GameFrame extends Canvas{
       
       if(Debug.CLIP_MODE && (Scoreboard.winningPlayer == null || Debug.CLIP_ZOOM_STRETCH)){
         if(!Debug.CLIP_ZOOM_STRETCH){
-          Area a = new Area();
+          area.reset();
           
           for(Player p : players){
             if(!p.isOut()){
-              int x = (int) Math.min(Math.max(p.x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
-              int y = (int) Math.min(Math.max(p.y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
+              tempX = (int) Math.min(Math.max(p.x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
+              tempY = (int) Math.min(Math.max(p.y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
               
-              clipShape.setFrame(x, y, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
-              a.add(new Area(clipShape));
+              clipShape.setFrame(tempX, tempY, CLIP_WINDOW_WIDTH, CLIP_WINDOW_HEIGHT);
+              area.add(new Area(clipShape));
             }
           }
           
-          g2d.setClip(a);
+          g2d.setClip(area);
         }
         else{
-          int x = (int) Math.min(Math.max(players[0].x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
-          int y = (int) Math.min(Math.max(players[0].y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
+          tempX = (int) Math.min(Math.max(players[0].x - CLIP_WINDOW_SHIFT_X,  0), CLIP_MAX_X);
+          tempY = (int) Math.min(Math.max(players[0].y - CLIP_WINDOW_SHIFT_Y,  0), CLIP_MAX_Y);
           g2d.clip(clipShape);
-          g2d.translate(-x, -y);
+          g2d.translate(-tempX, -tempY);
         }
       }
       

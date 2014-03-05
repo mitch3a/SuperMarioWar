@@ -72,9 +72,9 @@ public class Game implements Runnable {
       "MrMister_Dirty Pipes.map" //26 tons of warps
     };   
 
-    world = new World(worlds[26]);
+    //world = new World(worlds[26]);
 
-    //world = new World(); // Starts a random world (for now)
+    world = new World(); // Starts a random world (for now)
         
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world, this);
