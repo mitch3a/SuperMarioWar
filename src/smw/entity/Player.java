@@ -97,10 +97,10 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
     //TODO mk not sure how i feel about this
 		AboveArrow arrow = new AboveArrow(this);
-		Game.world.drawablesLayer3.add(arrow);
-		Game.world.updatables.add(arrow);
-    Game.world.updatables.add(spawnAnimation);
-    Game.world.drawablesLayer2.add(spawnAnimation);
+		Game.world.addDrawable(arrow, 3);
+		Game.world.addUpdatable(arrow);
+    Game.world.addUpdatable(spawnAnimation);
+    Game.world.addDrawable(spawnAnimation, 2);
 	}
 	
 	private void initForSpawn(){
@@ -109,8 +109,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
     Game.world.setSpawnPoint(this);
     spawnAnimation = new SpawnAnimation((int)x, (int)y, color);
     //TODO mk not sure how i feel about this
-    Game.world.updatables.add(spawnAnimation);
-    Game.world.drawablesLayer2.add(spawnAnimation);
+    Game.world.addUpdatable(spawnAnimation);
+    Game.world.addDrawable(spawnAnimation, 2);
     sprite.setJumping();
 	}
 	

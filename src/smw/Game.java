@@ -23,6 +23,7 @@ public class Game implements Runnable {
   public static World world;
   public static SoundPlayer soundPlayer = new SoundPlayer();
   private static PlayerControlBase[] pc;
+  private static final PauseDisplay pauseDisplay = new PauseDisplay();
   
   /** The desired frames per second. */
   public double FPS = 60.0;
@@ -72,9 +73,9 @@ public class Game implements Runnable {
       "MrMister_Dirty Pipes.map" //26 tons of warps
     };   
 
-    //world = new World(worlds[26]);
+    world = new World(worlds[23]);
 
-    world = new World(); // Starts a random world (for now)
+    //world = new World(); // Starts a random world (for now)
         
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world, this);
@@ -218,6 +219,63 @@ public class Game implements Runnable {
     }
   }
   
+  /*This version is to to more accurately depict time. I believe it also is more effience
+   * mathematically
+   *  
+  public void run() {
+    // Time between renders in nanoseconds (1 sec / FPS).
+    double timePerRender_ns = 1000000000.0 / FPS;
+    long lastUpdateTime_ns = System.nanoTime();
+    long timeSinceLastUpdate = 0;
+    long currentTime_ns;
+    boolean needRender;
+    
+    // Record keeping to determine FPS and UPS.
+    long secTimer = System.currentTimeMillis();
+    int frames = 0;
+    int updates = 0;
+    while (running) {
+      currentTime_ns = System.nanoTime();
+      timeSinceLastUpdate = currentTime_ns - lastUpdateTime_ns;
+      needRender = false; // TODO - need to figure out how we want our loop to work
+
+      updatePause();
+      
+      if (timeSinceLastUpdate >= timePerRender_ns) {
+        updates++;
+        needRender = true;
+        lastUpdateTime_ns = currentTime_ns;
+      }
+      
+      try {
+        Thread.sleep(2);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      
+      if (needRender) {
+        for (Player p : players) {
+          p.poll();
+        }
+        
+        if(!paused){
+          updateGame(timeSinceLastUpdate);
+        }
+        
+        render();
+        frames++;
+      }
+      
+      if (System.currentTimeMillis() - secTimer > 1000) {
+        if(Debug.LOG_FRAMERATE) System.out.println("FPS " + frames + " UPS " + updates);
+        secTimer += 1000;
+        frames = 0;
+        updates = 0;
+      }
+      
+    }
+  }
+   */
   private void updatePause(){
     if(!paused){
       for(int i = 0 ; i < players.length ; ++i){
@@ -225,7 +283,7 @@ public class Game implements Runnable {
           soundPlayer.sfxPause();
           pausePlayer = i;
           paused = true;
-          world.drawablesLayer3.add(new PauseDisplay());
+          world.addDrawable(pauseDisplay, 3);
           pauseState = 0;
           break;
         }
@@ -281,7 +339,7 @@ public class Game implements Runnable {
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
-    float timeDelta_ms = (int)(timeDelta_ns) / 1000000;
+    float timeDelta_ms = (float) (timeDelta_ns)/1000000;
     world.update(timeDelta_ms);
   	
   	for (Player p : players) {

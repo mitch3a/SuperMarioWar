@@ -1,6 +1,7 @@
 package smw.world.hazards;
 
 import smw.Game;
+import smw.entity.Player;
 
 @SuppressWarnings("serial")
 public abstract class OilFlame extends AnimatedHazard{
@@ -28,6 +29,11 @@ public abstract class OilFlame extends AnimatedHazard{
         reset();
       }
     }
+  }
+  
+  @Override
+  public boolean kills(Player player) {  
+    return isAnimating && player.intersects(this);
   }
 
   @Override

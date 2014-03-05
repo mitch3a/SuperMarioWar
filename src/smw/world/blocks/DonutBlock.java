@@ -58,7 +58,7 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
     if(playerOnTopTime > MAX_TIME_PLAYER_ON_TOP_WITHOUT_FALLING){
       playerOnTop = false;
       isFalling = true;
-      Game.world.movingCollidables.add(this);
+      Game.world.addMovingCollidable(this);
     }
     
     if(playerOnTop && !isFalling){
@@ -141,5 +141,10 @@ public class DonutBlock extends SolidBlock implements Updatable, MovingCollidabl
   @Override
   public boolean willDrag(){
     return isFalling;
+  }
+
+  @Override
+  public boolean kills(Player player) {
+    return false;//Realistically, it will have fallen past the spawn point before spawning
   }
 }

@@ -36,4 +36,9 @@ public class FireBall extends AnimatedHazard{
     //TODO all this casting is probably not worth it
     offsetX = (offsetX + (int)width)%((int)tileSheet.getWidth());
   }
+
+  @Override
+  public boolean kills(Player player) {
+    return intersects(player);
+  }
 }

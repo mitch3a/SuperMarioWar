@@ -199,4 +199,12 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
   public boolean shouldBeRemoved() {
     return false;
   }
+
+  @Override
+  public boolean kills(Player player) {
+    Collidable temp = getCollidable(player.x, player.y);
+    
+    //TODO might want to make sure its lethal but this is good enough for now
+    return temp != null;
+  }
 }

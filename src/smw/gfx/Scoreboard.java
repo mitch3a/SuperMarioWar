@@ -22,6 +22,7 @@ public class Scoreboard {
 	Point[] spriteStart;
 	Point[] scoreStart;
 	Color shadeColor;
+	//TODO this should probably not exist. It should be added to drawables and updateables
 	ArrayList<WinnerText> winnerTextList = new ArrayList<WinnerText>();
 	long timeLastWinnerBorn;
 	public static Player winningPlayer = null;
@@ -80,6 +81,7 @@ public class Scoreboard {
 	  else{
   	  long currentTime = System.currentTimeMillis();
   	  if(Debug.WINNER_TEXT && currentTime > timeLastWinnerBorn + WinnerText.TIME_BETWEEN_WINNERS_MS){
+  	    //TODO this should be made into a pool so that they aren't created on the fly
   	    WinnerText temp = new WinnerText((int)winningPlayer.x, winningPlayer.y);
   	    winnerTextList.add(temp);
   	    

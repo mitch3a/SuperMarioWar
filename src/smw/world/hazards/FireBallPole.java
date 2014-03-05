@@ -89,4 +89,23 @@ public class FireBallPole extends AnimatedHazard{
     //TODO all this casting is probably not worth it
     offsetX = (offsetX + (int)width)%((int)tileSheet.getWidth());
   }
+
+  @Override
+  public boolean kills(Player player) {    
+    float currentX = x;
+    float currentY = y;
+    float xForBalls = path.getX();
+    float yForBalls = path.getY();
+    
+    for(int i = 0 ; i < numBalls ; ++i){
+      if(player.intersects(currentX, currentY, width, height)){
+        return true;
+      }
+      
+      currentX += xForBalls;
+      currentY += yForBalls;
+    }
+    
+    return false;
+  }
 }
