@@ -13,9 +13,6 @@ public class Debug {
   public static final boolean LOG_FRAMERATE = false;
   public static final boolean LOG_WORLD_INFO = true;
   public static final boolean LOG_TILE_TYPE_INFO = false;
-  public static final boolean MUTE = false;
-  public static final boolean MUTE_SFX = false;
-  public static final boolean MUTE_MUSIC = true;
   public static boolean PLAYER_DEATH_IDLE = false;
   public static boolean PLAYER_DEATH_OFFSCREEN_TIMER = false;
   public static final boolean WINNER_TEXT = false;
