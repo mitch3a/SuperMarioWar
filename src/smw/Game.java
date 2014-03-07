@@ -6,6 +6,7 @@ import smw.entity.Player;
 import smw.gfx.PauseDisplay;
 import smw.menu.*;
 import smw.settings.Debug;
+import smw.settings.Settings;
 import smw.sound.SoundPlayer;
 import smw.ui.GamePad;
 import smw.ui.Keyboard;
@@ -38,6 +39,17 @@ public class Game implements Runnable {
   private int pausePlayer;
   
   public Game(final int numPlayers) {
+    //TODO move this to the menu once it is fully implemented. For now, use this
+    //     place to set to what you want
+    
+    Settings settings = Settings.getInstance();
+    
+    settings.setStretchMode(false);
+    settings.setFullscreen(false);
+    settings.setVolumeSFX(1.0f);
+    settings.setVolumeMaster(0.0f);
+    settings.saveSettings();
+    
     // TODO - RPG work in progress
     //setMenu(new TitleMenu());
     
@@ -82,17 +94,12 @@ public class Game implements Runnable {
   	
   	soundPlayer.setTrackList(world.getMusicCategoryID());
   	soundPlayer.playBGM();
-  	if (Debug.MUTE) {
-      soundPlayer.setMasterVolume(0);
-    }
-    if (Debug.MUTE_MUSIC) {
-      soundPlayer.setBGMVolume(0);
-    }
-    if (Debug.MUTE_SFX) {
-      soundPlayer.setSFXVolume(0);
-    }
+  	
+
   	
     pc = new PlayerControlBase[numPlayers]; 
+
+    
 
     // TODO - check for game pads, then default to keyboard--probably allow the user to change this in settings later.
     // Start with checking for Xbox controller if running Windows.

@@ -10,7 +10,7 @@ import paulscode.sound.codecs.CodecWav;
 import paulscode.sound.libraries.LibraryJavaSound;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 import smw.Utilities;
-import smw.settings.Debug;
+import smw.settings.Settings;
 import smw.world.World;
 
 /**
@@ -44,21 +44,23 @@ public class SoundPlayer {
   /** Constructs the sound player. */
   public SoundPlayer() {    
 	  soundSystem = new SoundSystem();
-	  /*
 	  try {
-      soundSystem = SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
+      soundSystem = new SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
         LibraryLWJGLOpenAL.class : LibraryJavaSound.class);
       SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
       SoundSystemConfig.setCodec("wav", CodecWav.class);
-      */
-      setMasterVolume(masterVol);
+
+      Settings settings = Settings.getInstance();
+      setMasterVolume(settings.getVolumeMaster());
+      setBGMVolume(settings.getVolumeBGM());
+      setSFXVolume(settings.getVolumeSFX());
       
       setupBGMList();
       setupSfx();
-    /*
+
     } catch (SoundSystemException e)  {
       System.err.println("Error linking sound plugins!");
-    }*/
+    }
   }
   
   /** Sets up the BGM track list for each music category number that exists in a map file. */

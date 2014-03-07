@@ -3,11 +3,13 @@ package smw.ui.screen;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
@@ -22,6 +24,7 @@ import smw.entity.Player;
 import smw.gfx.Scoreboard;
 import smw.gfx.Sprite;
 import smw.settings.Debug;
+import smw.settings.Settings;
 import smw.world.World;
 
 public class GameFrame extends Canvas{
@@ -33,8 +36,8 @@ public class GameFrame extends Canvas{
 	public static int res_height = 480;
 	public static double scaleFactorWidth = 1.5f;
 	public static double scaleFactorHeight = 1.5f;
-	 public static double scaleFactorScoreboardWidth = 1.5f;
-	  public static double scaleFactorScoreboardHeight = 1.5f;
+	public static double scaleFactorScoreboardWidth = 1.5f;
+	public static double scaleFactorScoreboardHeight = 1.5f;
 	public static int bumpFactor = 0;
 	private boolean bumpUp = false;
 	private boolean bumpDown = false;
@@ -59,7 +62,7 @@ public class GameFrame extends Canvas{
 	private Scoreboard scoreboard;
 	private World world;
 	private Game game;
-	
+
 	private int tempX, tempY;
 	/**
 	 * Creates the frame to display the game.
@@ -82,9 +85,9 @@ public class GameFrame extends Canvas{
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
     frame.setResizable(true);
-    frame.add(this, BorderLayout.CENTER);
+    frame.add(this, BorderLayout.CENTER);    
     frame.pack();
-    
+
     // If the window is closed perform any needed shutdown cleanup.
     frame.addWindowListener(new WindowAdapter() {
       @Override
@@ -94,12 +97,26 @@ public class GameFrame extends Canvas{
       }
     });
     
-    // TODO - this is broken, I think we don't want to be able to resize the window anyway.
-    frame.addComponentListener(new ComponentAdapter() {
+    Settings settings = Settings.getInstance();
+    if(settings.isFullscreen()){
+      frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+      frame.addComponentListener(new ComponentAdapter() {
         public void componentResized(ComponentEvent e) {
-            resetScalingFactors();
+        
         }
-    });
+       
+        public void componentMoved(ComponentEvent e) {
+          frame.setLocation(0,0);
+        }
+      });
+	  }
+    else{
+      frame.addComponentListener(new ComponentAdapter() {
+        public void componentResized(ComponentEvent e) {
+          resetScalingFactors();
+        }
+      });
+    }
     
     resetScalingFactors();
     
@@ -171,22 +188,44 @@ public class GameFrame extends Canvas{
     Toolkit.getDefaultToolkit().sync();
   }
   
+  synchronized void resetScalingFactors(){
+    double width = frame.getWidth();
+    double height = frame.getHeight();
     
-  // TODO - probably only want to change screen size in settings anyway...
-  // mk - I disagree. I kind of hate how the regular game will only let you 
-  //      go full screen or tiny screen. I think it needs work like maintaining
-  //      aspect ratio, but at the very least should be in there for now because
-  //      it can help for debuggin
-  void resetScalingFactors(){
+    Settings settings = Settings.getInstance();
+    if(!settings.isStretchMode()){
+      double desiredRatio = (((double)res_width)/res_height);
+      double actualRatio = (width/height);
+      
+      if(actualRatio == desiredRatio){
+        return;
+      }
+      
+      if( actualRatio > desiredRatio){
+        //Too wide so tone back width
+        height -= (height % 3);
+        width = height*desiredRatio;
+      }
+      else{
+        //Too tall so tone back height
+        
+        width -= (width % 4);
+        height = width/desiredRatio;
+      }
+      
+      //TODO not sure wtf is wrong with this mk
+      //frame.setSize((int)width, (int)height);
+    }
+    
     if(Debug.CLIP_MODE && Debug.CLIP_ZOOM_STRETCH){
-      scaleFactorWidth =  (double)(getWidth())/CLIP_WINDOW_WIDTH;
-      scaleFactorHeight = (double)(getHeight())/CLIP_WINDOW_HEIGHT;
-      scaleFactorScoreboardWidth = (double)(getWidth())/res_width;
-      scaleFactorScoreboardHeight = (double)(getHeight())/res_height;
+      scaleFactorWidth =  width/CLIP_WINDOW_WIDTH;
+      scaleFactorHeight = height/CLIP_WINDOW_HEIGHT;
+      scaleFactorScoreboardWidth = width/res_width;
+      scaleFactorScoreboardHeight = height/res_height;
     }
     else{
-      scaleFactorWidth =  (double)(getWidth())/res_width;
-      scaleFactorHeight = (double)(getHeight())/res_height;
+      scaleFactorWidth =  width/res_width;
+      scaleFactorHeight = height/res_height;
       scaleFactorScoreboardWidth = scaleFactorWidth;
       scaleFactorScoreboardHeight = scaleFactorHeight;
     }
