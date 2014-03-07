@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 import smw.Drawable;
+import smw.ui.screen.GameFrame;
 
 /* 
  * Each tile has an image the is drawn for it
@@ -53,7 +54,7 @@ public class Tile implements Drawable {
    * @param observer
    */
   public void draw(Graphics2D graphics, ImageObserver observer) {
-    if (hasImage) {
+    if(hasImage){
       graphics.drawImage(tileSheet.getTileImg(tileSheetX, tileSheetY), x, y, observer);
     }
   }
@@ -64,8 +65,35 @@ public class Tile implements Drawable {
    * @param observer
    */
   public void draw(Graphics2D graphics, int overrideX, int overrideY, ImageObserver observer) {
-    if (hasImage) {
-      graphics.drawImage(tileSheet.getTileImg(tileSheetX, tileSheetY), overrideX, overrideY, observer);
+    if (hasImage) {    
+      //Make sure we only draw within the screen bounds
+      BufferedImage image = tileSheet.getTileImg(tileSheetX, tileSheetY);
+      //Right side of screen
+      int width = Math.min(image.getWidth(),   GameFrame.res_width  - overrideX);
+      //Bottom of screen
+      int height = Math.min(image.getHeight(), GameFrame.res_height - overrideY);
+      
+      //Left side of screen
+      if(overrideX < 0){
+        if(overrideX + width < 0){
+          return;
+        }
+        
+        width += overrideX; 
+        overrideX = 0;
+      }
+      
+      //Top of screen
+      if(overrideY < 0){
+        if(overrideY + height < 0){
+          return;
+        }
+        
+        height += overrideY; 
+        overrideY = 0;
+      }
+      
+      graphics.drawImage(image, overrideX, overrideY, width, height, observer);
     }
   }
   

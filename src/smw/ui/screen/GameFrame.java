@@ -181,6 +181,7 @@ public class GameFrame extends Canvas{
       Graphics2D g2d2 = (Graphics2D)bs.getDrawGraphics();
       g2d2.scale(scaleFactorScoreboardWidth, scaleFactorScoreboardHeight);
       scoreboard.draw(g2d2, this);
+      g2d2.dispose();
     }
     g2d.dispose();
     // Display contents of buffer.

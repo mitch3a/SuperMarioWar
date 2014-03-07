@@ -43,6 +43,7 @@ public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
     for(int i = 0 ; i < tiles.length ; ++i){
      for(int j = 0 ; j < tiles[i].length ; ++j){
        tiles[i][j].draw(graphics, (int)collidables[i][j].x, (int)collidables[i][j].y, observer);
+       
        if(collidables[i][j].x > GameFrame.res_width - Tile.SIZE){
          tiles[i][j].draw(graphics, ((int)collidables[i][j].x) - GameFrame.res_width, (int)collidables[i][j].y, observer);
        }
