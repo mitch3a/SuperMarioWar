@@ -1,4 +1,6 @@
-package smw.world;
+package smw.menu;
+
+import smw.world.World;
 
 public class WorldPreview extends World{
   //Top left point of where the image will be drawn

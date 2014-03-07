@@ -1,6 +1,6 @@
 package smw;
 
-import smw.world.WorldPreviewTest;
+import smw.menu.WorldPreviewTest;
 
 public class Main {
 	public static void main(String[] args) {

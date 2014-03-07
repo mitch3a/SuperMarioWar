@@ -1,4 +1,4 @@
-package smw.world;
+package smw.menu;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;

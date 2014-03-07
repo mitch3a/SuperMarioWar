@@ -1,4 +1,4 @@
-package smw.world;
+package smw.menu;
 
 import java.util.HashSet;
 import java.util.Set;
