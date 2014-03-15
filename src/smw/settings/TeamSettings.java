@@ -1,13 +1,9 @@
 package smw.settings;
 
 import java.util.Properties;
-import java.util.logging.Logger;
-
-import smw.settings.GamePlaySettings.ShieldStyle;
 
 public class TeamSettings implements SubSetting{
   static final String CATEGORY_NAME = "Team";
-  static final Logger logger = Logger.getLogger(TeamSettings.class.getName());
   
   static final String KEY_PLAYER_COLLISION = "PlayerCollision";
   static final String KEY_COLORS = "Colors";

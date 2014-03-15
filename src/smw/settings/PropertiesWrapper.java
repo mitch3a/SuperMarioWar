@@ -2,6 +2,7 @@ package smw.settings;
 
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PropertiesWrapper {
@@ -24,7 +25,7 @@ public class PropertiesWrapper {
         try{
           input.close();  
         } catch(Exception e){
-          logger.warning(e.toString());
+          logger.log(Level.WARNING, "Could not close input file.", e);
         }
       }
     }
@@ -45,7 +46,7 @@ public class PropertiesWrapper {
       try{
         return Float.parseFloat(prop.getProperty(key));
       } catch(Exception e){
-        logger.warning(e.toString());
+        logger.log(Level.WARNING, "Could not parse Float for key " + key, e);
       }
     }
     
@@ -57,7 +58,7 @@ public class PropertiesWrapper {
       try{
         return Integer.parseInt(prop.getProperty(key));
       } catch(Exception e){
-        logger.warning(e.toString());
+        logger.log(Level.WARNING, "Could not parse Integer for key " + key, e);
       }
     }
     
@@ -69,7 +70,7 @@ public class PropertiesWrapper {
 		  try{
 		    return prop.getProperty(key, defaultValue);
       } catch(Exception e){
-        logger.warning(e.toString());
+        logger.log(Level.WARNING, "Could not parse String for key " + key, e);
       }
 		}
 		
@@ -81,7 +82,7 @@ public class PropertiesWrapper {
       try{
         return Enum.valueOf(c, prop.getProperty(key));
       } catch(Exception e){
-        logger.warning(e.toString());
+        logger.log(Level.WARNING, "Could not parse Enum in class " + c.getName() + " for key " + key, e);
       }
     }
     

@@ -1,12 +1,10 @@
 package smw.settings;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 
 public class GamePlaySettings implements SubSetting{
   static final String CATEGORY_NAME = "GamePlay";
-  static final Logger logger = Logger.getLogger(GamePlaySettings.class.getName());
   
   static final String KEY_RESPAWN_TIME    = "RespawnTime";
   static final String KEY_SHIELD_STYLE    = "ShieldStyle";
