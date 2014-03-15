@@ -44,13 +44,13 @@ public class GamePlaySettings implements SubSetting{
   
   float respawnTime;
   ShieldStyle shieldStyle;
-  float shieldTime = 1.0f;
-  float boundsTime = 5.0f;
-  float suicideTime = 5.0f;
-  WarpLockStyle warpLockStyle = WarpLockStyle.allWarps;
-  float warpLockTime = 3.0f;
-  BotDifficulty botDifficulty = BotDifficulty.easy;
-  PointSpeed pointSpeed = PointSpeed.fast;
+  float shieldTime;
+  float boundsTime;
+  float suicideTime;
+  WarpLockStyle warpLockStyle;
+  float warpLockTime;
+  BotDifficulty botDifficulty;
+  PointSpeed pointSpeed;
   
   public GamePlaySettings(PropertiesWrapper prop){
     respawnTime = prop.getFloat(KEY_RESPAWN_TIME, DEFAULT_RESPAWN_TIME);
