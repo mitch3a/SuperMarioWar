@@ -24,13 +24,15 @@ public abstract class Menu {
     public int length;
     public int x;
     public int y;
+    public boolean centerText;
 
-    public MenuItem(ItemType type, String label, int length, int x, int y) {
+    public MenuItem(ItemType type, String label, int length, int x, int y, boolean centerText) {
       this.type = type;
       this.label = label;
       this.length = length;
       this.x = x;
       this.y = y;
+      this.centerText = centerText;
     }
   }
   
@@ -50,7 +52,7 @@ public abstract class Menu {
   private static final int GRAY_SEL = 3;
   
   /** The background image. */
-  private BufferedImage backgroundImg;
+  protected BufferedImage backgroundImg;
   
   /** Pipe menu field images, indexed by: left/middle/right, green/gray selected or not. */
   private BufferedImage pipes[][] = new BufferedImage[3][4]; 
@@ -60,6 +62,8 @@ public abstract class Menu {
   
   /** Blue field images, to be index by: left/middle/right. */
   private BufferedImage blueField[] = new BufferedImage[3];
+  
+  protected BufferedImage titleImg;
   
   /** Constructor to read in all of the needed image files to create menus. */
   Menu() {
@@ -71,13 +75,11 @@ public abstract class Menu {
       
       // Read title, implement transparency, then center on top of background image.
       BufferedImage tempImg = ImageIO.read(this.getClass().getClassLoader().getResource("menu/menu_smw.png"));
-      BufferedImage titleImg = new BufferedImage(tempImg.getWidth(), tempImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+      titleImg = new BufferedImage(tempImg.getWidth(), tempImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
       titleImg.getGraphics().drawImage(tempImg, 0, 0, null);
       Palette p = Palette.getInstance();
       p.loadPalette();
       p.implementTransparent(titleImg);
-      Graphics2D g = backgroundImg.createGraphics();
-      g.drawImage(titleImg, (backgroundImg.getWidth() - titleImg.getWidth()) / 2, 30, null);
       
       // Read the sprite sheet for the pipe menu fields.
       tempImg = ImageIO.read(this.getClass().getClassLoader().getResource("menu/menu_selectfield.png"));
@@ -166,10 +168,10 @@ public abstract class Menu {
   public void drawMenuItem(Graphics2D g, MenuItem m, boolean selected) {
     switch (m.type) {
     case PIPE_GREEN:
-      drawPipeField(g, m.label, m.length, m.x, m.y, selected ? GRN_SEL : GRN_NOT_SEL);
+      drawPipeField(g, m.label, m.length, m.x, m.y, selected ? GRN_SEL : GRN_NOT_SEL, m.centerText);
       break;
     case PIPE_GRAY:
-      drawPipeField(g, m.label, m.length, m.x, m.y, selected ? GRAY_SEL : GRAY_NOT_SEL);
+      drawPipeField(g, m.label, m.length, m.x, m.y, selected ? GRAY_SEL : GRAY_NOT_SEL, m.centerText);
       break;
     case PLAYER_SELECT:
       drawPlayerSelectField(g, m.label, m.x, m.y, selected);
@@ -185,10 +187,10 @@ public abstract class Menu {
    * @param x
    * @param y
    */
-  public void drawBlueField(Graphics2D g, String text, int length, int x, int y) {
+  public void drawBlueField(Graphics2D g, String text, int length, int x, int y, boolean centerText) {
     final int segments = (length / PIPE_TILE_SIZE) - 2;
     final int leftOver = length % PIPE_TILE_SIZE;
-    final int textX = x + PIPE_TEXT_OFFSET_X;
+    int textX = x + PIPE_TEXT_OFFSET_X;
     final int textY = y + PIPE_TEXT_OFFSET_Y;
     
     g.drawImage(blueField[LEFT_INDEX], x, y, null);
@@ -203,7 +205,12 @@ public abstract class Menu {
     }
     g.drawImage(blueField[RIGHT_INDEX], x, y, null);
     if (text != null) {
-      Font.getInstance().drawLargeText(g, text.toCharArray(), textX, textY, null);
+      Font f = Font.getInstance();
+      if (centerText) {
+        textX -= PIPE_TEXT_OFFSET_X;
+        textX += ((length - f.getLargeFontSize() * text.length()) / 2);
+      }
+      f.drawLargeText(g, text.toCharArray(), textX, textY, null);
     }    
   }
   
@@ -216,10 +223,10 @@ public abstract class Menu {
    * @param x The graphics x pixel coordinate.
    * @param y The graphics y pixel coordinate.
    */
-  public void drawPipeField(Graphics2D g, String text, int length, int x, int y, int selected) {
+  public void drawPipeField(Graphics2D g, String text, int length, int x, int y, int selected, boolean centerText) {
     final int segments = (length / PIPE_TILE_SIZE) - 2;
     final int leftOver = length % PIPE_TILE_SIZE;
-    final int textX = x + PIPE_TEXT_OFFSET_X;
+    int textX = x + PIPE_TEXT_OFFSET_X;
     final int textY = y + PIPE_TEXT_OFFSET_Y;
     
     g.drawImage(pipes[LEFT_INDEX][selected], x, y, null);
@@ -234,7 +241,12 @@ public abstract class Menu {
     }
     g.drawImage(pipes[RIGHT_INDEX][selected], x, y, null);
     if (text != null) {
-      Font.getInstance().drawLargeText(g, text.toCharArray(), textX, textY, null);
+      Font f = Font.getInstance();
+      if (centerText) {
+        textX -= PIPE_TEXT_OFFSET_X;
+        textX += ((length - f.getLargeFontSize() * text.length()) / 2);
+      }
+      f.drawLargeText(g, text.toCharArray(), textX, textY, null);      
     }
   }
     

@@ -33,25 +33,25 @@ public class TitleMenu extends Menu {
     
   public TitleMenu() {
     ArrayList<MenuItem> optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Start", 310, 120, 210));
-    optionRow.add(new MenuItem(ItemType.PIPE_GRAY, "Go!", 80, 440, 210));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Start", 310, 120, 210, false));
+    optionRow.add(new MenuItem(ItemType.PIPE_GRAY, "Go!", 80, 440, 210, false));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250));
+    optionRow.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250, false));
     // TODO - add player select buttons
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Options", 400, 120, 322));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Options", 400, 120, 322, false));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Controls", 400, 120, 362));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Controls", 400, 120, 362, false));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Exit", 400, 120, 402));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Exit", 400, 120, 402, false));
     menuItems.add(optionRow);
     
     verticalOptionCount = menuItems.size();
@@ -60,6 +60,8 @@ public class TitleMenu extends Menu {
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     drawBackground(g, io);
+    
+    g.drawImage(titleImg, (backgroundImg.getWidth() - titleImg.getWidth()) / 2, 30, null);
 
     // Figure out which item was selected.
     List<MenuItem> selRow = menuItems.get(selectionY);
