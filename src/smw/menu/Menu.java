@@ -49,6 +49,7 @@ public abstract class Menu {
   private static final int GRAY_NOT_SEL = 2;
   private static final int GRAY_SEL = 3;
   
+  /** The background image. */
   private BufferedImage backgroundImg;
   
   /** Pipe menu field images, indexed by: left/middle/right, green/gray selected or not. */
@@ -57,8 +58,10 @@ public abstract class Menu {
   /** Select field images to be indexed by: left/middle/right, selected or not. */
   private BufferedImage selectField[][] = new BufferedImage[3][2];
   
+  /** Blue field images, to be index by: left/middle/right. */
   private BufferedImage blueField[] = new BufferedImage[3];
   
+  /** Constructor to read in all of the needed image files to create menus. */
   Menu() {
     // Read background image and darken by 15%.
     try {
@@ -132,14 +135,34 @@ public abstract class Menu {
     }
   }
   
+  /**
+   * Draws the menu.
+   * @param g
+   * @param io
+   */
   public abstract void draw(Graphics2D g, ImageObserver io);
       
+  /**
+   * Updates the menu.
+   * @param deltaTime_ms
+   */
   public abstract void update(double deltaTime_ms);
   
+  /**
+   * Draws the background image.
+   * @param g
+   * @param io
+   */
   public void drawBackground(Graphics2D g, ImageObserver io){
     g.drawImage(backgroundImg, 0, 0, io);
   }
   
+  /**
+   * Draws the provided menu item.
+   * @param g
+   * @param m
+   * @param selected
+   */
   public void drawMenuItem(Graphics2D g, MenuItem m, boolean selected) {
     switch (m.type) {
     case PIPE_GREEN:
@@ -154,7 +177,14 @@ public abstract class Menu {
     }
   }
   
-  // TODO - draw blue field
+  /**
+   * Draw the blue field.
+   * @param g
+   * @param text
+   * @param length
+   * @param x
+   * @param y
+   */
   public void drawBlueField(Graphics2D g, String text, int length, int x, int y) {
     final int segments = (length / PIPE_TILE_SIZE) - 2;
     final int leftOver = length % PIPE_TILE_SIZE;
