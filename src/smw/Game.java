@@ -114,7 +114,7 @@ public class Game implements Runnable {
     // No Xbox controller, so check for other game pad.
     if (pc[0] == null) {
       try {
-        GamePad controller = new GamePad(GamePad.ControllerType.SNES_WIN_MK);
+        GamePad controller = new GamePad(GamePad.ControllerType.SNES_MAC_MK);
         if (controller.isConnected()) {
           pc[0] = controller;
         }

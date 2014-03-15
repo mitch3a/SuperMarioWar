@@ -49,45 +49,26 @@ public class GamePlaySettings implements SubSetting{
   float shieldTime = 1.0f;
   float boundsTime = 5.0f;
   float suicideTime = 5.0f;
-  WarpLockStyle warpLockStyle;
+  WarpLockStyle warpLockStyle = WarpLockStyle.allWarps;
   float warpLockTime = 3.0f;
-  BotDifficulty botDifficulty;
-  PointSpeed pointSpeed;
+  BotDifficulty botDifficulty = BotDifficulty.easy;
+  PointSpeed pointSpeed = PointSpeed.fast;
   
   public GamePlaySettings(PropertiesWrapper prop){
     respawnTime = prop.getFloat(KEY_RESPAWN_TIME, DEFAULT_RESPAWN_TIME);
-    shieldStyle = ShieldStyle.valueOf(prop.getString(KEY_SHIELD_STYLE, DEFAULT_SHIELD_STYLE));
-    
-    shieldTime  = Float.parseFloat(prop.getProperty(KEY_SHIELD_TIME));
-    boundsTime  = Float.parseFloat(prop.getProperty(KEY_BOUNDS_TIME));
-    suicideTime  = Float.parseFloat(prop.getProperty(KEY_SUICIDE_TIME));
-
-    try{
-      warpLockStyle = WarpLockStyle.valueOf(prop.getProperty(KEY_WARP_LOCK_STYLE));
-    } catch(Exception e){
-      logger.warning("Bad value for " + KEY_WARP_LOCK_STYLE + " " + e.toString());
-      warpLockStyle = WarpLockStyle.allWarps;
-    }
-    
-    warpLockTime  = Float.parseFloat(prop.getProperty(KEY_WARP_LOCK_TIME)); 
-    
-    try{
-      botDifficulty = BotDifficulty.valueOf(prop.getProperty(KEY_BOT_DIFFICULTY));
-    } catch(Exception e){
-      logger.warning("Bad value for " + KEY_BOT_DIFFICULTY + " " + e.toString());
-      botDifficulty = BotDifficulty.easy;
-    }
-    
-    try{
-      pointSpeed = PointSpeed.valueOf(prop.getProperty(KEY_POINT_SPEED));
-    } catch(Exception e){
-      logger.warning("Bad value for " + KEY_POINT_SPEED + " " + e.toString());
-      pointSpeed = PointSpeed.verySlow;
-    }
+    shieldStyle = (ShieldStyle) prop.getEnum(ShieldStyle.class, KEY_SHIELD_STYLE, DEFAULT_SHIELD_STYLE);
+    shieldTime  = prop.getFloat(KEY_SHIELD_TIME,  DEFAULT_SHIELD_TIME);
+    boundsTime  = prop.getFloat(KEY_BOUNDS_TIME,  DEFAULT_BOUNDS_TIME);
+    suicideTime = prop.getFloat(KEY_SUICIDE_TIME, DEFAULT_SUICIDE_TIME);
+    warpLockStyle = (WarpLockStyle) prop.getEnum(WarpLockStyle.class, KEY_WARP_LOCK_STYLE, DEFAULT_WARP_LOCK_STYLE);
+    warpLockTime  = prop.getFloat(KEY_WARP_LOCK_TIME, DEFAULT_WARP_LOCK_TIME); 
+    botDifficulty = (BotDifficulty) prop.getEnum(BotDifficulty.class, KEY_BOT_DIFFICULTY, DEFAULT_BOT_DIFFICULTY);
+    pointSpeed    = (PointSpeed) prop.getEnum(PointSpeed.class, KEY_POINT_SPEED, DEFAULT_POINT_SPEED);
   }
   
   @Override
   public void add(Properties prop) {
+    shieldStyle  = ShieldStyle.hard;
     prop.setProperty(KEY_RESPAWN_TIME,    Float.toString(respawnTime));
     prop.setProperty(KEY_SHIELD_STYLE,    shieldStyle.toString());
     prop.setProperty(KEY_SHIELD_TIME,     Float.toString(shieldTime));

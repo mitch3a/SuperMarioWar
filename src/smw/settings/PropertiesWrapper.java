@@ -10,16 +10,30 @@ public class PropertiesWrapper {
   
   Properties prop;
   
-  public PropertiesWrapper() throws Exception{
-    prop = new Properties();
-    FileInputStream input = new FileInputStream("config.properties");
-    prop.load(input);
+  public PropertiesWrapper() {
+    FileInputStream input = null;
     
-    input.close();  
+    try{
+      prop = new Properties();
+      input = new FileInputStream("config.properties");
+      prop.load(input);
+    } catch(Exception e){
+      logger.warning(e.toString());
+    } finally{
+      if(input != null){
+        try{
+          input.close();  
+        } catch(Exception e){
+          logger.warning(e.toString());
+        }
+      }
+    }
+    
+    
   }
   
   public boolean getBoolean(String key, boolean defaultValue){
-    if(prop != null && prop.contains(key)){
+    if(prop != null && prop.containsKey(key)){
       return prop.getProperty(key).equalsIgnoreCase(trueString);
     }
     
@@ -27,7 +41,7 @@ public class PropertiesWrapper {
   }
   
   public float getFloat(String key, float defaultValue){
-    if(prop != null && prop.contains(key)){
+    if(prop != null && prop.containsKey(key)){
       try{
         return Float.parseFloat(prop.getProperty(key));
       } catch(Exception e){
@@ -39,7 +53,7 @@ public class PropertiesWrapper {
   }
   
   public int getInt(String key, int defaultValue){
-    if(prop != null && prop.contains(key)){
+    if(prop != null && prop.containsKey(key)){
       try{
         return Integer.parseInt(prop.getProperty(key));
       } catch(Exception e){
@@ -51,7 +65,7 @@ public class PropertiesWrapper {
   }
   
 	public String getString(String key, String defaultValue){
-		if(prop != null && prop.contains(key)){
+		if(prop != null && prop.containsKey(key)){
 		  try{
 		    return prop.getProperty(key, defaultValue);
       } catch(Exception e){
@@ -61,4 +75,16 @@ public class PropertiesWrapper {
 		
 		return defaultValue;
 	}
+
+  public <T extends Enum<T>> T getEnum(Class<T> c, String key, T defaultValue) {
+    if(prop != null && prop.containsKey(key)){
+      try{
+        return Enum.valueOf(c, prop.getProperty(key));
+      } catch(Exception e){
+        logger.warning(e.toString());
+      }
+    }
+    
+    return defaultValue;
+  }
 }
