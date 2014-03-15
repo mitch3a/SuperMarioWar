@@ -9,6 +9,8 @@ public class Utilities {
   private static PrintStream systemOutStream = System.out;
   /** Instance of the original error stream. */
   private static PrintStream systemErrStream = System.err;
+  
+  public static boolean outputEnabled = true; 
     
   /** Returns whether the OS is 64 bit.
    * @return true = 64 bit
@@ -26,15 +28,25 @@ public class Utilities {
   
   /** Disables system output. */
   public static void disableOutput() {
-    PrintStream noOpStream = new PrintStream(new OutputStream() {
-      public void write(int b) { }
-    });
-    System.setOut(noOpStream);
+    /*
+    if (outputEnabled) {
+      outputEnabled = false;
+      systemOutStream = System.out;
+      PrintStream noOpStream = new PrintStream(new OutputStream() {
+        public void write(int b) { }
+      });
+      System.setOut(noOpStream);
+    }
+    */
   }
   
   /** Enables system output. */
   public static void enableOutput() {
-    System.setOut(systemOutStream);
+    /*
+    if (!outputEnabled) {
+      System.setOut(systemOutStream);
+    }
+    */
   }
   
   /** Disables output to the error stream. */
