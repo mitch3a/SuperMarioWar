@@ -6,8 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
-
-import com.sun.istack.internal.logging.Logger;
+import java.util.logging.Logger;
 
 /**
  * Provides flags to indicate whether a given function/area of code is being
@@ -17,7 +16,7 @@ import com.sun.istack.internal.logging.Logger;
 public class Settings {  
   private static Settings INSTANCE;
 
-  static final Logger logger = Logger.getLogger(Settings.class);
+  static final Logger logger = Logger.getLogger(Settings.class.getName());
   
   static final String TRUE = "true";
   static final String FALSE = "false";
@@ -31,11 +30,17 @@ public class Settings {
   
   //static final String KEY_ = "";
 
-  boolean fullscreen = false;
-  boolean stretchMode = false;
-  float volumeMaster = 0;
-  float volumeBGM = 0;
-  float volumeSFX = 0;
+  boolean fullscreen;
+  boolean stretchMode;
+  float volumeMaster;
+  float volumeBGM;
+  float volumeSFX;
+  
+  boolean DEFAULT_FULL_SCREEN = false;
+  boolean DEFAULT_STRETCH_MODE = false;
+  float DEFAULT_VOLUME_MASTER = 0;
+  float DEFAULT_VOLUME_BGM = 0;
+  float DEFAULT_VOLUME_SFX = 0;
   
   GamePlaySettings gamePlay;
   TeamSettings team;
@@ -49,41 +54,22 @@ public class Settings {
   }
 
   private Settings() {
-    Properties prop = new Properties();
-    FileInputStream input = null;
-    File file = new File("config.properties");
-    if (file.isFile() && file.canRead()) {
-      try {
-        input = new FileInputStream(file);
-        prop.load(input);
-        if (!prop.isEmpty()) {
-          
-          // TODO - should be checking if the property exists before calling "equals"
-          // if it doesn't exist this will return null
-          // Also if the settings file is empty or doesn't exist, should probably just create a default one!
-          fullscreen  = (prop.getProperty(KEY_FULLSCREEN ).equals(TRUE)) ? true : false;
-          stretchMode = (prop.getProperty(KEY_STRETCHMODE).equals(TRUE)) ? true : false;
-          
-          volumeMaster = Float.parseFloat(prop.getProperty(KEY_VOLUME_MASTER));
-          volumeBGM    = Float.parseFloat(prop.getProperty(KEY_VOLUME_BGM));
-          volumeSFX    = Float.parseFloat(prop.getProperty(KEY_VOLUME_SFX));
-    
-          gamePlay = new GamePlaySettings(prop);
-          team = new TeamSettings(prop);
-        }
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      } finally {
-        if (input != null) {
-          try {
-            input.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    } else {
-      System.err.println("Config file not found!");
+    PropertiesWrapper prop;
+    try {
+      prop = new PropertiesWrapper();
+      
+      fullscreen  = prop.getBoolean(KEY_FULLSCREEN, DEFAULT_FULL_SCREEN);
+      stretchMode = prop.getBoolean(KEY_STRETCHMODE, DEFAULT_STRETCH_MODE);
+      
+      volumeMaster = prop.getFloat(KEY_VOLUME_MASTER, DEFAULT_VOLUME_MASTER);
+      volumeBGM    = prop.getFloat(KEY_VOLUME_BGM, DEFAULT_VOLUME_BGM);
+      volumeSFX    = prop.getFloat(KEY_VOLUME_SFX, DEFAULT_VOLUME_SFX);
+
+      gamePlay = new GamePlaySettings(prop);
+      team = new TeamSettings(prop);
+      
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -92,6 +78,12 @@ public class Settings {
     OutputStream output = null;
 
     try {
+      File f = new File(CONFIG_FILE);
+      
+      if(!f.exists()){
+        f.createNewFile();
+      }
+      
       output = new FileOutputStream(CONFIG_FILE);
 
       prop.setProperty(KEY_FULLSCREEN,  fullscreen  ? TRUE : FALSE);
@@ -116,7 +108,6 @@ public class Settings {
           e.printStackTrace();
         }
       }
-
     }
   }
   

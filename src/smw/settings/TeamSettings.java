@@ -1,12 +1,13 @@
 package smw.settings;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 
-import com.sun.istack.internal.logging.Logger;
+import smw.settings.GamePlaySettings.ShieldStyle;
 
 public class TeamSettings implements SubSetting{
   static final String CATEGORY_NAME = "Team";
-  static final Logger logger = Logger.getLogger(TeamSettings.class);
+  static final Logger logger = Logger.getLogger(TeamSettings.class.getName());
   
   static final String KEY_PLAYER_COLLISION = "PlayerCollision";
   static final String KEY_COLORS = "Colors";
@@ -24,31 +25,19 @@ public class TeamSettings implements SubSetting{
     all, gameWinner, gameLoser, leadingTeams, trailingTeams, random, randomLoser, roundRobin;
   }
   
+
+  private static final PlayerCollision DEFAULT_PLAYER_COLLISION = PlayerCollision.on;
+  private static final Colors DEFAULT_COLORS = Colors.individual;
+  private static final TournamentControl DEFAULT_TOURNAMENT_CONTROL = TournamentControl.all;
+  
   PlayerCollision playerCollision;
   Colors colors;
   TournamentControl tournamentControl;
   
-  public TeamSettings(Properties prop){
-    try{
-      playerCollision = PlayerCollision.valueOf(prop.getProperty(KEY_PLAYER_COLLISION));
-    } catch(Exception e){
-      logger.warning("Bad value for " + KEY_PLAYER_COLLISION, e);
-      playerCollision = PlayerCollision.on;
-    }
-    
-    try{
-      colors = Colors.valueOf(prop.getProperty(KEY_COLORS));
-    } catch(Exception e){
-      logger.warning("Bad value for " + KEY_COLORS, e);
-      colors = Colors.team;
-    }
-    
-    try{
-      tournamentControl = TournamentControl.valueOf(prop.getProperty(KEY_TOURNAMENT_CONTROL));
-    } catch(Exception e){
-      logger.warning("Bad value for " + KEY_TOURNAMENT_CONTROL, e);
-      tournamentControl = TournamentControl.all;
-    }
+  public TeamSettings(PropertiesWrapper prop){
+    playerCollision = (PlayerCollision) prop.getEnum(PlayerCollision.class, KEY_PLAYER_COLLISION, DEFAULT_PLAYER_COLLISION);
+    colors = (Colors) prop.getEnum(Colors.class, KEY_COLORS, DEFAULT_COLORS);
+    tournamentControl = (TournamentControl) prop.getEnum(TournamentControl.class, KEY_TOURNAMENT_CONTROL, DEFAULT_TOURNAMENT_CONTROL);
   }
   
   @Override
