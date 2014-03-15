@@ -10,6 +10,7 @@ import java.util.Map;
 import smw.Collidable;
 import smw.world.Tile;
 import smw.world.TileSheetManager;
+import smw.world.World;
 import smw.world.MovingPlatform.EllipticalPath;
 import smw.world.MovingPlatform.Path;
 import smw.world.MovingPlatform.StraightContinuousPath;
@@ -83,7 +84,7 @@ public class WorldBuffer {
     return buffer.getFloat();
   }
 
-  public AnimatedHazard getHazard(){
+  public AnimatedHazard getHazard(World world){
     Hazard hazard = new Hazard();
     hazard.type = getShort();
     hazard.x    = getShort();
@@ -97,7 +98,7 @@ public class WorldBuffer {
       hazard.dparam[j] = getFloat();
     }
     
-    return hazard.getAnimatedHazard();
+    return hazard.getAnimatedHazard(world);
   }
   
   public int getInt(){

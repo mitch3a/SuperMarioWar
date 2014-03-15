@@ -13,7 +13,7 @@ import smw.world.MovingCollidable;
 import smw.world.Tile;
 import smw.world.MovingPlatform.StraightSegmentPath;
 
-public class DonutBlock extends SolidBlock implements Updatable, MovingCollidable{
+public class DonutBlock extends SolidBlock implements MovingCollidable{
   public boolean isFalling;
   boolean playerOnTop;
   float playerOnTopTime;

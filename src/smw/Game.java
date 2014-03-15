@@ -82,12 +82,13 @@ public class Game implements Runnable {
       "JJames_Clocks on Fire.map", // 23 lava, circular moving platform and 2 spinning hazards
       "Peardian_alinos gate.map", //24 lava + noteblocks
       "LKA_Burn Yourself.map", //25 fire cannons
-      "MrMister_Dirty Pipes.map" //26 tons of warps
+      "MrMister_Dirty Pipes.map", //26 tons of warps
+      "JJames_Bullet Bill Air.map" //27 Bullet bills duh
     };   
 
-    //world = new World(worlds[23]);
+    world = new World(worlds[27]);
 
-    world = new World(); // Starts a random world (for now)
+    //world = new World(); // Starts a random world (for now)
         
     players = new Player[numPlayers];
   	gameFrame = new GameFrame(players, world, this);

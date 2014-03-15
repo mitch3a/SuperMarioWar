@@ -14,7 +14,7 @@ import smw.world.TileSheet;
 import smw.world.TileSheetManager;
 
 @SuppressWarnings("serial")
-public abstract class AnimatedHazard extends Collidable.Death implements Drawable, Updatable, MovingCollidable{
+public abstract class AnimatedHazard extends Collidable.Death implements MovingCollidable{
   TileSheet tileSheet = null;
   
   /** The frame rate of the animation. */
