@@ -1,9 +1,9 @@
 package smw.settings;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
@@ -50,32 +50,40 @@ public class Settings {
 
   private Settings() {
     Properties prop = new Properties();
-    InputStream input = null;
-
-    try {
-      input = new FileInputStream("config.properties");
-      prop.load(input);
-
-      fullscreen  = (prop.getProperty(KEY_FULLSCREEN ).equals(TRUE)) ? true : false;
-      stretchMode = (prop.getProperty(KEY_STRETCHMODE).equals(TRUE)) ? true : false;
-      
-      volumeMaster = Float.parseFloat(prop.getProperty(KEY_VOLUME_MASTER));
-      volumeBGM    = Float.parseFloat(prop.getProperty(KEY_VOLUME_BGM));
-      volumeSFX    = Float.parseFloat(prop.getProperty(KEY_VOLUME_SFX));
-
-      gamePlay = new GamePlaySettings(prop);
-      team = new TeamSettings(prop);
-      
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    } finally {
-      if (input != null) {
-        try {
-          input.close();
-        } catch (IOException e) {
-          e.printStackTrace();
+    FileInputStream input = null;
+    File file = new File("config.properties");
+    if (file.isFile() && file.canRead()) {
+      try {
+        input = new FileInputStream(file);
+        prop.load(input);
+        if (!prop.isEmpty()) {
+          
+          // TODO - should be checking if the property exists before calling "equals"
+          // if it doesn't exist this will return null
+          // Also if the settings file is empty or doesn't exist, should probably just create a default one!
+          fullscreen  = (prop.getProperty(KEY_FULLSCREEN ).equals(TRUE)) ? true : false;
+          stretchMode = (prop.getProperty(KEY_STRETCHMODE).equals(TRUE)) ? true : false;
+          
+          volumeMaster = Float.parseFloat(prop.getProperty(KEY_VOLUME_MASTER));
+          volumeBGM    = Float.parseFloat(prop.getProperty(KEY_VOLUME_BGM));
+          volumeSFX    = Float.parseFloat(prop.getProperty(KEY_VOLUME_SFX));
+    
+          gamePlay = new GamePlaySettings(prop);
+          team = new TeamSettings(prop);
+        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      } finally {
+        if (input != null) {
+          try {
+            input.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
       }
+    } else {
+      System.err.println("Config file not found!");
     }
   }
 
