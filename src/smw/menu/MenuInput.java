@@ -16,10 +16,16 @@ public class MenuInput {
 
   /** The last unique user input action. */
   private Action lastAction = Action.NO_ACTION;
+  private Action returnAction = Action.NO_ACTION;
   
   /** Returns the last unique user input action. */
   public Action getLastAction() {
-    return lastAction;
+    Action retValue = Action.NO_ACTION;
+    if (lastAction != returnAction) {
+      returnAction = lastAction;
+      retValue = lastAction;
+    }
+    return retValue;
   }
   
   /** Updates the input state, must be called during game update. */

@@ -48,6 +48,7 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     keyMap.put(this.jump, false);
     keyMap.put(this.run, false); 
     keyMap.put(this.pause, false);
+    keyMap.put(KeyEvent.VK_ESCAPE, false);
   }
 
   /**

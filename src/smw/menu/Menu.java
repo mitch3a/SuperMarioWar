@@ -57,6 +57,8 @@ public abstract class Menu {
   /** Select field images to be indexed by: left/middle/right, selected or not. */
   private BufferedImage selectField[][] = new BufferedImage[3][2];
   
+  private BufferedImage blueField[] = new BufferedImage[3];
+  
   Menu() {
     // Read background image and darken by 15%.
     try {
@@ -115,9 +117,17 @@ public abstract class Menu {
         selectField[RIGHT_INDEX][i] = playerSelect.getSubimage(32 * 15 + 16, y, 16, 64);
       }
       
+      // Store the plain blue field image.
+      tempImg = ImageIO.read(this.getClass().getClassLoader().getResource("menu/menu_plain_field.png"));
+      BufferedImage plainFieldImg = new BufferedImage(tempImg.getWidth(), tempImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+      plainFieldImg.getGraphics().drawImage(tempImg, 0, 0, null);
+      p.implementTransparent(plainFieldImg);
+      blueField[LEFT_INDEX] = plainFieldImg.getSubimage(0, 0, 32, 32);
+      blueField[MID_INDEX] = plainFieldImg.getSubimage(32, 0, 32, 32);
+      blueField[RIGHT_INDEX] = plainFieldImg.getSubimage(480, 0, 32, 32);
+      
       // TODO - get and store player, bot, none icons, also small menu text for font..., selection animations
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -142,6 +152,29 @@ public abstract class Menu {
       drawPlayerSelectField(g, m.label, m.x, m.y, selected);
       break;
     }
+  }
+  
+  // TODO - draw blue field
+  public void drawBlueField(Graphics2D g, String text, int length, int x, int y) {
+    final int segments = (length / PIPE_TILE_SIZE) - 2;
+    final int leftOver = length % PIPE_TILE_SIZE;
+    final int textX = x + PIPE_TEXT_OFFSET_X;
+    final int textY = y + PIPE_TEXT_OFFSET_Y;
+    
+    g.drawImage(blueField[LEFT_INDEX], x, y, null);
+    x += PIPE_TILE_SIZE;
+    for (int i = 0; i < segments; i++) {
+      g.drawImage(blueField[MID_INDEX], x, y, null);
+      x += PIPE_TILE_SIZE;
+    }
+    if (leftOver > 0) {
+      g.drawImage(blueField[MID_INDEX], x, y, null);
+      x += leftOver;
+    }
+    g.drawImage(blueField[RIGHT_INDEX], x, y, null);
+    if (text != null) {
+      Font.getInstance().drawLargeText(g, text.toCharArray(), textX, textY, null);
+    }    
   }
   
   /**
@@ -184,10 +217,7 @@ public abstract class Menu {
    */
   public void drawPlayerSelectField(Graphics2D g, String text, int x, int y, boolean selected) {
     Font font = Font.getInstance();
-    
-    if (selected)
-    System.out.println("SELECTED");
-    
+        
     final int selectedIndex = selected ? 1 : 0;
     BufferedImage leftField = selectField[LEFT_INDEX][selectedIndex];
     BufferedImage middleField = selectField[MID_INDEX][selectedIndex];
