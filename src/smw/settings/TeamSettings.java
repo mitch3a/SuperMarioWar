@@ -1,12 +1,11 @@
 package smw.settings;
 
 import java.util.Properties;
-
-import com.sun.istack.internal.logging.Logger;
+import java.util.logging.Logger;
 
 public class TeamSettings implements SubSetting{
   static final String CATEGORY_NAME = "Team";
-  static final Logger logger = Logger.getLogger(TeamSettings.class);
+  static final Logger logger = Logger.getLogger(TeamSettings.class.getName());
   
   static final String KEY_PLAYER_COLLISION = "PlayerCollision";
   static final String KEY_COLORS = "Colors";
@@ -32,21 +31,21 @@ public class TeamSettings implements SubSetting{
     try{
       playerCollision = PlayerCollision.valueOf(prop.getProperty(KEY_PLAYER_COLLISION));
     } catch(Exception e){
-      logger.warning("Bad value for " + KEY_PLAYER_COLLISION, e);
+      logger.warning("Bad value for " + KEY_PLAYER_COLLISION + " " + e.toString());
       playerCollision = PlayerCollision.on;
     }
     
     try{
       colors = Colors.valueOf(prop.getProperty(KEY_COLORS));
     } catch(Exception e){
-      logger.warning("Bad value for " + KEY_COLORS, e);
+      logger.warning("Bad value for " + KEY_COLORS + " " + e.toString());
       colors = Colors.team;
     }
     
     try{
       tournamentControl = TournamentControl.valueOf(prop.getProperty(KEY_TOURNAMENT_CONTROL));
     } catch(Exception e){
-      logger.warning("Bad value for " + KEY_TOURNAMENT_CONTROL, e);
+      logger.warning("Bad value for " + KEY_TOURNAMENT_CONTROL + " " + e.toString());
       tournamentControl = TournamentControl.all;
     }
   }

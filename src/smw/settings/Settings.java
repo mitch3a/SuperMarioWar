@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-
-import com.sun.istack.internal.logging.Logger;
+import java.util.logging.Logger;
 
 /**
  * Provides flags to indicate whether a given function/area of code is being
@@ -17,7 +16,7 @@ import com.sun.istack.internal.logging.Logger;
 public class Settings {  
   private static Settings INSTANCE;
 
-  static final Logger logger = Logger.getLogger(Settings.class);
+  static final Logger logger = Logger.getLogger(Settings.class.getName());
   
   static final String TRUE = "true";
   static final String FALSE = "false";
@@ -56,7 +55,12 @@ public class Settings {
       input = new FileInputStream("config.properties");
       prop.load(input);
 
-      fullscreen  = (prop.getProperty(KEY_FULLSCREEN ).equals(TRUE)) ? true : false;
+      try{
+    	fullscreen  = (prop.getProperty(KEY_FULLSCREEN ).equals(TRUE)) ? true : false;
+      } catch(Exception e){
+    	fullscreen = false;  
+      }
+      
       stretchMode = (prop.getProperty(KEY_STRETCHMODE).equals(TRUE)) ? true : false;
       
       volumeMaster = Float.parseFloat(prop.getProperty(KEY_VOLUME_MASTER));
@@ -66,7 +70,7 @@ public class Settings {
       gamePlay = new GamePlaySettings(prop);
       team = new TeamSettings(prop);
       
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
     } finally {
       if (input != null) {
@@ -108,7 +112,6 @@ public class Settings {
           e.printStackTrace();
         }
       }
-
     }
   }
   
