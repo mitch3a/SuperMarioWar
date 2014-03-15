@@ -199,6 +199,14 @@ public class Font {
 		}
 	}
 	
+	public int getLargeFontSize() {
+	  return largeFont[0].getWidth();
+	}
+	
+	public int getSmallFontSize() {
+	  return smallFont[0].getWidth();
+	}
+	
 	public void drawLargeText(Graphics2D graphics, char[] charArray, int x, int y, ImageObserver observer){
 		drawText(graphics, largeFont, charArray, x, y, observer);
 	}

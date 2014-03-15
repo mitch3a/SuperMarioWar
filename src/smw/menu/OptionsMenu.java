@@ -23,47 +23,47 @@ public class OptionsMenu extends Menu {
   OptionsMenu() {
     // Setup selectable items.
     ArrayList<MenuItem> optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Gameplay", 400, 120, 40));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Gameplay", 400, 120, 40, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Team", 400, 120, 80));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Team", 400, 120, 80, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Item Selection", 400, 120, 120));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Item Selection", 400, 120, 120, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Item Settings", 400, 120, 160));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Item Settings", 400, 120, 160, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Weapons & Projectiles", 400, 120, 200));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Weapons & Projectiles", 400, 120, 200, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Weapon Use Limits", 400, 120, 240));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Weapon Use Limits", 400, 120, 240, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Graphics", 400, 120, 280));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Graphics", 400, 120, 280, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Eye Candy", 400, 120, 320));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Eye Candy", 400, 120, 320, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Music & Sound", 400, 120, 360));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Music & Sound", 400, 120, 360, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Refresh Maps", 400, 120, 400));
+    optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Refresh Maps", 400, 120, 400, true));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();
-    optionRow.add(new MenuItem(ItemType.PIPE_GRAY, "Back", 80, 544, 432));
+    optionRow.add(new MenuItem(ItemType.PIPE_GRAY, "Back", 80, 544, 432, true));
     menuItems.add(optionRow);
     
     verticalOptionCount = menuItems.size();  
@@ -73,7 +73,7 @@ public class OptionsMenu extends Menu {
   public void draw(Graphics2D g, ImageObserver io) {
     drawBackground(g, io);
     
-    drawBlueField(g, "Options Menu", 630, 0, 0);
+    drawBlueField(g, "Options Menu", 630, 0, 0, true);
 
     // Figure out which item was selected.
     List<MenuItem> selRow = menuItems.get(selectionY);
