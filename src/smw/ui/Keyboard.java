@@ -49,6 +49,15 @@ public class Keyboard extends PlayerControlBase implements KeyListener{
     keyMap.put(this.run, false); 
     keyMap.put(this.pause, false);
   }
+
+  /**
+   * Returns whether the desired key was pressed.
+   * @param keyCode The desired key.
+   * @return true = pressed
+   */
+  public boolean getKeyPress(int keyCode) {
+    return (keyMap.containsKey(keyCode)) ? keyMap.get(keyCode) : false; 
+  }
   
   public void poll(){
   	//TODO mk once keyboard actually polls (instead of just listening all the time) then this can be abstract

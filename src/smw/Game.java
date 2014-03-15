@@ -20,10 +20,14 @@ public class Game implements Runnable {
   //TODO don't like this but not sure how player should tell Game to bump screen
   private static GameFrame gameFrame;
   private static Player[] players;
-  public Menu menu;
+  public static Menu menu;
   public static World world;
   public static SoundPlayer soundPlayer = new SoundPlayer();
   private static PlayerControlBase[] pc;
+  
+  // TODO - should probably always create a keyboard regardless of gamepads
+  public static Keyboard keyboard;
+  
   private static final PauseDisplay pauseDisplay = new PauseDisplay();
   
   /** The desired frames per second. */
@@ -43,14 +47,14 @@ public class Game implements Runnable {
     //     place to set to what you want
     
     Settings settings = Settings.getInstance();
-    
+    /* TODO - mitch uncomment these once you fix settings! (or add a default file in projo I guess)
     settings.setStretchMode(false);
     settings.setFullscreen(false);
     settings.setVolumeSFX(1.0f);
     settings.setVolumeMaster(0.0f);
     settings.saveSettings();
-    
-    // TODO - RPG work in progress
+    */
+    // TODO - RPG work in progress - don't use this yet! probably will want to have it turned off for debugging anyway
     //setMenu(new TitleMenu());
     
     // TODO - setup world selector or something, for now pick what you want to test code.
@@ -84,6 +88,7 @@ public class Game implements Runnable {
       "LKA_Burn Yourself.map", //25 fire cannons
       "MrMister_Dirty Pipes.map" //26 tons of warps
     };   
+    // TODO - this map doesn't work! - Tanuki_Der Ewige Garten.map
 
     //world = new World(worlds[23]);
 
@@ -95,7 +100,8 @@ public class Game implements Runnable {
   	soundPlayer.setTrackList(world.getMusicCategoryID());
   	soundPlayer.playBGM();
   	
-
+  	// TODO - should probably always create a keyboard regardless of gamepads
+  	keyboard = new Keyboard(gameFrame.getGameFrame(), KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_J, KeyEvent.VK_SPACE);
   	
     pc = new PlayerControlBase[numPlayers]; 
 
@@ -325,28 +331,19 @@ public class Game implements Runnable {
   }
 
   private void updateGame(double timeDelta_ns) { 	
-  	if (menu != null) {
-  	  // TODO - this is actually broken, we need a way to get "toggle" keys from user input otherwise the menu selectio jumps a ton!
-  	  // TODO - this sucks, we should probably make the input handling more user friendly for menus...
-  	  if (pc[0] == null) {
-  	    return;
-  	  }
-  	  int direction = pc[0].getDirection();
-  	  boolean up = pc[0].isUp();
-      boolean down = pc[0].isDown();
-  	  boolean left = (direction == -1);
-  	  boolean right = (direction == 1);
-  	  boolean select = pc[0].isActionPressed(); // TODO - this is probably not setup
-  	  boolean esc = false; // TODO - get escape key from keyboard
-  	  menu.update(up, down, left, right, select, esc);
-  	  return;
-  	}
+    
+    float timeDelta_ms = (float) (timeDelta_ns)/1000000;
+    
+    if (menu != null) {
+      menu.update(timeDelta_ms);
+      return;
+    }
+    
     // Mitch - I set this up to just do the collision and if no collision, then allow the player in.
   	// not only is this unfair (ie if 2 players are running at each other, player 1 will see the spot
   	// open, take it, then player 2 will see it as taken and not get it), but this could also cause
   	// weird issues (like if you were chasing a player moving 2 pixels a frame, you couldn't get any
   	// closer than 2 pixels to him. But this is good enough for now. 
-    float timeDelta_ms = (float) (timeDelta_ns)/1000000;
     world.update(timeDelta_ms);
   	
   	for (Player p : players) {
@@ -357,10 +354,10 @@ public class Game implements Runnable {
   
   /**
    * Sets the current menu to display.
-   * @param menu Menu to display.
+   * @param m Menu to display.
    */
-  public void setMenu(Menu menu) {
-    this.menu = menu;
+  public static void setMenu(Menu m) {
+    menu = m;
   }
   
   public static PlayerControlBase[] getPlayerControl() {

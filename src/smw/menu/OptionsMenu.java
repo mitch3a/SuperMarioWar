@@ -12,8 +12,7 @@ public class OptionsMenu extends Menu {
   }
 
   @Override
-  public void update(boolean up, boolean down, boolean left, boolean right,
-      boolean select, boolean esc) {
+  public void update(double deltaTime_ms) {
     // TODO Auto-generated method stub
     
   }
