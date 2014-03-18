@@ -2,13 +2,12 @@ package smw.settings;
 
 import java.util.Properties;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class TeamSettings implements SubSetting{
   static final String CATEGORY_NAME = "Team";
-  
-  static final String KEY_PLAYER_COLLISION = "PlayerCollision";
-  static final String KEY_COLORS = "Colors";
-  static final String KEY_TOURNAMENT_CONTROL = "TournamentControl";
-  
+    
   public enum PlayerCollision{
     off, assist, on;
   }
@@ -21,54 +20,29 @@ public class TeamSettings implements SubSetting{
     all, gameWinner, gameLoser, leadingTeams, trailingTeams, random, randomLoser, roundRobin;
   }
   
-
-  private static final PlayerCollision DEFAULT_PLAYER_COLLISION = PlayerCollision.on;
-  private static final Colors DEFAULT_COLORS = Colors.individual;
-  private static final TournamentControl DEFAULT_TOURNAMENT_CONTROL = TournamentControl.all;
+  static final KeyDefaultPairEnum<PlayerCollision>   PLAYER_COLLISION   = new KeyDefaultPairEnum<PlayerCollision>  (CATEGORY_NAME + "." + "PlayerCollision",   PlayerCollision.on);
+  static final KeyDefaultPairEnum<Colors>            COLORS             = new KeyDefaultPairEnum<Colors>           (CATEGORY_NAME + "." + "Colors",            Colors.individual);
+  static final KeyDefaultPairEnum<TournamentControl> TOURNAMENT_CONTROL = new KeyDefaultPairEnum<TournamentControl>(CATEGORY_NAME + "." + "TournamentControl", TournamentControl.all);
   
-  PlayerCollision playerCollision;
-  Colors colors;
-  TournamentControl tournamentControl;
+  @Getter @Setter PlayerCollision playerCollision;
+  @Getter @Setter Colors colors;
+  @Getter @Setter TournamentControl tournamentControl;
   
   public TeamSettings(PropertiesWrapper prop){
-    playerCollision = (PlayerCollision) prop.getEnum(PlayerCollision.class, KEY_PLAYER_COLLISION, DEFAULT_PLAYER_COLLISION);
-    colors = (Colors) prop.getEnum(Colors.class, KEY_COLORS, DEFAULT_COLORS);
-    tournamentControl = (TournamentControl) prop.getEnum(TournamentControl.class, KEY_TOURNAMENT_CONTROL, DEFAULT_TOURNAMENT_CONTROL);
+    playerCollision   = (PlayerCollision)   prop.getEnum(PLAYER_COLLISION);
+    colors            = (Colors)            prop.getEnum(COLORS);
+    tournamentControl = (TournamentControl) prop.getEnum(TOURNAMENT_CONTROL);
   }
   
   @Override
   public void add(Properties prop) {
-    prop.setProperty(KEY_PLAYER_COLLISION, playerCollision.toString());
-    prop.setProperty(KEY_COLORS, colors.toString());
-    prop.setProperty(KEY_TOURNAMENT_CONTROL, tournamentControl.toString());
+    prop.setProperty(PLAYER_COLLISION.key,   playerCollision.toString());
+    prop.setProperty(COLORS.key,             colors.toString());
+    prop.setProperty(TOURNAMENT_CONTROL.key, tournamentControl.toString());
   }
   
   @Override
   public String getCategoryName() {
     return CATEGORY_NAME;
-  }
-  
-  public synchronized PlayerCollision getPlayerCollision(){
-    return playerCollision;
-  }
-  
-  public synchronized void setPlayerCollision(PlayerCollision playerCollision){
-    this.playerCollision = playerCollision;
-  }
-  
-  public synchronized Colors getColors(){
-    return colors;
-  }
-  
-  public synchronized void getColors(Colors colors){
-    this.colors = colors;
-  }
-  
-  public synchronized TournamentControl getTournamentControl(){
-    return tournamentControl;
-  }
-  
-  public synchronized void setTournamentControl(TournamentControl tournamentControl){
-    this.tournamentControl =  tournamentControl;
   }
 }

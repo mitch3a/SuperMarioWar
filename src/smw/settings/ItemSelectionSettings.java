@@ -2,10 +2,14 @@ package smw.settings;
 
 import java.util.Properties;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import smw.settings.GamePlaySettings.BotDifficulty;
 import smw.settings.GamePlaySettings.PointSpeed;
 import smw.settings.GamePlaySettings.ShieldStyle;
 import smw.settings.GamePlaySettings.WarpLockStyle;
+import smw.settings.TeamSettings.PlayerCollision;
 
 public class ItemSelectionSettings implements SubSetting{
   static final String CATEGORY_NAME = "ItemSelection";
@@ -25,44 +29,46 @@ public class ItemSelectionSettings implements SubSetting{
     superMarioWorld;
   }
   
-  float DEFAULT_RESPAWN_TIME = 1.0f;
-  UseSettingsFrom DEFAULT_SHIELD_STYLE = UseSettingsFrom.mapOnly;
-  ItemSet DEFAULT_ITEM_SET = ItemSet.customSet1;
-  float DEFAULT_GREEN_MUSHROOM = 10;
-  float DEFAULT_RED_MUSHROOM = 4;
-  float DEFAULT_BLUE_MUSHROOM = 2;
-  float DEFAULT_YELLOW_MUSHROOM = 1;
-  float DEFAULT_QUESTION_MUSHROOM = 5;
-  float DEFAULT_FLOWER = 10;
-  float DEFAULT_HAMMER = 4;
-  float DEFAULT_BOOMERANG = 6;
-  float DEFAULT_DEATH_MUSHROOM = 5;
-  float DEFAULT_STAR = 8;
-  float DEFAULT_BOMB = 4;
-  float DEFAULT_TANOOKI = 6;
-  float DEFAULT_TIMER = 4;
-  float DEFAULT_BULLET_BILL = 2;
-  float DEFAULT_FIREBALL = 4;
-  float DEFAULT_POW_BLOCK = 2;
+  static final UseSettingsFrom DEFAULT_SHIELD_STYLE = UseSettingsFrom.mapOnly;
+  static final ItemSet DEFAULT_ITEM_SET = ItemSet.customSet1;
+  static final float DEFAULT_GREEN_MUSHROOM = 10;
+  static final float DEFAULT_RED_MUSHROOM = 4;
+  static final float DEFAULT_BLUE_MUSHROOM = 2;
+  static final float DEFAULT_YELLOW_MUSHROOM = 1;
+  static final float DEFAULT_QUESTION_MUSHROOM = 5;
+  static final float DEFAULT_FLOWER = 10;
+  static final float DEFAULT_HAMMER = 4;
+  static final float DEFAULT_BOOMERANG = 6;
+  static final float DEFAULT_DEATH_MUSHROOM = 5;
+  static final float DEFAULT_STAR = 8;
+  static final float DEFAULT_BOMB = 4;
+  static final float DEFAULT_TANOOKI = 6;
+  static final float DEFAULT_TIMER = 4;
+  static final float DEFAULT_BULLET_BILL = 2;
+  static final float DEFAULT_FIREBALL = 4;
+  static final float DEFAULT_POW_BLOCK = 2;
 
-  float greenMushroom;
-  float redMushroom;
-  float blueMushroom;
-  float yellowMushroom;
-  float questionMushroom;
-  float flower;
-  float hammer;
-  float boomerang;
-  float deathMushroom;
-  float star;
-  float bomb;
-  float tanooki;
-  float timer;
-  float bulletBill;
-  float fireball;
-  float powBlock;
+  
+  @Getter @Setter float greenMushroom;
+  @Getter @Setter float redMushroom;
+  @Getter @Setter float blueMushroom;
+  @Getter @Setter float yellowMushroom;
+  @Getter @Setter float questionMushroom;
+  @Getter @Setter float flower;
+  @Getter @Setter float hammer;
+  @Getter @Setter float boomerang;
+  @Getter @Setter float deathMushroom;
+  @Getter @Setter float star;
+  @Getter @Setter float bomb;
+  @Getter @Setter float tanooki;
+  @Getter @Setter float timer;
+  @Getter @Setter float bulletBill;
+  @Getter @Setter float fireball;
+  @Getter @Setter float powBlock;
   
   public ItemSelectionSettings(PropertiesWrapper prop){
+    
+    
     /*
     respawnTime = prop.getFloat(KEY_RESPAWN_TIME, DEFAULT_RESPAWN_TIME);
     shieldStyle = (ShieldStyle) prop.getEnum(ShieldStyle.class, KEY_SHIELD_STYLE, DEFAULT_SHIELD_STYLE);

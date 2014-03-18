@@ -4,7 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.TreeSet;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Provides flags to indicate whether a given function/area of code is being
@@ -18,8 +24,8 @@ public class Settings {
   static final String FALSE = "false";
 
   static final String CONFIG_FILE = "config.properties";
-  static final String KEY_FULLSCREEN = "Fullscreen";
-  static final String KEY_STRETCHMODE = "StretchMode";
+  static final KeyDefaultPair<Boolean> FULLSCREEN = new KeyDefaultPair<Boolean>("Fullscreen", false);
+  static final KeyDefaultPair<Boolean> STRETCHMODE = new KeyDefaultPair<Boolean>("StretchMode", false);
   static final String KEY_VOLUME_MASTER = "VolumeMaster";
   static final String KEY_VOLUME_BGM = "VolumeBackgroundMusic";
   static final String KEY_VOLUME_SFX = "VolumeSoundFX";
@@ -38,8 +44,12 @@ public class Settings {
   float DEFAULT_VOLUME_BGM = 0;
   float DEFAULT_VOLUME_SFX = 0;
   
-  GamePlaySettings gamePlay;
-  TeamSettings team;
+  @Getter @Setter GamePlaySettings gamePlay;
+  @Getter @Setter TeamSettings team;
+  @Getter @Setter ItemSelectionSettings itemSelection;
+  @Getter @Setter ItemSettings item;
+  @Getter @Setter WeaponsAndProjectilesSettings weaponsAndProjectiles;
+  @Getter @Setter WeaponUseLimitsSettings weaponUseLimits;
   
   public synchronized static Settings getInstance() {
     if (INSTANCE == null) {
@@ -54,15 +64,21 @@ public class Settings {
     try {
       prop = new PropertiesWrapper();
       
-      fullscreen  = prop.getBoolean(KEY_FULLSCREEN, DEFAULT_FULL_SCREEN);
-      stretchMode = prop.getBoolean(KEY_STRETCHMODE, DEFAULT_STRETCH_MODE);
+      fullscreen  = prop.getBoolean(FULLSCREEN);
+      stretchMode = prop.getBoolean(STRETCHMODE);
       
-      volumeMaster = prop.getFloat(KEY_VOLUME_MASTER, DEFAULT_VOLUME_MASTER);
-      volumeBGM    = prop.getFloat(KEY_VOLUME_BGM, DEFAULT_VOLUME_BGM);
-      volumeSFX    = prop.getFloat(KEY_VOLUME_SFX, DEFAULT_VOLUME_SFX);
+      //TODO volumeMaster = prop.getFloat(KEY_VOLUME_MASTER, DEFAULT_VOLUME_MASTER);
+      //TODO volumeBGM    = prop.getFloat(KEY_VOLUME_BGM, DEFAULT_VOLUME_BGM);
+      //TODO volumeSFX    = prop.getFloat(KEY_VOLUME_SFX, DEFAULT_VOLUME_SFX);
 
       gamePlay = new GamePlaySettings(prop);
       team = new TeamSettings(prop);
+      gamePlay = new GamePlaySettings(prop);
+      team = new TeamSettings(prop);
+      itemSelection = new ItemSelectionSettings(prop);
+      item = new ItemSettings(prop);
+      weaponsAndProjectiles = new WeaponsAndProjectilesSettings(prop);
+      weaponUseLimits = new WeaponUseLimitsSettings(prop);
       
     } catch (Exception e) {
       e.printStackTrace();
@@ -70,7 +86,14 @@ public class Settings {
   }
 
   public synchronized void saveSettings() {
-    Properties prop = new Properties();
+    //Want to store these in order
+    Properties prop = new Properties(){
+      @Override
+      public synchronized Enumeration<Object> keys() {
+          return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+      }
+    };
+  
     OutputStream output = null;
 
     try {
@@ -82,8 +105,8 @@ public class Settings {
       
       output = new FileOutputStream(CONFIG_FILE);
 
-      prop.setProperty(KEY_FULLSCREEN,  fullscreen  ? TRUE : FALSE);
-      prop.setProperty(KEY_STRETCHMODE, stretchMode ? TRUE : FALSE);
+      prop.setProperty(FULLSCREEN.key,  fullscreen  ? TRUE : FALSE);
+      prop.setProperty(STRETCHMODE.key, stretchMode ? TRUE : FALSE);
 
       prop.setProperty(KEY_VOLUME_MASTER,   Float.toString(volumeMaster));
       prop.setProperty(KEY_VOLUME_BGM,      Float.toString(volumeBGM));
@@ -91,6 +114,10 @@ public class Settings {
       
       gamePlay.add(prop);
       team.add(prop);
+      itemSelection.add(prop);
+      item.add(prop);
+      weaponsAndProjectiles.add(prop);
+      weaponUseLimits.add(prop);
 
       prop.store(output, null);
       
@@ -107,10 +134,6 @@ public class Settings {
     }
   }
   
-  public synchronized final GamePlaySettings getGamePlaySettings(){
-    return gamePlay;
-  }
-
   public synchronized boolean isFullscreen() {
     return fullscreen;
   }

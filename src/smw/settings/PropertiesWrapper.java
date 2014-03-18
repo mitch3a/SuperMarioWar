@@ -33,59 +33,60 @@ public class PropertiesWrapper {
     
   }
   
-  public boolean getBoolean(String key, boolean defaultValue){
-    if(prop != null && prop.containsKey(key)){
-      return prop.getProperty(key).equalsIgnoreCase(trueString);
+  public boolean getBoolean(KeyDefaultPair<Boolean> pair){
+    if(prop != null && prop.containsKey(pair.key)){
+      return prop.getProperty(pair.key).equalsIgnoreCase(trueString);
     }
     
-    return defaultValue;
+    return pair.defaultValue;
   }
   
-  public float getFloat(String key, float defaultValue){
-    if(prop != null && prop.containsKey(key)){
+  public float getFloat(KeyDefaultPair<Float> pair){
+    if(prop != null && prop.containsKey(pair.key)){
       try{
-        return Float.parseFloat(prop.getProperty(key));
+        return Float.parseFloat(prop.getProperty(pair.key));
       } catch(Exception e){
-        logger.log(Level.WARNING, "Could not parse Float for key " + key, e);
+        logger.log(Level.WARNING, "Could not parse Float for key " + pair.key, e);
       }
     }
     
-    return defaultValue;
+    return pair.defaultValue;
   }
   
-  public int getInt(String key, int defaultValue){
-    if(prop != null && prop.containsKey(key)){
+  public int getInt(KeyDefaultPair<Integer> pair){
+    if(prop != null && prop.containsKey(pair.key)){
       try{
-        return Integer.parseInt(prop.getProperty(key));
+        return Integer.parseInt(prop.getProperty(pair.key));
       } catch(Exception e){
-        logger.log(Level.WARNING, "Could not parse Integer for key " + key, e);
+        logger.log(Level.WARNING, "Could not parse Integer for key " + pair.key, e);
       }
     }
     
-    return defaultValue;
+    return pair.defaultValue;
   }
   
-	public String getString(String key, String defaultValue){
-		if(prop != null && prop.containsKey(key)){
-		  try{
-		    return prop.getProperty(key, defaultValue);
+  public String getString(KeyDefaultPair<String> pair){
+    if(prop != null && prop.containsKey(pair.key)){
+      try{
+        return prop.getProperty(pair.key);
       } catch(Exception e){
-        logger.log(Level.WARNING, "Could not parse String for key " + key, e);
+        logger.log(Level.WARNING, "Could not parse String for key " + pair.key, e);
       }
-		}
-		
-		return defaultValue;
-	}
+    }
+    
+    return pair.defaultValue;
+  }
+  
 
-  public <T extends Enum<T>> T getEnum(Class<T> c, String key, T defaultValue) {
-    if(prop != null && prop.containsKey(key)){
+  public <T extends Enum<T>> T getEnum(KeyDefaultPairEnum<T> pair){
+    if(prop != null && prop.containsKey(pair.key)){
       try{
-        return Enum.valueOf(c, prop.getProperty(key));
+        return Enum.valueOf(pair.classType, prop.getProperty(pair.key));
       } catch(Exception e){
-        logger.log(Level.WARNING, "Could not parse Enum in class " + c.getName() + " for key " + key, e);
+        logger.log(Level.WARNING, "Could not parse Enum in class " + pair.getClass().toString() + " for key " + pair.key, e);
       }
     }
     
-    return defaultValue;
+    return pair.defaultValue;
   }
 }

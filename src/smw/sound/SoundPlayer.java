@@ -51,6 +51,7 @@ public class SoundPlayer {
       SoundSystemConfig.setCodec("wav", CodecWav.class);
 
       Settings settings = Settings.getInstance();
+      settings.saveSettings();
       setMasterVolume(settings.getVolumeMaster());
       setBGMVolume(settings.getVolumeBGM());
       setSFXVolume(settings.getVolumeSFX());
