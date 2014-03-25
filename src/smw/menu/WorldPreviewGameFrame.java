@@ -14,8 +14,6 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
-import smw.world.World;
-
 public class WorldPreviewGameFrame extends Canvas{
 
   private static final long serialVersionUID = 1L;
