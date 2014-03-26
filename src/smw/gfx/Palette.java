@@ -30,21 +30,12 @@ public class Palette {
   }
 	
   public enum ColorScheme {
-    RED(0), GREEN(1), YELLOW(2), BLUE(3);
-    
-    public final int index;
-    private ColorScheme(int index) {
-      this.index = index;
-    }
+    RED, GREEN, YELLOW, BLUE;
   }
   
 	HashMap<Integer, int[]> colorMap = new HashMap<Integer, int[]>();
 	
 	final static int NUM_SCHEMES = 9;
-	final static int redIndex = 0;
-	final static int greenIndex = 1;
-	final static int yellowIndex = 2;
-	final static int blueIndex = 3;
 	
 	byte getRed(int color) {
 		return (byte) ((color >> 16) & 0x000000FF);
@@ -104,7 +95,7 @@ public class Palette {
 	    for (int h = 0 ; h < image.getHeight(); ++h) {
 	      int currentColor = image.getRGB(w, h);
 	      if (colorMap.containsKey(currentColor) ){
-	        image.setRGB(w, h, colorMap.get(currentColor)[color.index]);
+	        image.setRGB(w, h, colorMap.get(currentColor)[color.ordinal()]);
 	      }
 	      
 	      if (image.getRGB(w, h) == 0xffff00ff) {

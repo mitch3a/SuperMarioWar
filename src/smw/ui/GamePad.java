@@ -18,47 +18,47 @@ public class GamePad  extends PlayerControlBase{
 	 ****************************************************/
 	void setControllerValues(ControllerType type){
 		switch(type){
-			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.index]  =  1;
-												buttonToComponentMap[PlayerButton.RIGHT.index] =  1;
-												buttonToComponentMap[PlayerButton.DOWN.index]  =  0;
-												buttonToComponentMap[PlayerButton.UP.index]    =  0;
-												buttonToComponentMap[PlayerButton.JUMP.index]  =  8;
-												buttonToComponentMap[PlayerButton.RUN.index]   =  9;
-												buttonToComponentMap[PlayerButton.PAUSE.index] = 15;
-												pressedValues[PlayerButton.LEFT.index]  = -1.0f;
-												pressedValues[PlayerButton.RIGHT.index] =  1.0f;
-												pressedValues[PlayerButton.UP.index]    = -1.0f;
-												pressedValues[PlayerButton.DOWN.index]  =  1.0f;
-												pressedValues[PlayerButton.JUMP.index]  =  1.0f;
-												pressedValues[PlayerButton.RUN.index]   =  1.0f;
-												pressedValues[PlayerButton.PAUSE.index]  =  1.0f;
+			case SNES_WIN_MK: buttonToComponentMap[PlayerButton.LEFT.ordinal()]  =  1;
+												buttonToComponentMap[PlayerButton.RIGHT.ordinal()] =  1;
+												buttonToComponentMap[PlayerButton.DOWN.ordinal()]  =  0;
+												buttonToComponentMap[PlayerButton.UP.ordinal()]    =  0;
+												buttonToComponentMap[PlayerButton.JUMP.ordinal()]  =  8;
+												buttonToComponentMap[PlayerButton.RUN.ordinal()]   =  9;
+												buttonToComponentMap[PlayerButton.PAUSE.ordinal()] = 15;
+												pressedValues[PlayerButton.LEFT.ordinal()]  = -1.0f;
+												pressedValues[PlayerButton.RIGHT.ordinal()] =  1.0f;
+												pressedValues[PlayerButton.UP.ordinal()]    = -1.0f;
+												pressedValues[PlayerButton.DOWN.ordinal()]  =  1.0f;
+												pressedValues[PlayerButton.JUMP.ordinal()]  =  1.0f;
+												pressedValues[PlayerButton.RUN.ordinal()]   =  1.0f;
+												pressedValues[PlayerButton.PAUSE.ordinal()]  =  1.0f;
 												break;
-			case LOGITECH_TIM: buttonToComponentMap[PlayerButton.LEFT.index]  = 16;
-                         buttonToComponentMap[PlayerButton.RIGHT.index] = 16;
-                         //TODO buttonToComponentMap[PlayerButton.DOWN.index] = 2;
-                         buttonToComponentMap[PlayerButton.JUMP.index]  = 1;
-                         buttonToComponentMap[PlayerButton.RUN.index]   = 0;
-                         pressedValues[PlayerButton.LEFT.index]  =  1.0f;
-                         pressedValues[PlayerButton.RIGHT.index] =  0.5f;
-                         //TODO pressedValues[PlayerButton.DOWN.index] =  0.5f;
-                         pressedValues[PlayerButton.JUMP.index]  =  1.0f;
-                         pressedValues[PlayerButton.RUN.index]   =  1.0f;
+			case LOGITECH_TIM: buttonToComponentMap[PlayerButton.LEFT.ordinal()]  = 16;
+                         buttonToComponentMap[PlayerButton.RIGHT.ordinal()] = 16;
+                         //TODO buttonToComponentMap[PlayerButton.DOWN.ordinal()] = 2;
+                         buttonToComponentMap[PlayerButton.JUMP.ordinal()]  = 1;
+                         buttonToComponentMap[PlayerButton.RUN.ordinal()]   = 0;
+                         pressedValues[PlayerButton.LEFT.ordinal()]  =  1.0f;
+                         pressedValues[PlayerButton.RIGHT.ordinal()] =  0.5f;
+                         //TODO pressedValues[PlayerButton.DOWN.ordinal()] =  0.5f;
+                         pressedValues[PlayerButton.JUMP.ordinal()]  =  1.0f;
+                         pressedValues[PlayerButton.RUN.ordinal()]   =  1.0f;
                          //TODO added UP and Pause as well
                          break;
-			case SNES_MAC_MK: buttonToComponentMap[PlayerButton.LEFT.index]  =  13;
-                        buttonToComponentMap[PlayerButton.RIGHT.index] =  13;
-                        buttonToComponentMap[PlayerButton.DOWN.index]  =  14;
-                        buttonToComponentMap[PlayerButton.UP.index]    =  14;
-                        buttonToComponentMap[PlayerButton.JUMP.index]  =  2;
-                        buttonToComponentMap[PlayerButton.RUN.index]   =  3;
-                        buttonToComponentMap[PlayerButton.PAUSE.index] =  9;
-                        pressedValues[PlayerButton.LEFT.index]  = -1.0f;
-                        pressedValues[PlayerButton.RIGHT.index] =  1.0f;
-                        pressedValues[PlayerButton.UP.index]    = -1.0f;
-                        pressedValues[PlayerButton.DOWN.index]  =  1.0f;
-                        pressedValues[PlayerButton.JUMP.index]  =  1.0f;
-                        pressedValues[PlayerButton.RUN.index]   =  1.0f;
-                        pressedValues[PlayerButton.PAUSE.index] =  1.0f;
+			case SNES_MAC_MK: buttonToComponentMap[PlayerButton.LEFT.ordinal()]  =  13;
+                        buttonToComponentMap[PlayerButton.RIGHT.ordinal()] =  13;
+                        buttonToComponentMap[PlayerButton.DOWN.ordinal()]  =  14;
+                        buttonToComponentMap[PlayerButton.UP.ordinal()]    =  14;
+                        buttonToComponentMap[PlayerButton.JUMP.ordinal()]  =  2;
+                        buttonToComponentMap[PlayerButton.RUN.ordinal()]   =  3;
+                        buttonToComponentMap[PlayerButton.PAUSE.ordinal()] =  9;
+                        pressedValues[PlayerButton.LEFT.ordinal()]  = -1.0f;
+                        pressedValues[PlayerButton.RIGHT.ordinal()] =  1.0f;
+                        pressedValues[PlayerButton.UP.ordinal()]    = -1.0f;
+                        pressedValues[PlayerButton.DOWN.ordinal()]  =  1.0f;
+                        pressedValues[PlayerButton.JUMP.ordinal()]  =  1.0f;
+                        pressedValues[PlayerButton.RUN.ordinal()]   =  1.0f;
+                        pressedValues[PlayerButton.PAUSE.ordinal()] =  1.0f;
                         break;
 			case NONE:        
 			default:          setup();             
@@ -76,12 +76,6 @@ public class GamePad  extends PlayerControlBase{
   Controller controller;
   
   boolean isConnected;
-  
-  //TODO this seems to work, but might want to reset it 
-  //     after every poll in case it moves in memory, no
-  //     problems so far though. Really don't need it. Could
-  //     just call getComponents everywhere
-  final Component[] components;
   
 	//TODO verify that touch sensitivity is not an issue
 	//    (ie maybe can't use != and need some wiggle room)
@@ -122,7 +116,7 @@ public class GamePad  extends PlayerControlBase{
    
     //Need to poll in order to get the default values
     controller.poll();
-    components = controller.getComponents();
+    Component[] components = controller.getComponents();
     NUM_BUTTONS = components.length;
     defaultValues = new float[NUM_BUTTONS];
     
@@ -179,7 +173,7 @@ public class GamePad  extends PlayerControlBase{
   * @return button index of button pressed
   ************************************************/
   void setNextButton(PlayerButton buttonToSet){
-  	int index = buttonToSet.index;
+  	int index = buttonToSet.ordinal();
   	boolean buttonSet = false;
     while(!buttonSet){
       controller.poll();
@@ -251,8 +245,8 @@ public class GamePad  extends PlayerControlBase{
    * @return true if the button is pressed
    ****************************************************/
   boolean isPressed(PlayerButton button){
-  	int componentIndex = buttonToComponentMap[button.index];
-    return components[componentIndex].getPollData() == pressedValues[button.index];
+  	int componentIndex = buttonToComponentMap[button.ordinal()];
+    return controller.getComponents()[componentIndex].getPollData() == pressedValues[button.ordinal()];
   }
 
   @Override

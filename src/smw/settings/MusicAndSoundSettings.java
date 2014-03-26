@@ -10,18 +10,7 @@ public class MusicAndSoundSettings implements SubSetting{
     zero, one, two, three, four, five, six, seven, eight;
     
     public static float getValue(Volume v){
-      switch(v){
-        case zero:  return 0.0f;
-        case one:   return 1/8.0f;
-        case two:   return 2/8.0f;
-        case three: return 3/8.0f;
-        case four:  return 4/8.0f;
-        case five:  return 5/8.0f;
-        case six:   return 6/8.0f;
-        case seven: return 7/8.0f;
-      }
-      
-      return 1.0f;
+      return v.ordinal()/8.0f;
     }
   }
   

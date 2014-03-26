@@ -301,7 +301,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	  // Handle player idle time.
 	  Font font = Font.getInstance();
 	  if (idleCountdown_ms <= IDLE_DISPLAY_TIME_MS) {
-	    font.drawBoxedNumber(graphics, idleCountdown_ms / 1000, color.index, (int)x + NUMBER_SPRITE_OFFSET,
+	    font.drawBoxedNumber(graphics, idleCountdown_ms / 1000, color.ordinal(), (int)x + NUMBER_SPRITE_OFFSET,
 	      (int)y + NUMBER_SPRITE_OFFSET, observer);
 	  }
 	  
@@ -310,7 +310,7 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	    graphics.drawImage(sprite.getImage(), (int)(x-GameFrame.res_width + 1), (int)y, observer);
 	    // Wrap around idle count down timer.
 	    if (idleCountdown_ms <= IDLE_DISPLAY_TIME_MS) {
-	      font.drawBoxedNumber(graphics, idleCountdown_ms / 1000, color.index,
+	      font.drawBoxedNumber(graphics, idleCountdown_ms / 1000, color.ordinal(),
 	        (int)(x-GameFrame.res_width + 1) + NUMBER_SPRITE_OFFSET, (int)y + NUMBER_SPRITE_OFFSET, observer);
 	    }
 	  }

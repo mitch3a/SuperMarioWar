@@ -64,8 +64,6 @@ public class Settings {
     musicAndSound = new MusicAndSoundSettings(prop);
     
     setLanguage(language);    
-    
-    System.out.println(settingTitles.getTitle(musicAndSound));
   }
   
   public void setLanguage(Language language){

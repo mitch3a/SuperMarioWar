@@ -21,13 +21,9 @@ public class Sprite {
 	};
 
 	public static enum Direction {
-		RIGHT(0), LEFT(1);
+		RIGHT, LEFT;
 		
 		public static int NUM_DIRECTIONS = 2;
-	  public final int index;
-	  private Direction(int index) {
-	    this.index = index;
-	  }
 	};
 
   public static final int IMAGE_WIDTH = 32;
@@ -68,8 +64,8 @@ public class Sprite {
       AffineTransformOp op = new AffineTransformOp(result, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
       
       for (int i = 0; i < NUM_IMAGES; i++) {
-        sprites[Direction.RIGHT.index][i] = convertedImg.getSubimage(i * IMAGE_WIDTH, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-        sprites[Direction.LEFT.index ][i] = op.filter(sprites[Direction.RIGHT.index][i], null);
+        sprites[Direction.RIGHT.ordinal()][i] = convertedImg.getSubimage(i * IMAGE_WIDTH, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+        sprites[Direction.LEFT.ordinal() ][i] = op.filter(sprites[Direction.RIGHT.ordinal()][i], null);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -133,7 +129,7 @@ public class Sprite {
   }
 
   public BufferedImage getImage() {
-    return sprites[currentDirection.index][currentAction.index];
+    return sprites[currentDirection.ordinal()][currentAction.index];
   }
 
   public void setJumping() {

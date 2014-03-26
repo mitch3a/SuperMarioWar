@@ -81,7 +81,7 @@ public class SpawnAnimation implements Updatable, Drawable{
     public SpawnAnimationPair(float x, float y, ColorScheme color, int size){
       path = new SpiralPath.RegularVelocity(VELOCITY, 0, NUM_ROTATIONS, RADIUS, x, y);
       tileSheetX = Tile.SIZE*size;
-      tileSheetY = Tile.SIZE*color.index;
+      tileSheetY = Tile.SIZE*color.ordinal();
     }
   }
 

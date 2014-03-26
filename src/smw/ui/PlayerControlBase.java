@@ -15,13 +15,9 @@ public abstract class PlayerControlBase{
 	 *       the component index itself
 	 ***************************************************/
 	public enum PlayerButton{
-		LEFT(0), RIGHT(1), DOWN(2), UP(3), JUMP(4), RUN(5), PAUSE(6);
+		LEFT, RIGHT, DOWN, UP, JUMP, RUN, PAUSE;
 		
 		final static int NUM_BUTTONS_USED = 7;
-		final int index;
-		PlayerButton(int i){
-			index = i;
-		}
 	}
 	
   public enum ControllerType {

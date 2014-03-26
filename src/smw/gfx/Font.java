@@ -25,13 +25,9 @@ public class Font {
   private final BufferedImage[][] boxedNumbers = new BufferedImage[NUM_COLORS][NUM_NUMBERS];
   
   enum ScoreType {
-    COLOR(0), GRAY(1);
+    COLOR, GRAY;
     
     public static final int NUM_SCORE_TYPES = 2;
-    public final int index;
-    ScoreType(int i) {
-      index = i;
-    }
   }
 
   static {
@@ -111,8 +107,8 @@ public class Font {
       p.implementTransparent(convertedImg);
 	    
 	    for (int i = 0; i < NUM_NUMBERS; i++) {
-	    	scoreNumbers[ScoreType.COLOR.index][i] = convertedImg.getSubimage(i * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT);
-        scoreNumbers[ScoreType.GRAY.index ][i] = convertedImg.getSubimage(i * NUMBER_WIDTH, NUMBER_HEIGHT, NUMBER_WIDTH, NUMBER_HEIGHT);
+	    	scoreNumbers[ScoreType.COLOR.ordinal()][i] = convertedImg.getSubimage(i * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT);
+        scoreNumbers[ScoreType.GRAY.ordinal() ][i] = convertedImg.getSubimage(i * NUMBER_WIDTH, NUMBER_HEIGHT, NUMBER_WIDTH, NUMBER_HEIGHT);
       }
     } catch (IOException e) {
 	    e.printStackTrace();
@@ -217,7 +213,7 @@ public class Font {
 	
 	public Image getSingleDigitScore(int i, ScoreType type){
 		if(i < 10){
-			return scoreNumbers[type.index][i];
+			return scoreNumbers[type.ordinal()][i];
 		}
 		
 		return null;

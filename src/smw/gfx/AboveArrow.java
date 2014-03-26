@@ -30,7 +30,7 @@ public class AboveArrow implements Drawable, Updatable {
    */
   public AboveArrow(Player player) {
     this.player = player;
-    tileSheetX = player.color.index * Tile.SIZE;
+    tileSheetX = player.color.ordinal() * Tile.SIZE;
   }
 
   @Override
@@ -38,7 +38,7 @@ public class AboveArrow implements Drawable, Updatable {
     // Only draw arrow when the player is alive and off the screen.
     if (!player.isDead() && (player.y <= -Sprite.IMAGE_HEIGHT)) {
       g.drawImage(tileSheet.getTileImg(tileSheetX, tileSheetY, Tile.SIZE, ARROW_IMAGE_HEIGHT), (int)player.x, y, io);
-      Font.getInstance().drawBoxedNumber(g, countDown_ms / 1000, player.color.index, (int)player.x + TIMER_OFFSET_X, y + TIMER_OFFSET_Y, io);
+      Font.getInstance().drawBoxedNumber(g, countDown_ms / 1000, player.color.ordinal(), (int)player.x + TIMER_OFFSET_X, y + TIMER_OFFSET_Y, io);
     }
   }
 
