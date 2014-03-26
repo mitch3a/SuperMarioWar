@@ -5,6 +5,11 @@ import smw.gfx.Sprite;
 
 public class FireBall extends AnimatedHazard{
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6966249960537000692L;
+
   public FireBall(int x, int y) {
     //(32-18)/2 = 6 -> to center it
     super(x + 6, y + 6, "fireball.png", 18, 18, 100, 4, 0, 0);

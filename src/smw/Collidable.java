@@ -10,6 +10,11 @@ import smw.world.Tile;
 //TODO mk as other objects are implemented, might want to replace Player with something generic
 //     ALSO this should probably be an abstract type
 public abstract class Collidable extends Rectangle2D.Float{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -8638553429127344457L;
+
   //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful
   //Converts the tile type into the flags that this tile carries (solid + ice + death, etc)
   static final short[] g_iTileTypeConversion = {0, 1, 2, 5, 121, 9, 17, 33, 65, 6, 21, 37, 69, 3961, 265, 529, 1057, 2113, 4096};
@@ -105,6 +110,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Non Solid
    */
   public static class NonSolid extends Collidable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7988350142248714466L;
+
     public NonSolid(int x, int y) {
       super(x, y);
     }
@@ -115,6 +125,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    */
   public static class Solid extends Collidable{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4329454001787262104L;
+
     public Solid(int x, int y) {
       super(x, y);
     }
@@ -153,6 +168,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * SolidOnTop
    */
   public static class SolidOnTop extends Collidable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6655601256705049256L;
+
     public SolidOnTop(int x, int y) {
       super(x, y);
     }
@@ -182,6 +202,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Ice
    */
   public static class Ice extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5363736811771340532L;
+
     public Ice(int x, int y) {
       super(x, y);
     }
@@ -199,6 +224,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    */
   public static class Death extends Collidable{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -440585211719668819L;
+
     public Death(int x, int y, int width, int height){
       super(x, y, width, height);
     }
@@ -236,6 +266,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Death On Top
    */
   public static class DeathOnTop extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3843284549022365640L;
+
     public DeathOnTop(int x, int y) {
       super(x, y);
     }
@@ -251,6 +286,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Death On Bottom
    */
   public static class DeathOnBottom extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8648720442591129359L;
+
     public DeathOnBottom(int x, int y) {
       super(x, y);
     }
@@ -266,6 +306,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Death On Right
    */
   public static class DeathOnRight extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2803188035451549603L;
+
     public DeathOnRight(int x, int y) {
       super(x, y);
     }
@@ -281,6 +326,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Death On Left
    */
   public static class DeathOnLeft extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1788100670495257908L;
+
     public DeathOnLeft(int x, int y) {
       super(x, y);
     }
@@ -296,6 +346,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Super Death
    */
   public static class SuperDeath extends Collidable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 407979696693260664L;
+
     public SuperDeath(int x, int y) {
       super(x, y);
     }
@@ -329,6 +384,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Super Death On Top
    */
   public static class SuperDeathOnTop extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5827141992439694842L;
+
     public SuperDeathOnTop(int x, int y) {
       super(x, y);
     }
@@ -344,6 +404,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Super Death On Bottom
    */
   public static class SuperDeathOnBottom extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6128056906664469419L;
+
     public SuperDeathOnBottom(int x, int y) {
       super(x, y);
     }
@@ -359,6 +424,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Super Death On Right
    */
   public static class SuperDeathOnRight extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8454023115425324440L;
+
     public SuperDeathOnRight(int x, int y) {
       super(x, y);
     }
@@ -374,6 +444,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Super Death On Left
    */
   public static class SuperDeathOnLeft extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1650914518888636252L;
+
     public SuperDeathOnLeft(int x, int y) {
       super(x, y);
     }
@@ -389,6 +464,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Ice Death On Bottom
    */
   public static class IceDeathOnBottom extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8238464100262577831L;
+
     public IceDeathOnBottom(int x, int y) {
       super(x, y);
     }
@@ -404,6 +484,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Ice Death On Right
    */
   public static class IceDeathOnRight extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2929794363073454285L;
+
     public IceDeathOnRight(int x, int y) {
       super(x, y);
     }
@@ -419,6 +504,11 @@ public abstract class Collidable extends Rectangle2D.Float{
    * Ice Death On Left
    */
   public static class IceDeathOnLeft extends Solid{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6376124707297720406L;
+
     public IceDeathOnLeft(int x, int y) {
       super(x, y);
     }

@@ -9,6 +9,10 @@ import smw.world.Tile;
 import smw.world.MovingPlatform.StraightSegmentPath;
 
 public class NoteBlock extends AnimatedBlock {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1033602744934518447L;
   static final float PIXELS_TO_MOVE = 16;
   static final float HIT_BLOCK_STARTING_VELOCITY = 0.5f;
   boolean isHit;
@@ -114,12 +118,22 @@ public class NoteBlock extends AnimatedBlock {
   }
 
   public static class BlueNoteBlock extends NoteBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8269677930369680889L;
+
     public BlueNoteBlock(int x, int y){
       super(x, y, "noteblock.png");
     }
   }
   
   public static class WhiteNoteBlock extends NoteBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1136426417874019400L;
+
     public WhiteNoteBlock(int x, int y){
       super(x, y, "noteblock.png");
       this.tileSheetY += Tile.SIZE;
@@ -127,6 +141,11 @@ public class NoteBlock extends AnimatedBlock {
   }
   
   public static class RedNoteBlock extends NoteBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1866002606577333198L;
+
     public RedNoteBlock(int x, int y){
       super(x, y, "noteblock.png");
       this.tileSheetY += 2*Tile.SIZE;

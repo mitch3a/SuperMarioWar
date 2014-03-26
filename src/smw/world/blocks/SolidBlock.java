@@ -10,6 +10,11 @@ import smw.world.TileSheet;
 import smw.world.TileSheetManager;
 
 public class SolidBlock extends Collidable.Solid implements Drawable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 3012999890957575155L;
+
   TileSheet tileSheet = null;
   
   public int[] settings = new int[26]; // TODO - I think this is mapped to NUM_POWERUPS

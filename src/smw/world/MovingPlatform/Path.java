@@ -30,10 +30,7 @@ public abstract class Path{
     return currentPos[X] - prev[X];
   }
   
-  public float getYChange(){
-    if(currentPos[Y] - prev[Y] > 100){
-      int todo = 0;
-    }
+  public float getYChange(){    
     return currentPos[Y] - prev[Y];
   }
   

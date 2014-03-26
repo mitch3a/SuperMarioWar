@@ -10,6 +10,10 @@ import smw.Updatable;
 
 //TODO I don't like this being collidable... need to fix this
 public class AnimatedDrawable extends Collidable.Solid implements Updatable, Drawable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -9162708371394247342L;
   /** Images used for each frame of animation. */
   protected BufferedImage[] images;
   /** Current image index in the animation. */

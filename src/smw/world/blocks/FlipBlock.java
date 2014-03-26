@@ -3,6 +3,10 @@ package smw.world.blocks;
 import smw.entity.Player;
 
 public  class FlipBlock extends AnimatedBlock{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 3808562715744284314L;
   final float ANIMATION_LENGTH = 10000; //10 seconds
   float timeAnimationRunning;
   

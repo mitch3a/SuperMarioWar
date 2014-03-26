@@ -2,7 +2,6 @@ package smw.world.Structures;
 
 import smw.world.Tile;
 import smw.world.hazards.AnimatedHazard;
-import smw.world.hazards.FireBall;
 import smw.world.hazards.FireBallPole;
 import smw.world.hazards.OilFlame;
 

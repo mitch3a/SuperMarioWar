@@ -10,6 +10,10 @@ import smw.entity.Player;
 import smw.world.Tile;
 
 public abstract class SwitchControlBlock extends SolidBlock implements Updatable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 4456939559232621438L;
   final List<SwitchBlock> blocksToChange;
   final int tileSheetYOff;
   
@@ -61,6 +65,10 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
    * give it its own list of blocks to update.
    */
   public static class Red extends SwitchControlBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1461737917896835682L;
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
     public static boolean blocksOn = false;
     
@@ -86,6 +94,10 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   }
   
   public static class Green extends SwitchControlBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1408131195016234024L;
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
     public static boolean blocksOn = false;
     
@@ -111,6 +123,10 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   }
   
   public static class Yellow extends SwitchControlBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8570190138096224206L;
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
     public static boolean blocksOn = false;
     
@@ -136,6 +152,10 @@ public abstract class SwitchControlBlock extends SolidBlock implements Updatable
   }
   
   public static class Blue extends SwitchControlBlock{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7481474808671045276L;
     static final List<SwitchBlock> blocksToChange = new LinkedList<SwitchBlock>();
     public static boolean blocksOn = false;
     

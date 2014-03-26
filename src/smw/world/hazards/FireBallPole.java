@@ -10,6 +10,10 @@ import smw.world.MovingPlatform.EllipticalPath;
 
 public class FireBallPole extends AnimatedHazard{
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 9120498870741345275L;
   final int numBalls;
   final static int spaceBetweenBalls = 28;
   

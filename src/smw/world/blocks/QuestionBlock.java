@@ -5,6 +5,10 @@ import smw.entity.Player;
 import smw.world.Tile;
 
 public class QuestionBlock extends AnimatedBlock{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 8112440979454055356L;
   final float ANIMATION_LENGTH = 10000; //10 seconds
   final static float BUMP_LENGTH = 100; // 0.1 seconds
   float timeRunning;

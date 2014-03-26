@@ -10,6 +10,10 @@ import smw.world.Tile;
  * by SwitchControlBlocks
  */
 public class SwitchBlock extends SolidBlock{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 6385800132136017015L;
   boolean hidden;
   final int tileSheetYHidden;
 

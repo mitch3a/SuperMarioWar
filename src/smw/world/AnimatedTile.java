@@ -8,6 +8,10 @@ import javax.imageio.ImageIO;
 import smw.gfx.Palette;
 
 public class AnimatedTile extends AnimatedDrawable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -4608576932031411676L;
   static final int ANIMATED_TILE_STATES = 4;
   static BufferedImage masterImage = null; //TODO not crazy about how this is done but quick/efficient
 

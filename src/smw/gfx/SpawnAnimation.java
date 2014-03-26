@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import smw.Drawable;
-import smw.Game;
 import smw.Updatable;
 import smw.gfx.Palette.ColorScheme;
 import smw.world.Tile;

@@ -9,7 +9,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
@@ -138,8 +137,8 @@ public class GameFrame extends Canvas{
     g2d.scale(scaleFactorWidth, scaleFactorHeight);
     
     // TODO - RPG - If we have a menu then only draw that! (Although this won't work for pause menu!)
-    if (game.menu != null) {
-      game.menu.draw(g2d, this);
+    if (Game.menu != null) {
+      Game.menu.draw(g2d, this);
     } else {
       
       if(Debug.CLIP_MODE && (Scoreboard.winningPlayer == null || Debug.CLIP_ZOOM_STRETCH)){

@@ -1,7 +1,6 @@
 package smw.world.blocks;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 import smw.Game;
@@ -14,6 +13,10 @@ import smw.world.Tile;
 import smw.world.MovingPlatform.StraightSegmentPath;
 
 public class DonutBlock extends SolidBlock implements Updatable, MovingCollidable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 3484038768179897858L;
   public boolean isFalling;
   boolean playerOnTop;
   float playerOnTopTime;
