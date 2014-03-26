@@ -23,29 +23,18 @@ public class PropertiesWrapper {
   
   @SuppressWarnings("serial")
   public PropertiesWrapper() {
-    FileInputStream input = null;
+    prop = new Properties(){
+      @Override
+      public synchronized Enumeration<Object> keys() {
+          return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+      }
+    };
     
-    try{
-      prop = new Properties(){
-        @Override
-        public synchronized Enumeration<Object> keys() {
-            return Collections.enumeration(new TreeSet<Object>(super.keySet()));
-        }
-      };
-      
-      input = new FileInputStream("config.properties");
+    try(FileInputStream input = new FileInputStream("config.properties")){
       prop.load(input);
     } catch(Exception e){
       logger.warning(e.toString());
-    } finally{
-      if(input != null){
-        try{
-          input.close();  
-        } catch(Exception e){
-          logger.log(Level.WARNING, "Could not close input file.", e);
-        }
-      }
-    }
+    } 
   }
   
   public boolean getBoolean(KeyDefaultPair<Boolean> pair){

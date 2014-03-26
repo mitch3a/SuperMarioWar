@@ -44,8 +44,8 @@ public class Debug {
    */
   public static String getMapVersion(String name){
     String result = "";
-    try {
-      WorldBuffer buffer = new WorldBuffer(name);
+    
+    try (WorldBuffer buffer = new WorldBuffer(name)){
       int version = buffer.getVersion();
       
       result += "Version: " + version;
@@ -68,7 +68,6 @@ public class Debug {
           buffer.getString();
         }
       }
-      buffer.close();
     }
     catch (Exception e) {
       e.printStackTrace();

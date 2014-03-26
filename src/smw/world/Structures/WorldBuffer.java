@@ -18,7 +18,7 @@ import smw.world.hazards.AnimatedHazard;
 import smw.world.warps.WarpEntrance;
 import smw.world.warps.WarpExit;
 
-public class WorldBuffer {
+public class WorldBuffer implements AutoCloseable{
 
   MappedByteBuffer buffer;
   FileChannel fileChannel;

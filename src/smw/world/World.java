@@ -121,8 +121,7 @@ public class World {
     warps = new WarpEntrance[MAP_WIDTH][MAP_HEIGHT];
     nospawn = new boolean[NUM_SPAWN_AREA_TYPES][MAP_WIDTH][MAP_HEIGHT];
 
-    try {
-      WorldBuffer buffer = new WorldBuffer(worldName);
+    try (WorldBuffer buffer = new WorldBuffer(worldName)){
       int version = buffer.getVersion();
 
       // For now only support latest world files (1.8+)
@@ -482,9 +481,6 @@ public class World {
         }
 
       }// end if (version >= 1800)
-
-      // Close out file.
-      buffer.close();
     } catch (Exception e) {
       e.printStackTrace();
     }

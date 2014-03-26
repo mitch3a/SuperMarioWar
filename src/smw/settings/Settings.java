@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lombok.Getter;
@@ -39,23 +40,17 @@ public class Settings {
   }
 
   private Settings() {
-    PropertiesWrapper prop;
-    try {
-      prop = new PropertiesWrapper();
+    PropertiesWrapper prop = new PropertiesWrapper();
 
-      gamePlay = new GamePlaySettings(prop);
-      team = new TeamSettings(prop);
-      itemSelection = new ItemSelectionSettings(prop);
-      item = new ItemSettings(prop);
-      weaponsAndProjectiles = new WeaponsAndProjectilesSettings(prop);
-      weaponUseLimits = new WeaponUseLimitsSettings(prop);
-      graphics = new GraphicsSettings(prop);
-      eyeCandy = new EyeCandySettings(prop);
-      musicAndSound = new MusicAndSoundSettings(prop);
-      
-    } catch (Exception e) {
-      logger()
-    }
+    gamePlay = new GamePlaySettings(prop);
+    team = new TeamSettings(prop);
+    itemSelection = new ItemSelectionSettings(prop);
+    item = new ItemSettings(prop);
+    weaponsAndProjectiles = new WeaponsAndProjectilesSettings(prop);
+    weaponUseLimits = new WeaponUseLimitsSettings(prop);
+    graphics = new GraphicsSettings(prop);
+    eyeCandy = new EyeCandySettings(prop);
+    musicAndSound = new MusicAndSoundSettings(prop);
   }
 
   public synchronized void saveSettings() {
@@ -68,8 +63,7 @@ public class Settings {
       try {
         f.createNewFile();
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+       logger.log(Level.SEVERE, "Cannot create Settings File: ", e);
       }
     }
 
