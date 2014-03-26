@@ -1,18 +1,11 @@
 package smw.menu;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.awt.image.RescaleOp;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import smw.Game;
-import smw.gfx.Font;
-import smw.gfx.Palette;
 import smw.menu.MenuInput.Action;
 
 public class TitleMenu extends Menu {

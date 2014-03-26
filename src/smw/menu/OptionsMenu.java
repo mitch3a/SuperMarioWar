@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import smw.Game;
-import smw.menu.Menu.ItemType;
-import smw.menu.Menu.MenuItem;
 import smw.menu.MenuInput.Action;
 
 public class OptionsMenu extends Menu {
