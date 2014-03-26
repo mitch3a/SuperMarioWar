@@ -86,6 +86,8 @@ public class ItemSelectionSettings implements SubSetting{
   
   @Override
   public void add(PropertiesWrapper prop) {
+    prop.setProperty(USE_SETTINGS_FROM, useSettingsFrom);
+    prop.setProperty(ITEM_SET, itemSet);
     prop.setProperty(GREEN_MUSHROOM, greenMushroom);
     prop.setProperty(RED_MUSHROOM, redMushroom);
     prop.setProperty(BLUE_MUSHROOM, blueMushroom);

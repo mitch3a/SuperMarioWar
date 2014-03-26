@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import smw.settings.SettingTitles.Language;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +23,11 @@ public class Settings {
   static final String CONFIG_FILE = "config.properties";
   static final Logger logger = Logger.getLogger(Settings.class.getName());
   
+
+  
+  //For example settingTitles.getTitle(ItemSelectionSettings.UseSettingsFrom));
+  @Getter SettingTitles settingTitles;
+  
   @Getter @Setter GamePlaySettings gamePlay;
   @Getter @Setter TeamSettings team;
   @Getter @Setter ItemSelectionSettings itemSelection;
@@ -31,15 +38,19 @@ public class Settings {
   @Getter @Setter EyeCandySettings eyeCandy;
   @Getter @Setter MusicAndSoundSettings musicAndSound;
   
-  public synchronized static Settings getInstance() {
+  public synchronized static Settings getInstance(Language language) {
     if (INSTANCE == null) {
-      INSTANCE = new Settings();
+      INSTANCE = new Settings(language);
     }
 
     return INSTANCE;
   }
 
-  private Settings() {
+  public synchronized static Settings getInstance(){
+    return getInstance(Language.english);
+  }
+  
+  private Settings(Language language) {
     PropertiesWrapper prop = new PropertiesWrapper();
 
     gamePlay = new GamePlaySettings(prop);
@@ -51,6 +62,14 @@ public class Settings {
     graphics = new GraphicsSettings(prop);
     eyeCandy = new EyeCandySettings(prop);
     musicAndSound = new MusicAndSoundSettings(prop);
+    
+    setLanguage(language);    
+    
+    System.out.println(settingTitles.getTitle(musicAndSound));
+  }
+  
+  public void setLanguage(Language language){
+    settingTitles = new SettingTitles(language);
   }
 
   public synchronized void saveSettings() {
