@@ -1,7 +1,5 @@
 package smw.settings;
 
-import java.util.Properties;
-
 import lombok.Getter;
 import lombok.Setter;
 

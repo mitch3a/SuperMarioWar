@@ -21,6 +21,7 @@ public class PropertiesWrapper {
   
   Properties prop;
   
+  @SuppressWarnings("serial")
   public PropertiesWrapper() {
     FileInputStream input = null;
     
