@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class Settings {
   private static Settings INSTANCE;
 
   static final String CONFIG_FILE = "config.properties";
+  static final Logger logger = Logger.getLogger(Settings.class.getName());
   
   @Getter @Setter GamePlaySettings gamePlay;
   @Getter @Setter TeamSettings team;
@@ -52,7 +54,7 @@ public class Settings {
       musicAndSound = new MusicAndSoundSettings(prop);
       
     } catch (Exception e) {
-      e.printStackTrace();
+      logger()
     }
   }
 
@@ -60,17 +62,18 @@ public class Settings {
     //Want to store these in order
     PropertiesWrapper prop = new PropertiesWrapper();
   
-    OutputStream output = null;
-
-    try {
-      File f = new File(CONFIG_FILE);
-      
-      if(!f.exists()){
+    File f = new File(CONFIG_FILE);
+    
+    if(!f.exists()){
+      try {
         f.createNewFile();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
-      
-      output = new FileOutputStream(CONFIG_FILE);
+    }
 
+    try (OutputStream output = new FileOutputStream(CONFIG_FILE)){
       gamePlay.add(prop);
       team.add(prop);
       itemSelection.add(prop);
@@ -85,14 +88,6 @@ public class Settings {
       
     } catch (IOException io) {
       io.printStackTrace();
-    } finally {
-      if (output != null) {
-        try {
-          output.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+    } 
   }
 }
