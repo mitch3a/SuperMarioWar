@@ -10,15 +10,15 @@ public class WeaponUseLimitsSettings implements SubSetting{
     unlimited, limit2, limit5, limit8, limit10, limit12, limit15, limit20, limit25, limit30, limit40, limit50;
   }
   
-  static final KeyDefaultPairEnum<Limit> FIREBALL  = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Fireball",  Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> HAMMER    = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Hammer",    Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> BOOMERANG = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Boomerang", Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> FEATHER   = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Feather",   Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> LEAF      = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Leaf",      Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> P_WING    = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "PWing",     Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> TANOOKI   = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Tanooki",   Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> BOMB      = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Bomb",      Limit.unlimited);
-  static final KeyDefaultPairEnum<Limit> WAND      = new KeyDefaultPairEnum<Limit>  (CATEGORY_NAME + "." + "Wand",      Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> FIREBALL  = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Fireball",  Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> HAMMER    = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Hammer",    Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> BOOMERANG = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Boomerang", Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> FEATHER   = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Feather",   Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> LEAF      = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Leaf",      Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> P_WING    = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "PWing",     Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> TANOOKI   = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Tanooki",   Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> BOMB      = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Bomb",      Limit.unlimited);
+  static final KeyDefaultPairEnum<Limit> WAND      = new KeyDefaultPairEnum<Limit>(CATEGORY_NAME + "." + "Wand",      Limit.unlimited);
   
   @Getter @Setter Limit fireball;
   @Getter @Setter Limit hammer;
