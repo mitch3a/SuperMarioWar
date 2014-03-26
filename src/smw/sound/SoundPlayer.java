@@ -45,24 +45,24 @@ public class SoundPlayer {
   /** Constructs the sound player. */
   public SoundPlayer() {
 	  try {
-      soundSystem = new SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
-        LibraryLWJGLOpenAL.class : LibraryJavaSound.class);
+      soundSystem = SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
+        new SoundSystem(LibraryLWJGLOpenAL.class) :
+        new SoundSystem();
+        
       SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
       SoundSystemConfig.setCodec("wav", CodecWav.class);
-
-      Settings settings = Settings.getInstance();
-      settings.saveSettings();
-      setMasterVolume(1.0f);
-      setBGMVolume(Volume.getValue(settings.getMusicAndSound().getMusicVolume()));
-      setSFXVolume(Volume.getValue(settings.getMusicAndSound().getSoundVolume()));
-      
-      setupBGMList();
-      setupSfx();
-
     } catch (SoundSystemException e) {
       System.err.println("Error linking sound plugins!");
-      soundSystem = new SoundSystem();
     }
+
+    Settings settings = Settings.getInstance();
+    settings.saveSettings();
+    setMasterVolume(1.0f);
+    setBGMVolume(Volume.getValue(settings.getMusicAndSound().getMusicVolume()));
+    setSFXVolume(Volume.getValue(settings.getMusicAndSound().getSoundVolume()));
+    
+    setupBGMList();
+    setupSfx();
   }
   
   /** Sets up the BGM track list for each music category number that exists in a map file. */
