@@ -24,6 +24,7 @@ import smw.entity.Player;
 import smw.gfx.Scoreboard;
 import smw.gfx.Sprite;
 import smw.settings.Debug;
+import smw.settings.GraphicsSettings.ScreenSize;
 import smw.settings.Settings;
 import smw.world.World;
 
@@ -98,7 +99,7 @@ public class GameFrame extends Canvas{
     });
     
     Settings settings = Settings.getInstance();
-    if(settings.isFullscreen()){
+    if(settings.getGraphics().getScreenSize() == ScreenSize.fullScreen){
       frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       frame.addComponentListener(new ComponentAdapter() {
         public void componentResized(ComponentEvent e) {
@@ -194,7 +195,7 @@ public class GameFrame extends Canvas{
     double height = frame.getHeight();
     
     Settings settings = Settings.getInstance();
-    if(!settings.isStretchMode()){
+    if(false){//TODO!settings.isStretchMode()){
       double desiredRatio = (((double)res_width)/res_height);
       double actualRatio = (width/height);
       

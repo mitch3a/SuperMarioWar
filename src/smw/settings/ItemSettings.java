@@ -1,7 +1,5 @@
 package smw.settings;
 
-import java.util.Properties;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -56,13 +54,13 @@ public class ItemSettings implements SubSetting{
   }
   
   @Override
-  public void add(Properties prop) {
-    prop.setProperty(ITEM_USE_SPEED.key,    itemUseSpeed.toString());
-    prop.setProperty(ITEM_SPAWN.key,        itemSpawn.toString());
-    prop.setProperty(HIDDEN_BLOCK_HIDE.key, hiddenBlockHide.toString());
-    prop.setProperty(SWAP_STYLE.key,        swapStyle.toString());
-    prop.setProperty(BONUS_WHEEL.key,       bonusWheel.toString());
-    prop.setProperty(BONUS_ITEM.key,        bonusItem.toString());
+  public void add(PropertiesWrapper prop) {
+    prop.setProperty(ITEM_USE_SPEED,    itemUseSpeed);
+    prop.setProperty(ITEM_SPAWN,        itemSpawn);
+    prop.setProperty(HIDDEN_BLOCK_HIDE, hiddenBlockHide);
+    prop.setProperty(SWAP_STYLE,        swapStyle);
+    prop.setProperty(BONUS_WHEEL,       bonusWheel);
+    prop.setProperty(BONUS_ITEM,        bonusItem);
   }
   
   @Override

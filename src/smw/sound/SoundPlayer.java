@@ -11,6 +11,7 @@ import paulscode.sound.libraries.LibraryJavaSound;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 import smw.Utilities;
 import smw.settings.Settings;
+import smw.settings.MusicAndSoundSettings.Volume;
 import smw.world.World;
 
 /**
@@ -52,9 +53,9 @@ public class SoundPlayer {
 
       Settings settings = Settings.getInstance();
       settings.saveSettings();
-      setMasterVolume(settings.getVolumeMaster());
-      setBGMVolume(settings.getVolumeBGM());
-      setSFXVolume(settings.getVolumeSFX());
+      setMasterVolume(1.0f);
+      setBGMVolume(Volume.getValue(settings.getMusicAndSound().getMusicVolume()));
+      setSFXVolume(Volume.getValue(settings.getMusicAndSound().getSoundVolume()));
       
       setupBGMList();
       setupSfx();

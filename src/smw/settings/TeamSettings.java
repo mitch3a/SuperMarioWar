@@ -1,7 +1,5 @@
 package smw.settings;
 
-import java.util.Properties;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,16 +27,16 @@ public class TeamSettings implements SubSetting{
   @Getter @Setter TournamentControl tournamentControl;
   
   public TeamSettings(PropertiesWrapper prop){
-    playerCollision   = (PlayerCollision)   prop.getEnum(PLAYER_COLLISION);
-    colors            = (Colors)            prop.getEnum(COLORS);
-    tournamentControl = (TournamentControl) prop.getEnum(TOURNAMENT_CONTROL);
+    playerCollision   = prop.getEnum(PLAYER_COLLISION);
+    colors            = prop.getEnum(COLORS);
+    tournamentControl = prop.getEnum(TOURNAMENT_CONTROL);
   }
   
   @Override
-  public void add(Properties prop) {
-    prop.setProperty(PLAYER_COLLISION.key,   playerCollision.toString());
-    prop.setProperty(COLORS.key,             colors.toString());
-    prop.setProperty(TOURNAMENT_CONTROL.key, tournamentControl.toString());
+  public void add(PropertiesWrapper prop) {
+    prop.setProperty(PLAYER_COLLISION,   playerCollision);
+    prop.setProperty(COLORS,             colors);
+    prop.setProperty(TOURNAMENT_CONTROL, tournamentControl);
   }
   
   @Override

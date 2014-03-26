@@ -1,7 +1,5 @@
 package smw.settings;
 
-import java.util.Properties;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,27 +45,27 @@ public class GamePlaySettings implements SubSetting{
   
   public GamePlaySettings(PropertiesWrapper prop){
     respawnTime = prop.getFloat(RESPAWN_TIME);
-    shieldStyle = (ShieldStyle) prop.getEnum(SHIELD_STYLE);
+    shieldStyle = prop.getEnum(SHIELD_STYLE);
     shieldTime  = prop.getFloat(SHIELD_TIME);
     boundsTime  = prop.getFloat(BOUNDS_TIME);
     suicideTime = prop.getFloat(SUICIDE_TIME);
-    warpLockStyle = (WarpLockStyle) prop.getEnum(WARP_LOCK_STYLE);
+    warpLockStyle = prop.getEnum(WARP_LOCK_STYLE);
     warpLockTime  = prop.getFloat(WARP_LOCK_TIME); 
-    botDifficulty = (BotDifficulty) prop.getEnum(BOT_DIFFICULTY);
-    pointSpeed    = (PointSpeed) prop.getEnum(POINT_SPEED);
+    botDifficulty = prop.getEnum(BOT_DIFFICULTY);
+    pointSpeed    = prop.getEnum(POINT_SPEED);
   }
   
   @Override
-  public void add(Properties prop) {
-    prop.setProperty(RESPAWN_TIME.key,    Float.toString(respawnTime));
-    prop.setProperty(SHIELD_STYLE.key,    shieldStyle.toString());
-    prop.setProperty(SHIELD_TIME.key,     Float.toString(shieldTime));
-    prop.setProperty(BOUNDS_TIME.key,     Float.toString(boundsTime));
-    prop.setProperty(SUICIDE_TIME.key,    Float.toString(suicideTime));
-    prop.setProperty(WARP_LOCK_STYLE.key, warpLockStyle.toString());
-    prop.setProperty(WARP_LOCK_TIME.key,  Float.toString(warpLockTime));
-    prop.setProperty(BOT_DIFFICULTY.key,  botDifficulty.toString());
-    prop.setProperty(POINT_SPEED.key,     pointSpeed.toString());
+  public void add(PropertiesWrapper prop) {
+    prop.setProperty(RESPAWN_TIME,    respawnTime);
+    prop.setProperty(SHIELD_STYLE,    shieldStyle);
+    prop.setProperty(SHIELD_TIME,     shieldTime);
+    prop.setProperty(BOUNDS_TIME,     boundsTime);
+    prop.setProperty(SUICIDE_TIME,    suicideTime);
+    prop.setProperty(WARP_LOCK_STYLE, warpLockStyle);
+    prop.setProperty(WARP_LOCK_TIME,  warpLockTime);
+    prop.setProperty(BOT_DIFFICULTY,  botDifficulty);
+    prop.setProperty(POINT_SPEED,     pointSpeed);
   }
 
   @Override
