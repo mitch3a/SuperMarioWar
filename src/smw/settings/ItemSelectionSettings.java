@@ -1,15 +1,7 @@
 package smw.settings;
 
-import java.util.Properties;
-
 import lombok.Getter;
 import lombok.Setter;
-
-import smw.settings.GamePlaySettings.BotDifficulty;
-import smw.settings.GamePlaySettings.PointSpeed;
-import smw.settings.GamePlaySettings.ShieldStyle;
-import smw.settings.GamePlaySettings.WarpLockStyle;
-import smw.settings.TeamSettings.PlayerCollision;
 
 public class ItemSelectionSettings implements SubSetting{
   static final String CATEGORY_NAME = "ItemSelection";
@@ -29,73 +21,87 @@ public class ItemSelectionSettings implements SubSetting{
     superMarioWorld;
   }
   
-  static final UseSettingsFrom DEFAULT_SHIELD_STYLE = UseSettingsFrom.mapOnly;
-  static final ItemSet DEFAULT_ITEM_SET = ItemSet.customSet1;
-  static final float DEFAULT_GREEN_MUSHROOM = 10;
-  static final float DEFAULT_RED_MUSHROOM = 4;
-  static final float DEFAULT_BLUE_MUSHROOM = 2;
-  static final float DEFAULT_YELLOW_MUSHROOM = 1;
-  static final float DEFAULT_QUESTION_MUSHROOM = 5;
-  static final float DEFAULT_FLOWER = 10;
-  static final float DEFAULT_HAMMER = 4;
-  static final float DEFAULT_BOOMERANG = 6;
-  static final float DEFAULT_DEATH_MUSHROOM = 5;
-  static final float DEFAULT_STAR = 8;
-  static final float DEFAULT_BOMB = 4;
-  static final float DEFAULT_TANOOKI = 6;
-  static final float DEFAULT_TIMER = 4;
-  static final float DEFAULT_BULLET_BILL = 2;
-  static final float DEFAULT_FIREBALL = 4;
-  static final float DEFAULT_POW_BLOCK = 2;
-
+  static final KeyDefaultPair<Boolean> SCREEN_CRUNCH    = new KeyDefaultPair<Boolean>(CATEGORY_NAME + "." + "ScreenCrunch", false);
   
-  @Getter @Setter float greenMushroom;
-  @Getter @Setter float redMushroom;
-  @Getter @Setter float blueMushroom;
-  @Getter @Setter float yellowMushroom;
-  @Getter @Setter float questionMushroom;
-  @Getter @Setter float flower;
-  @Getter @Setter float hammer;
-  @Getter @Setter float boomerang;
-  @Getter @Setter float deathMushroom;
-  @Getter @Setter float star;
-  @Getter @Setter float bomb;
-  @Getter @Setter float tanooki;
-  @Getter @Setter float timer;
-  @Getter @Setter float bulletBill;
-  @Getter @Setter float fireball;
-  @Getter @Setter float powBlock;
+  static final KeyDefaultPairEnum<UseSettingsFrom> USE_SETTINGS_FROM = new KeyDefaultPairEnum<UseSettingsFrom>(CATEGORY_NAME + "." + "UseSettingsFrom", UseSettingsFrom.mapOnly);
+  static final KeyDefaultPairEnum<ItemSet> ITEM_SET = new KeyDefaultPairEnum<ItemSet>(CATEGORY_NAME + "." + "ItemSet", ItemSet.customSet1);
+  
+  static final KeyDefaultPair<Integer> GREEN_MUSHROOM = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "GreenMushroom", 10);
+  static final KeyDefaultPair<Integer> RED_MUSHROOM = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "RedMushroom", 4);
+  static final KeyDefaultPair<Integer> BLUE_MUSHROOM = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "BlueMushroom", 2);
+  static final KeyDefaultPair<Integer> YELLOW_MUSHROOM = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "YellowMushroom", 1);
+  static final KeyDefaultPair<Integer> QUESTION_MUSHROOM = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "QuestionMushroom", 5);
+  static final KeyDefaultPair<Integer> FLOWER = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Flower", 10);
+  static final KeyDefaultPair<Integer> HAMMER = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Hammer", 4);
+  static final KeyDefaultPair<Integer> BOOMERANG = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Boomerang", 6);
+  static final KeyDefaultPair<Integer> DEATH_MUSHROOM = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "DeathMushroom", 5);
+  static final KeyDefaultPair<Integer> STAR = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Star", 8);
+  static final KeyDefaultPair<Integer> BOMB = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Bomb", 4);
+  static final KeyDefaultPair<Integer> TANOOKI = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Tanooki", 6);
+  static final KeyDefaultPair<Integer> TIMER = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Timer", 4);
+  static final KeyDefaultPair<Integer> BULLET_BILL = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "BulletBill", 2);
+  static final KeyDefaultPair<Integer> FIREBALL = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "Fireball", 4);
+  static final KeyDefaultPair<Integer> POW_BLOCK = new KeyDefaultPair<Integer>(CATEGORY_NAME + "." + "PowBlock", 2);
+
+  @Getter @Setter UseSettingsFrom useSettingsFrom;
+  @Getter @Setter ItemSet itemSet;  
+  @Getter @Setter int greenMushroom;
+  @Getter @Setter int redMushroom;
+  @Getter @Setter int blueMushroom;
+  @Getter @Setter int yellowMushroom;
+  @Getter @Setter int questionMushroom;
+  @Getter @Setter int flower;
+  @Getter @Setter int hammer;
+  @Getter @Setter int boomerang;
+  @Getter @Setter int deathMushroom;
+  @Getter @Setter int star;
+  @Getter @Setter int bomb;
+  @Getter @Setter int tanooki;
+  @Getter @Setter int timer;
+  @Getter @Setter int bulletBill;
+  @Getter @Setter int fireball;
+  @Getter @Setter int powBlock;
   
   public ItemSelectionSettings(PropertiesWrapper prop){
+    useSettingsFrom = prop.getEnum(USE_SETTINGS_FROM);
+    itemSet = prop.getEnum(ITEM_SET);
     
-    
-    /*
-    respawnTime = prop.getFloat(KEY_RESPAWN_TIME, DEFAULT_RESPAWN_TIME);
-    shieldStyle = (ShieldStyle) prop.getEnum(ShieldStyle.class, KEY_SHIELD_STYLE, DEFAULT_SHIELD_STYLE);
-    shieldTime  = prop.getFloat(KEY_SHIELD_TIME,  DEFAULT_SHIELD_TIME);
-    boundsTime  = prop.getFloat(KEY_BOUNDS_TIME,  DEFAULT_BOUNDS_TIME);
-    suicideTime = prop.getFloat(KEY_SUICIDE_TIME, DEFAULT_SUICIDE_TIME);
-    warpLockStyle = (WarpLockStyle) prop.getEnum(WarpLockStyle.class, KEY_WARP_LOCK_STYLE, DEFAULT_WARP_LOCK_STYLE);
-    warpLockTime  = prop.getFloat(KEY_WARP_LOCK_TIME, DEFAULT_WARP_LOCK_TIME); 
-    botDifficulty = (BotDifficulty) prop.getEnum(BotDifficulty.class, KEY_BOT_DIFFICULTY, DEFAULT_BOT_DIFFICULTY);
-    pointSpeed    = (PointSpeed) prop.getEnum(PointSpeed.class, KEY_POINT_SPEED, DEFAULT_POINT_SPEED);
-    */
+    greenMushroom    = prop.getInt(GREEN_MUSHROOM);
+    redMushroom      = prop.getInt(RED_MUSHROOM);
+    blueMushroom     = prop.getInt(BLUE_MUSHROOM);
+    yellowMushroom   = prop.getInt(YELLOW_MUSHROOM);
+    questionMushroom = prop.getInt(QUESTION_MUSHROOM);
+    flower           = prop.getInt(FLOWER);
+    hammer           = prop.getInt(HAMMER);
+    boomerang        = prop.getInt(BOOMERANG);
+    deathMushroom    = prop.getInt(DEATH_MUSHROOM);
+    star             = prop.getInt(STAR);
+    bomb             = prop.getInt(BOMB);
+    tanooki          = prop.getInt(TANOOKI);
+    timer            = prop.getInt(TIMER);
+    bulletBill       = prop.getInt(BULLET_BILL);
+    fireball         = prop.getInt(FIREBALL);
+    powBlock         = prop.getInt(POW_BLOCK);
   }
   
   @Override
-  public void add(Properties prop) {
-    /*
-    shieldStyle  = ShieldStyle.hard;
-    prop.setProperty(KEY_RESPAWN_TIME,    Float.toString(respawnTime));
-    prop.setProperty(KEY_SHIELD_STYLE,    shieldStyle.toString());
-    prop.setProperty(KEY_SHIELD_TIME,     Float.toString(shieldTime));
-    prop.setProperty(KEY_BOUNDS_TIME,     Float.toString(boundsTime));
-    prop.setProperty(KEY_SUICIDE_TIME,    Float.toString(suicideTime));
-    prop.setProperty(KEY_WARP_LOCK_STYLE, warpLockStyle.toString());
-    prop.setProperty(KEY_WARP_LOCK_TIME,  Float.toString(warpLockTime));
-    prop.setProperty(KEY_BOT_DIFFICULTY,  botDifficulty.toString());
-    prop.setProperty(KEY_POINT_SPEED,     pointSpeed.toString());
-    */
+  public void add(PropertiesWrapper prop) {
+    prop.setProperty(GREEN_MUSHROOM, greenMushroom);
+    prop.setProperty(RED_MUSHROOM, redMushroom);
+    prop.setProperty(BLUE_MUSHROOM, blueMushroom);
+    prop.setProperty(YELLOW_MUSHROOM, yellowMushroom);
+    prop.setProperty(QUESTION_MUSHROOM, questionMushroom);
+    prop.setProperty(FLOWER, flower);
+    prop.setProperty(HAMMER, hammer);
+    prop.setProperty(BOOMERANG, boomerang);
+    prop.setProperty(DEATH_MUSHROOM, deathMushroom);
+    prop.setProperty(STAR, star);
+    prop.setProperty(BOMB, bomb);
+    prop.setProperty(TANOOKI, tanooki);
+    prop.setProperty(TIMER, timer);
+    prop.setProperty(BULLET_BILL, bulletBill);
+    prop.setProperty(FIREBALL, fireball);
+    prop.setProperty(POW_BLOCK, powBlock);
   }
 
   @Override

@@ -1,5 +1,10 @@
 package smw.settings;
 
+/**
+ * Helper pair for Primitive Types. Used for saving/loading settings
+ * 
+ * @param <T>
+ */
 public class KeyDefaultPair<T> {
 
   T defaultValue;
