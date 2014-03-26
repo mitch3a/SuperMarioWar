@@ -43,8 +43,7 @@ public class SoundPlayer {
   private int trackList;
   
   /** Constructs the sound player. */
-  public SoundPlayer() {    
-	  soundSystem = new SoundSystem();
+  public SoundPlayer() {
 	  try {
       soundSystem = new SoundSystem(SoundSystem.libraryCompatible(LibraryLWJGLOpenAL.class) ?
         LibraryLWJGLOpenAL.class : LibraryJavaSound.class);
@@ -60,8 +59,9 @@ public class SoundPlayer {
       setupBGMList();
       setupSfx();
 
-    } catch (SoundSystemException e)  {
+    } catch (SoundSystemException e) {
       System.err.println("Error linking sound plugins!");
+      soundSystem = new SoundSystem();
     }
   }
   
