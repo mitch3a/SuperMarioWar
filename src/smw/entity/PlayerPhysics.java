@@ -35,10 +35,10 @@ public class PlayerPhysics {
    * values had to be converted.
    */
 
-  static class PhysicsValues{
+  public static class PhysicsValues{
     //Constant for either direction
     static final float JUMPING_VELOCITY = -9.0f;
-    static final float GRAVITY = 0.40f/16f;
+    public static final float GRAVITY = 0.40f/16f;
     
     static final float MAX_VELOCITY_Y = 20.0f;
     
@@ -47,6 +47,7 @@ public class PlayerPhysics {
     
     static final float NOTE_BLOCK_BOUNCE = 3.0f;
     static final float NOTE_BLOCK_BOUNCE_JUMP_POWER = -8.1f;
+    static final float KILL_ENEMY_BOUNCE = -3.0f;
     
     //Varies by direction
     final float MOVING_X_ADD; 
@@ -276,5 +277,9 @@ public class PlayerPhysics {
   private void setDirection(Direction newDirection){
     currentVelocityDirection = newDirection;
     currentPhysicsValues = (currentVelocityDirection == Direction.RIGHT) ? rightPhysicsValues : leftPhysicsValues;
+  }
+
+  public void killEnemy() {
+    velocityY = (playerControl.isJumping()) ? PhysicsValues.JUMPING_VELOCITY : PhysicsValues.KILL_ENEMY_BOUNCE;
   }
 }

@@ -56,7 +56,7 @@ public class SoundPlayer {
 
     Settings settings = Settings.getInstance();
     settings.saveSettings();
-    setMasterVolume(1.0f);
+    setMasterVolume(0.0f); //TODO something wrong. SEtting below doesnt work
     setBGMVolume(Volume.getValue(settings.getMusicAndSound().getMusicVolume()));
     setSFXVolume(Volume.getValue(settings.getMusicAndSound().getSoundVolume()));
     

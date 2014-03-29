@@ -409,4 +409,9 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
   public boolean canFall() {
     return canFall;
   }
+
+  public float killEnemy() {
+    physics.killEnemy();
+    return y;
+  }
 }
