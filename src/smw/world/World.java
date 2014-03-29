@@ -592,7 +592,7 @@ public class World {
     int numMapHazards = buffer.getInt();
 
     for (short i = 0; i < numMapHazards; ++i) {
-      AnimatedHazard temp = buffer.getHazard();
+      AnimatedHazard temp = buffer.getHazard(this);
 
       if (temp != null) {
         drawablesLayer3.add(temp);

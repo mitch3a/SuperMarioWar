@@ -12,7 +12,7 @@ import smw.ui.screen.GameFrame;
 import smw.world.MovingCollidable;
 import smw.world.Tile;
 
-public class MovingPlatform implements Drawable, Updatable, MovingCollidable{
+public class MovingPlatform implements MovingCollidable{
   Path path;
   Tile[][] tiles;
   Collidable[][] collidables;
