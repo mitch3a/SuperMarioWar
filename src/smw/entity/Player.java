@@ -218,14 +218,16 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 					if(!xCollide){
 						if(p.getY() < newY){
 						  p.score.increaseScore();
+						  p.killEnemy();
 							crush();
 						}
 						else{
 						  score.increaseScore();
+						  killEnemy();
 							p.crush();
 						}
 					}
-					physics.collideWithFloor();
+					
 					newY = y;
 					break;
 				}
