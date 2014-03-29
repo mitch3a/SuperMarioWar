@@ -1,16 +1,29 @@
 package smw.world.hazards;
 
+import smw.Game;
 import smw.ui.screen.GameFrame;
 
 public class MovingFireBall extends FireBall{
   final float VELOCITY_X;
   final float VELOCITY_Y;
+  
+  boolean partlyOff = false;
 
   public MovingFireBall(int x, int y, float velocity, float angleRadians) {
     super(x, y);
     
     VELOCITY_X = velocity*((float)Math.cos(angleRadians));
     VELOCITY_Y = -velocity*((float)Math.sin(angleRadians));    
+  }
+  
+  /**
+   * Use this method to make a copy. Convenient for wrapping 
+   */
+  public MovingFireBall(MovingFireBall previous, int newX) {
+    super(newX, (int)previous.y);
+    
+    VELOCITY_X = previous.VELOCITY_X;
+    VELOCITY_Y = previous.VELOCITY_Y;    
   }
   
   @Override
@@ -20,18 +33,26 @@ public class MovingFireBall extends FireBall{
     x += VELOCITY_X*timeDif_ms;
     y += VELOCITY_Y*timeDif_ms;
     
-    //TODO be smarter about wrapping
-    if(x + width < 0){
-      x += width + GameFrame.res_width;
+    if(VELOCITY_X > 0){
+      //Moving right. If moving off the screen, add another on the other side and this one will self-remove
+      if(!partlyOff && x + width > GameFrame.res_width){
+        Game.world.queueAnimatedHazard(new MovingFireBall(this, (int)(x - GameFrame.res_width)), 3);
+        partlyOff = true;
+      }
     }
-    else if( x > GameFrame.res_width){
-      x -= GameFrame.res_width + width;
+    else{
+      //Moving left. If moving off the screen, add another on the other side and this one will self-remove
+      if(!partlyOff && x < 0){
+        Game.world.queueAnimatedHazard(new MovingFireBall(this, (int)(x + GameFrame.res_width)), 3);
+        partlyOff = true;
+      }
     }
   }
   
   //Let X wrap
   @Override
   public boolean shouldBeRemoved() {
-    return y > GameFrame.res_height || y + height < 0;
+    //Don't need the partly off but prolly quicker overall
+    return partlyOff && (x > GameFrame.res_width || x + width < 0 || y > GameFrame.res_height || y + height < 0);
   }
 }
