@@ -115,7 +115,7 @@ public class BulletBillyCannon implements MovingCollidable{
     float velocity;
       
     public BulletBilly(int x, int y, float velocity) {
-      super(x, y, "bulletbill.png", 32, 32, 0, 0, 0, (velocity < 0) ? 0 : 32);
+      super(x, y, "bulletbill.png", 32, 32, 0, 0, (velocity < 0) ? 0 : 32);
       this.x = x;
       this.y = y;
       this.velocity = velocity/16f;

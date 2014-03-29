@@ -17,8 +17,6 @@ import smw.world.TileSheetManager;
 public abstract class AnimatedHazard extends Collidable.Death implements MovingCollidable{
   TileSheet tileSheet = null;
   
-  /** The frame rate of the animation. */
-  protected final int totalFrames;
   /** The time per frame. */
   protected final int updateRate_ms;
   /** The time that has elapsed for the current frame. */
@@ -32,14 +30,13 @@ public abstract class AnimatedHazard extends Collidable.Death implements MovingC
   int offsetX, offsetY = 0;
   
   //TODO left side
-  public AnimatedHazard(int x, int y, String tileSheetFile, int width, int height, int timePerFrame, int numFrames, int tileSheetX, int tileSheetY) {
+  public AnimatedHazard(int x, int y, String tileSheetFile, int width, int height, int timePerFrame, int tileSheetX, int tileSheetY) {
     super(x, y, width, height);
     
     tileSheet = TileSheetManager.getInstance().getTileSheet("gfx/packs/Classic/hazards/" + tileSheetFile);
     
     this.height = height;
     this.width  = width;
-    totalFrames = numFrames; //Can't rely on width
     updateRate_ms = timePerFrame; //TODO this should probably be a parameter
     startingTileSheetX = tileSheetX;
     startingTileSheetY = tileSheetY;

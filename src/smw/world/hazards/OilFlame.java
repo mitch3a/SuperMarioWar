@@ -13,7 +13,7 @@ public abstract class OilFlame extends AnimatedHazard{
   float flameOffTime;
   
   public OilFlame(int x, int y, int totalWidth, int totalHeight, int tileSheetX, int tileSheetY) {
-    super(x, y, "flame.png", totalWidth, totalHeight, 50, 4, tileSheetX, tileSheetY);
+    super(x, y, "flame.png", totalWidth, totalHeight, 50, tileSheetX, tileSheetY);
   }
   
   @Override

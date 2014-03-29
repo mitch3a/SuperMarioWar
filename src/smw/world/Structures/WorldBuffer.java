@@ -87,8 +87,8 @@ public class WorldBuffer implements AutoCloseable{
   public AnimatedHazard getHazard(World world){
     Hazard hazard = new Hazard();
     hazard.type = getShort();
-    hazard.x    = getShort();
-    hazard.y    = getShort();
+    hazard.tileX = getShort();
+    hazard.tileY = getShort();
 
     for(short j = 0; j < Hazard.NUMMAPHAZARDPARAMS; j++){
       hazard.iparam[j] = getShort();

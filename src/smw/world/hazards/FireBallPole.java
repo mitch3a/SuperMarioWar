@@ -21,7 +21,7 @@ public class FireBallPole extends AnimatedHazard{
   
   public FireBallPole(int x, int y, int numBalls, float velocity) {
     //(32-18)/2 = 6 -> to center it
-    super(x + 6, y + 6, "fireball.png", 18, 18, 100, 4, 0, 0);
+    super(x + 6, y + 6, "fireball.png", 18, 18, 100, 0, 0);
     
     this.numBalls = numBalls;
    

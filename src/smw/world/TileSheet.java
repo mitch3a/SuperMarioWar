@@ -121,7 +121,7 @@ public class TileSheet {
   }
   
   public BufferedImage getTileImg(int x, int y, int width, int height) {
-    if(x < 0 || y < 0){//TODO check not TOO big
+    if(x < 0 || y < 0 || width <= 0 || height <= 0){
       return null;
     }
     

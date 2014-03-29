@@ -881,6 +881,13 @@ public class World {
       }
     }
   }
+  
+  //TODO don't like this but good for now
+  private Map<AnimatedHazard, Integer> toAdd = new HashMap<AnimatedHazard, Integer>();
+//TODO don't like this but good for now
+  public void queueAnimatedHazard(AnimatedHazard hazard, int layer){
+    toAdd.put(hazard, layer);
+  }
 
   /**
    * Updates the world based on the time delta.
@@ -908,6 +915,16 @@ public class World {
         iter2.remove();
       }
     }
+    
+    //TODO don't like this but good for now
+    for(Map.Entry<AnimatedHazard, Integer> entry : toAdd.entrySet()){
+      AnimatedHazard hazard = entry.getKey();
+      addDrawable(hazard, entry.getValue());
+      addUpdatable(hazard);
+      addMovingCollidable(hazard);
+    }
+    
+    toAdd.clear();
   }
 
   public void addDrawable(Drawable drawable, int layer) {
