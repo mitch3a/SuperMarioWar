@@ -6,8 +6,11 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import smw.Collidable;
+import smw.settings.PropertiesWrapper;
 import smw.world.Tile;
 import smw.world.TileSheetManager;
 import smw.world.World;
@@ -20,13 +23,19 @@ import smw.world.warps.WarpEntrance;
 import smw.world.warps.WarpExit;
 
 public class WorldBuffer implements AutoCloseable{
-
+  static final Logger logger = Logger.getLogger(PropertiesWrapper.class.getName());
+  
   MappedByteBuffer buffer;
   FileChannel fileChannel;
   RandomAccessFile file;
   
   public WorldBuffer(String worldName) throws Exception{
-    file = new RandomAccessFile(this.getClass().getClassLoader().getResource("map/" + worldName).getPath().replaceAll("%20", " "), "r");
+    try{
+      file = new RandomAccessFile(this.getClass().getClassLoader().getResource("map/" + worldName).getPath().replaceAll("%20", " "), "r");
+    } catch(Exception e){
+      logger.log(Level.SEVERE, "Could not open map file " + worldName, e);
+      throw new Exception("Could not open map file " + worldName, e);
+    }
     fileChannel = file.getChannel();
     buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
     buffer.order(ByteOrder.LITTLE_ENDIAN); // Java defaults to BIG_ENDIAN, but MAP files were probably made on a x86 PC.

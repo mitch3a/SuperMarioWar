@@ -1,18 +1,20 @@
 package smw.entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import smw.Drawable;
 import smw.Game;
 import smw.Updatable;
 import smw.gfx.AboveArrow;
-import smw.gfx.Palette.ColorScheme;
 import smw.gfx.Font;
+import smw.gfx.Palette.ColorScheme;
 import smw.gfx.SpawnAnimation;
 import smw.gfx.Sprite;
 import smw.settings.Debug;
@@ -52,6 +54,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 	private long respawnTime;
 	public ColorScheme color;
   private boolean canFall = true;
+  
+  List<Rectangle> deathCheck = new ArrayList<Rectangle>();
   
 	public Player(PlayerControlBase playerControl, int playerIndex){	
 		physics = new PlayerPhysics(playerControl);
@@ -257,6 +261,8 @@ public class Player extends Rectangle2D.Float implements Drawable, Updatable{
 		sprite.crush();
 		Game.soundPlayer.sfxMip();
 	}
+	
+	
 	
 	public void superDeath() {
     if(!killed){

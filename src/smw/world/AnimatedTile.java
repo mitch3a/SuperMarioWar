@@ -48,6 +48,8 @@ public class AnimatedTile extends AnimatedDrawable{
       }
     } catch (IOException e) {
       e.printStackTrace();
+    } catch (Exception e){
+      e.printStackTrace();
     }
   }
   

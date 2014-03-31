@@ -28,14 +28,14 @@ public class Scoreboard {
 	public static Player winningPlayer = null;
 	
 	public Scoreboard(Player[] players){
-	  final int topY = 25; //Top of everything
+	  final int topY = 5; //Top of everything
 	  final int shadeWidth = 100; //width of shaded area
-	  final int shadeHeight = 44; //hight of shaded area
+	  final int shadeHeight = 38; //hight of shaded area
 	  final int widthSpace = 20; //space in between shaded areas
 	  final int spriteXOffset = 6; //offset from top left corner of shaded area
-	  final int spriteYOffset = 6; //offset from top left corner of shaded area
+	  final int spriteYOffset = 2; //offset from top left corner of shaded area
 	  final int scoreXOffset = 2*spriteXOffset + 32; //offset from top left corner of shaded area
-	  final int scoreYOffset = 14; //offset from top left corner of shaded area
+	  final int scoreYOffset = 5; //offset from top left corner of shaded area
 	  final float arcWidth = 15.0f;
 	  final float arcHeight = 15.0f;
 		this.players = players;
@@ -44,6 +44,11 @@ public class Scoreboard {
 		scoreStart = new Point[players.length];
 		
 		int start = (int) ((GameFrame.res_width/2) - (1.5*widthSpace + (2*shadeWidth)));
+		
+		if(players.length == 2){
+		  //center it
+		  start += shadeWidth + widthSpace;
+		}
 		
 		for(int i = 0 ; i < players.length ; ++i){
 			shadeRects[i] = new RoundRectangle2D.Float((float)start, (float)topY, (float)shadeWidth, 

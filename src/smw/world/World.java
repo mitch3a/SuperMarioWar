@@ -805,10 +805,36 @@ public class World {
           return newY;
         }
 
-        newY = collidables[(int) (newX / Tile.SIZE)][yCollision]
-            .collideWithTop(player, newY);
-        newY = collidables[rightmostXTile][yCollision].collideWithTop(player,
-            newY);
+        //order matters, like for hitting a block
+        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2)){
+          Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
+          
+          newY = leftCollidable.collideWithTop(player, newY);
+          //Re-evaluate for right side
+          yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
+
+          if (yCollision < 0) {
+            return newY;
+          }
+          
+          Collidable rightCollidable = collidables[rightmostXTile][yCollision];
+          newY = rightCollidable.collideWithTop(player, newY);
+        }
+        else{
+
+          Collidable rightCollidable = collidables[rightmostXTile][yCollision];
+          
+          newY = rightCollidable.collideWithTop(player, newY);
+          //Re-evaluate for left side
+          yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
+
+          if (yCollision < 0) {
+            return newY;
+          }
+          
+          Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
+          newY = leftCollidable.collideWithTop(player, newY);
+        }
       } else {
         // Moving up so check the top of the sprite with the bottom of the
         // object
@@ -818,10 +844,36 @@ public class World {
           return newY;
         }
 
-        newY = collidables[(int) (newX / Tile.SIZE)][yCollision]
-            .collideWithBottom(player, newY);
-        newY = collidables[rightmostXTile][yCollision].collideWithBottom(
-            player, newY);
+        //order matters, like for hitting a block
+        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2)){
+          Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
+          
+          newY = leftCollidable.collideWithBottom(player, newY);
+          //Re-evaluate for right side
+          yCollision = (int) (newY / Tile.SIZE);
+
+          if (yCollision < 0) {
+            return newY;
+          }
+          
+          Collidable rightCollidable = collidables[rightmostXTile][yCollision];
+          newY = rightCollidable.collideWithBottom(player, newY);
+        }
+        else{
+
+          Collidable rightCollidable = collidables[rightmostXTile][yCollision];
+          
+          newY = rightCollidable.collideWithBottom(player, newY);
+          //Re-evaluate for left side
+          yCollision = (int) (newY / Tile.SIZE);
+
+          if (yCollision < 0) {
+            return newY;
+          }
+          
+          Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
+          newY = leftCollidable.collideWithBottom(player, newY);
+        }
       }
     }
 

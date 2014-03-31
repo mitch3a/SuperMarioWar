@@ -90,11 +90,12 @@ public class Game implements Runnable {
       "JJames_Bullet Bill Air.map", //27 Bullet bills duh
       "GG_Pirhana Playground.map", //28 Straight tall plants
       "GG_Plant Fortress,map", //29 doesnt work (might be a typo)
-      "JJames_Plant Infestion.map"
+      "JJames_Plant Infestion.map", //30 tons of plants (both fire and not)
+      "GG_Cheesy feet jungle.map" //31 always out plants
     };   
     // TODO - this map doesn't work! - Tanuki_Der Ewige Garten.map
 
-    world = new World(worlds[30]);
+    world = new World(worlds[16]);
 
     //world = new World(); // Starts a random world (for now)
         
