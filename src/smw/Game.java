@@ -95,7 +95,7 @@ public class Game implements Runnable {
     };   
     // TODO - this map doesn't work! - Tanuki_Der Ewige Garten.map
 
-    world = new World(worlds[16]);
+    world = new World(worlds[31]);
 
     //world = new World(); // Starts a random world (for now)
         

@@ -806,14 +806,16 @@ public class World {
         }
 
         //order matters, like for hitting a block
-        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2)){
+        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2)  || 
+            collidables[rightmostXTile][yCollision].isDeath(Direction.DOWN)){//if right side is death, check left first
           Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
           
           newY = leftCollidable.collideWithTop(player, newY);
           //Re-evaluate for right side
           yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
 
-          if (yCollision < 0) {
+          //In this second case the player is JUST above a tile so no need checking it
+          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -828,7 +830,7 @@ public class World {
           //Re-evaluate for left side
           yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
 
-          if (yCollision < 0) {
+          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -845,14 +847,15 @@ public class World {
         }
 
         //order matters, like for hitting a block
-        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2)){
+        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2) || 
+            collidables[rightmostXTile][yCollision].isDeath(Direction.UP)){ //if right side is death, check left first
           Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
           
           newY = leftCollidable.collideWithBottom(player, newY);
           //Re-evaluate for right side
           yCollision = (int) (newY / Tile.SIZE);
 
-          if (yCollision < 0) {
+          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -867,7 +870,7 @@ public class World {
           //Re-evaluate for left side
           yCollision = (int) (newY / Tile.SIZE);
 
-          if (yCollision < 0) {
+          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           

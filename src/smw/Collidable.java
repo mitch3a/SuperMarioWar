@@ -6,6 +6,7 @@ import smw.entity.Player;
 import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
 import smw.world.Tile;
+import smw.world.warps.WarpBase.Direction;
 
 //TODO mk as other objects are implemented, might want to replace Player with something generic
 //     ALSO this should probably be an abstract type
@@ -76,6 +77,15 @@ public abstract class Collidable extends Rectangle2D.Float{
    *  it should move whatever is on top of it 
    */
   public boolean willDrag(){
+    return false;
+  }
+  
+  /**
+   * This method is used to determine if touching will kill a player
+   * @param d the direction the player is moving
+   * @return
+   */
+  public boolean isDeath(Direction d) {
     return false;
   }
   
@@ -260,6 +270,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.death();
       return newX;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return true;
+    }
   }
   
   /**
@@ -279,6 +294,11 @@ public abstract class Collidable extends Rectangle2D.Float{
     public float collideWithTop(Player player, float newY){
       player.death();
       return newY;
+    }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.DOWN);
     }
   }
   
@@ -300,6 +320,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.death();
       return newY;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.UP);
+    }
   }
   
   /**
@@ -320,6 +345,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.death();
       return newX;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.LEFT);
+    }
   }
   
   /**
@@ -339,6 +369,11 @@ public abstract class Collidable extends Rectangle2D.Float{
     public float collideWithLeft(Player player, float newY){
       player.death();
       return newY;
+    }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.RIGHT);
     }
   }
   
@@ -378,6 +413,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.superDeath();
       return newX;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return true;
+    }
   }
   
   /**
@@ -397,6 +437,11 @@ public abstract class Collidable extends Rectangle2D.Float{
     public float collideWithTop(Player player, float newY){
       player.superDeath();
       return newY;
+    }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.DOWN);
     }
   }
   
@@ -418,6 +463,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.superDeath();
       return newY;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.UP);
+    }
   }
   
   /**
@@ -437,6 +487,11 @@ public abstract class Collidable extends Rectangle2D.Float{
     public float collideWithRight(Player player, float newX){
       player.superDeath();
       return newX;
+    }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.LEFT);
     }
   }
   
@@ -458,6 +513,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.superDeath();
       return newY;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.RIGHT);
+    }
   }
   
   /**
@@ -477,6 +537,11 @@ public abstract class Collidable extends Rectangle2D.Float{
     public float collideWithBottom(Player player, float newY){
       player.death(); //TODO verify this is correct (not super death or need its own) AND right/left same issue (next 2 classes)
       return newY;
+    }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.UP);
     }
   }
   
@@ -498,6 +563,11 @@ public abstract class Collidable extends Rectangle2D.Float{
       player.death();
       return newX;
     }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.LEFT);
+    }
   }
   
   /**
@@ -517,6 +587,11 @@ public abstract class Collidable extends Rectangle2D.Float{
     public float collideWithLeft(Player player, float newY){
       player.superDeath();
       return newY;
+    }
+    
+    @Override
+    public boolean isDeath(Direction d) {
+      return (d == Direction.RIGHT);
     }
   }
 }

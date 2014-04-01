@@ -65,7 +65,8 @@ public class Scoreboard {
 		shadeColor = new Color(0, 0, 0, 120);
 	}
 	
-	public void update(){
+	@SuppressWarnings("unused") //Only because winner text is off for debugging purposes
+  public void update(){
 	  int count = 0;
 	  for(Player p : players){
 	    if(!p.isOut()){
