@@ -49,7 +49,7 @@ public abstract class WarpEntrance extends WarpBase{
       super.init(player.getImage());
       
       shiftX = Tile.SIZE;
-      shiftY = y - player.y;
+      shiftY = 0;
     }
 
     @Override
@@ -74,8 +74,8 @@ public abstract class WarpEntrance extends WarpBase{
     public void init(Player player){
       super.init(player.getImage());
       
-      shiftX = -Tile.SIZE;
-      shiftY = y - player.y;
+      shiftX = -Tile.SIZE + 1;
+      shiftY = 0;
     }
 
     @Override

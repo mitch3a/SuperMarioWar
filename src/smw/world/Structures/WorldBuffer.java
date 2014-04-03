@@ -208,25 +208,27 @@ public class WorldBuffer implements AutoCloseable{
     short connection = getShort();
     
     short id = getShort();
+    //TODO Couldn't tell you what these do
     short column = getShort();
     short row    = getShort();
 
     short lockx = getShort();
     short locky = getShort();
-    short warpx = getShort();
-    short warpy = getShort();
+    short warpx = (short)(getShort() << 5);
+    short warpy = (short)(getShort() << 5);
     
+    //TODO Not using this
     short numblocks = getShort();
     WarpExit warp;
     
     switch(direction){
-      case 0:  warp = new WarpExit.Up(connection, id, column, row, lockx, locky, warpx, warpy);
+      case 0:  warp = new WarpExit.Up(connection, id, lockx, locky, warpx, warpy);
                break;
-      case 1:  warp = new WarpExit.Right(connection, id, column, row, lockx, locky, warpx, warpy);
+      case 1:  warp = new WarpExit.Right(connection, id, lockx, locky, warpx, warpy);
                break;
-      case 2:  warp = new WarpExit.Down(connection, id, column, row, lockx, locky, warpx, warpy);
+      case 2:  warp = new WarpExit.Down(connection, id, lockx, locky, warpx, warpy);
                break;
-      default: warp = new WarpExit.Left(connection, id, column, row, lockx, locky, warpx, warpy);
+      default: warp = new WarpExit.Left(connection, id, lockx, locky, warpx, warpy);
     }
     
     return warp;

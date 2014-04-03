@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import smw.entity.Player;
 import smw.gfx.Palette.ColorScheme;
 
 public class Sprite {
@@ -27,6 +28,8 @@ public class Sprite {
 
   public static final int IMAGE_WIDTH = 32;
   public static final int IMAGE_HEIGHT = 32;
+  public static int offSetX = (IMAGE_WIDTH - Player.WIDTH)/2;
+  public static int offSetY = IMAGE_HEIGHT - Player.HEIGHT;
   public static final int NUM_IMAGES = 6;
   public static final long TIME_TO_HALF_STEP_MS = 60;
   

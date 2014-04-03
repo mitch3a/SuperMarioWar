@@ -23,7 +23,7 @@ public class FireBall extends AnimatedHazard{
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    if(intersects(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+    if(intersects(newX, newY, Player.WIDTH, Player.HEIGHT)){
       player.death();
       return newY;
     }

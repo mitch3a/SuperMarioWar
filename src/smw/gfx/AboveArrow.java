@@ -36,7 +36,7 @@ public class AboveArrow implements Drawable, Updatable {
   @Override
   public void draw(Graphics2D g, ImageObserver io) {
     // Only draw arrow when the player is alive and off the screen.
-    if (!player.isDead() && (player.y <= -Sprite.IMAGE_HEIGHT)) {
+    if (!player.isDead() && (player.y <= -Player.HEIGHT)) {
       g.drawImage(tileSheet.getTileImg(tileSheetX, tileSheetY, Tile.SIZE, ARROW_IMAGE_HEIGHT), (int)player.x, y, io);
       Font.getInstance().drawBoxedNumber(g, countDown_ms / 1000, player.color.ordinal(), (int)player.x + TIMER_OFFSET_X, y + TIMER_OFFSET_Y, io);
     }
@@ -50,7 +50,7 @@ public class AboveArrow implements Drawable, Updatable {
 	@Override
 	public void update(float timeDif_ms) {
 	  // If player is off screen, count down, if expired, kill player and reset timer.
-		if (!player.isDead() && (player.y <= -Sprite.IMAGE_HEIGHT)) {
+		if (!player.isDead() && (player.y <= -Player.HEIGHT)) {
 		  if (Debug.PLAYER_DEATH_OFFSCREEN_TIMER) {
   			countDown_ms -= timeDif_ms;
   			if (countDown_ms <= 0) {

@@ -118,13 +118,13 @@ public class DonutBlock extends SolidBlock implements MovingCollidable{
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    if(this.intersects(newX, newY,     Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT) &&
-       this.intersects(newX, player.y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+    if(this.intersects(newX, newY,     Player.WIDTH, Player.HEIGHT) &&
+       this.intersects(newX, player.y, Player.WIDTH, Player.HEIGHT)){
       player.death();
     }
     //TODO this isn't perfect
-    else if( this.intersects(newX, newY + lastDy,     Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT) &&
-            !this.intersects(newX, player.y + lastDy, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+    else if( this.intersects(newX, newY + lastDy,     Player.WIDTH, Player.HEIGHT) &&
+            !this.intersects(newX, player.y + lastDy, Player.WIDTH, Player.HEIGHT)){
       //pull player down on top
       return super.collideWithTop(player, newY);
     }

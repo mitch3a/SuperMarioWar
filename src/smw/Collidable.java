@@ -46,9 +46,9 @@ public abstract class Collidable extends Rectangle2D.Float{
   }
   
   protected void calculateReturnValues(){
-    left   = x - Tile.SIZE;
+    left   = x - Player.WIDTH;
     right  = x + Tile.SIZE;
-    top    = y - Tile.SIZE;
+    top    = y - Player.HEIGHT;
     bottom = y + Tile.SIZE;
   }
 
@@ -195,7 +195,7 @@ public abstract class Collidable extends Rectangle2D.Float{
     @Override
     public float collideWithTop(Player player, float newY){
       //TODO just want to get moving platforms working right
-      boolean wasAboveBefore = (player.y + Sprite.IMAGE_HEIGHT <= this.y + .01);//Rounding error
+      boolean wasAboveBefore = (player.y + Player.HEIGHT <= this.y + .01);//Rounding error
       if(player.canFall() && wasAboveBefore && player.physics.playerControl.isDown()){
         
       }

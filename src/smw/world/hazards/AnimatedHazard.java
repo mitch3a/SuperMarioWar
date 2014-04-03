@@ -60,7 +60,7 @@ public abstract class AnimatedHazard extends Collidable.Death implements MovingC
   
   @Override
   public float collideX(Player player, float newX) {
-    if(isAnimating && intersects(newX, player.y, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+    if(isAnimating && intersects(newX, player.y, Player.WIDTH, Player.HEIGHT)){
       player.death();
     }
     
@@ -69,7 +69,7 @@ public abstract class AnimatedHazard extends Collidable.Death implements MovingC
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    if(isAnimating && intersects(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+    if(isAnimating && intersects(newX, newY, Player.WIDTH, Player.HEIGHT)){
       player.death();
     }
     

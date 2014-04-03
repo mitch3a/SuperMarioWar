@@ -623,7 +623,7 @@ public class World {
     if (player.physics.playerControl.isDown()) {
       int yToCheck = (int) ((player.y + Tile.SIZE + 1) / Tile.SIZE);
       WarpEntrance result = testWarps((int) (player.x / Tile.SIZE), yToCheck,
-          (int) ((player.x + Tile.SIZE - 1) / Tile.SIZE), yToCheck,
+          (int) ((player.x + Player.WIDTH - 1) / Tile.SIZE), yToCheck,
           Direction.DOWN);
       if (result != null) {
         player.warp(result, getWarpExit(result));
@@ -634,7 +634,7 @@ public class World {
     if (player.physics.playerControl.isUp()) {
       int yToCheck = (int) ((player.y - 1) / Tile.SIZE);
       WarpEntrance result = testWarps((int) (player.x / Tile.SIZE), yToCheck,
-          (int) ((player.x + Tile.SIZE - 1) / Tile.SIZE), yToCheck,
+          (int) ((player.x + Player.WIDTH - 1) / Tile.SIZE), yToCheck,
           Direction.UP);
 
       if (result != null) {
@@ -646,7 +646,7 @@ public class World {
     if (player.physics.playerControl.getDirection() < 0) {
       int XToCheck = (int) ((player.x - 1) / Tile.SIZE);
       WarpEntrance result = testWarps(XToCheck, (int) (player.y / Tile.SIZE),
-          XToCheck, (int) ((player.y + Tile.SIZE - 1) / Tile.SIZE),
+          XToCheck, (int) ((player.y + Player.HEIGHT - 1) / Tile.SIZE),
           Direction.LEFT);
       if (result != null) {
         player.warp(result, getWarpExit(result));
@@ -655,7 +655,7 @@ public class World {
     } else if (player.physics.playerControl.getDirection() > 0) {
       int XToCheck = (int) ((player.x + Tile.SIZE + 1) / Tile.SIZE);
       WarpEntrance result = testWarps(XToCheck, (int) (player.y / Tile.SIZE),
-          XToCheck, (int) ((player.y + Tile.SIZE - 1) / Tile.SIZE),
+          XToCheck, (int) ((player.y + Player.HEIGHT - 1) / Tile.SIZE),
           Direction.RIGHT);
       if (result != null) {
         player.warp(result, getWarpExit(result));
@@ -717,11 +717,11 @@ public class World {
     // This is to test the bottom of the sprite
 
     // Above everything
-    if (player.y <= -32) {
+    if (player.y <= -Player.HEIGHT) {
       return newX;
     }
 
-    int lowestYTile = (int) (((player.y + Sprite.IMAGE_HEIGHT - 1) % GameFrame.res_height) / Tile.SIZE);
+    int lowestYTile = (int) (((player.y + Player.HEIGHT - 1) % GameFrame.res_height) / Tile.SIZE);
 
     // If half of player is above the top, just check the bottom half of the
     // player twice
@@ -746,7 +746,7 @@ public class World {
       if (player.x < newX && player.x + 500 > newX) {
         // Moving Right so check the right side of the sprite with the left side
         // of the object
-        int xCollision = (int) (((newX + Sprite.IMAGE_HEIGHT) % GameFrame.res_width) / Tile.SIZE);
+        int xCollision = (int) (((newX + Player.WIDTH) % GameFrame.res_width) / Tile.SIZE);
 
         newX = collidables[xCollision][highestYTile].collideWithLeft(player,
             newX);
@@ -786,7 +786,7 @@ public class World {
     // Doesn't get returned
     newX = (newX + GameFrame.res_width) % GameFrame.res_width;
 
-    int rightmostXTile = (int) (((newX + Sprite.IMAGE_WIDTH - 1) % GameFrame.res_width) / Tile.SIZE);
+    int rightmostXTile = (int) (((newX + Player.WIDTH - 1) % GameFrame.res_width) / Tile.SIZE);
 
     // /////////////////////////////////////////////////////////////
     // Objects
@@ -799,23 +799,23 @@ public class World {
       if (player.y < newY) {
         // Moving down so check the bottom of the sprite with the top of the
         // object
-        int yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
+        int yCollision = (int) (((newY + Player.HEIGHT) % GameFrame.res_height) / Tile.SIZE);
 
         if (yCollision < 0) {
           return newY;
         }
 
         //order matters, like for hitting a block
-        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2)  || 
+        if(newX % Player.WIDTH < (Player.WIDTH/2)  || 
             collidables[rightmostXTile][yCollision].isDeath(Direction.DOWN)){//if right side is death, check left first
           Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
           
           newY = leftCollidable.collideWithTop(player, newY);
           //Re-evaluate for right side
-          yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
+          yCollision = (int) (((newY + Player.HEIGHT) % GameFrame.res_height) / Tile.SIZE);
 
           //In this second case the player is JUST above a tile so no need checking it
-          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
+          if (yCollision < 0 || (newY - Player.HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -828,9 +828,9 @@ public class World {
           
           newY = rightCollidable.collideWithTop(player, newY);
           //Re-evaluate for left side
-          yCollision = (int) (((newY + Sprite.IMAGE_HEIGHT) % GameFrame.res_height) / Tile.SIZE);
+          yCollision = (int) (((newY + Player.HEIGHT) % GameFrame.res_height) / Tile.SIZE);
 
-          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
+          if (yCollision < 0 || (newY - Player.HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -847,7 +847,7 @@ public class World {
         }
 
         //order matters, like for hitting a block
-        if(newX % Sprite.IMAGE_WIDTH < (Sprite.IMAGE_WIDTH/2) || 
+        if(newX % Player.WIDTH < (Player.WIDTH/2) || 
             collidables[rightmostXTile][yCollision].isDeath(Direction.UP)){ //if right side is death, check left first
           Collidable leftCollidable = collidables[(int) (newX / Tile.SIZE)][yCollision];
           
@@ -855,7 +855,7 @@ public class World {
           //Re-evaluate for right side
           yCollision = (int) (newY / Tile.SIZE);
 
-          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
+          if (yCollision < 0 || (newY - Player.HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -870,7 +870,7 @@ public class World {
           //Re-evaluate for left side
           yCollision = (int) (newY / Tile.SIZE);
 
-          if (yCollision < 0 || (newY - Sprite.IMAGE_HEIGHT) % Tile.SIZE == 0) {
+          if (yCollision < 0 || (newY - Player.HEIGHT) % Tile.SIZE == 0) {
             return newY;
           }
           
@@ -1011,8 +1011,8 @@ public class World {
   public void setSpawnPoint(Player player) {
     if (spawnAreas == null || spawnAreas.length == 0) {
       // TODO mk this is just to avoid crashes
-      player.x = (float) (Math.random() * (GameFrame.res_width - Sprite.IMAGE_WIDTH));
-      player.y = (float) (Math.random() * (GameFrame.res_height - Sprite.IMAGE_HEIGHT));
+      player.x = (float) (Math.random() * (GameFrame.res_width - Player.WIDTH));
+      player.y = (float) (Math.random() * (GameFrame.res_height - Player.HEIGHT));
 
       return;
     }

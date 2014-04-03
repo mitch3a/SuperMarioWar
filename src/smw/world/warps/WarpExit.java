@@ -9,51 +9,51 @@ import smw.world.Tile;
 public abstract class WarpExit extends WarpBase{
   //TODO these values are only used because we currently expect a player to be 32x32. The original source
   //     had players as w=22, h=25. Once that change goes in, this must be removed.
-  private final static int startOffSetY = 32 - 25;
-  private final static int startOffSetX = (32 - 22)/2;
+  private final static int startOffSetY = Sprite.offSetY;
+  private final static int startOffSetX = Sprite.offSetX;
+  //Player should start full in, but is "out" once his extra on the first part + collidable part is out.
+  private final static int PIXELS_TIL_OUT_X = Player.WIDTH + ((Sprite.IMAGE_WIDTH - Player.WIDTH)/2);
+  private final static int PIXELS_TIL_OUT_Y = Player.HEIGHT;
   short lockx;
   short locky;
 
-  short warpx;
-  short warpy;
   short numblocks; 
 
+  /**
+   * 
+   * @param connection
+   * @param id
+   * @param x - the x the player should end up at
+   * @param y - the y the player should end up at
+   * @param lockx
+   * @param locky
+   */
   public WarpExit(short connection, short id, short x, short y, 
-                  short lockx, short locky, short warpx, short warpy) {
+                  short lockx, short locky) {
     super(x, y, connection, id);
     
     this.lockx = lockx;
     this.locky = locky;
-    this.warpx = warpx;
-    this.warpy = warpy;
   }
   
   void init(BufferedImage image){
     this.image = image;
     subImageX = 0;
     subImageY = 0;
-    subImageWidth = image.getWidth();
-    subImageHeight = image.getHeight();
+    subImageWidth = Sprite.IMAGE_WIDTH;
+    subImageHeight = Sprite.IMAGE_HEIGHT;
     shiftX = 0;
     shiftY = 0;
   }
   
-  @Override
-  //This isn't used traditionally becuase warps are not added to updatables/drawables.
-  //They are handled by the player using them
-  public boolean shouldBeRemoved() {
-    return subImageWidth  > image.getWidth() || 
-           subImageHeight > image.getHeight();
-  }
- 
+  
   /**
    * Right to Left WARP exit
    */
   public static class Left extends WarpExit{
 
-    public Left(short connection, short id, short x, short y, 
-                short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, (short)(x - Tile.SIZE - startOffSetX + 2), (short)(y - startOffSetY), lockx, locky, warpx, warpy);
+    public Left(short connection, short id, short lockx, short locky, short warpx, short warpy) {
+      super(connection, id, (short)(warpx - PIXELS_TIL_OUT_X + 1), warpy, lockx, locky);
       
     }
     
@@ -61,8 +61,8 @@ public abstract class WarpExit extends WarpBase{
     public void init(Player player){
       super.init(player.getImage());
       
-      shiftX = Sprite.IMAGE_WIDTH;
-      subImageWidth = 0;
+      shiftX = Player.WIDTH;
+      subImageWidth = Sprite.IMAGE_HEIGHT - PIXELS_TIL_OUT_X;
     }
 
     @Override
@@ -72,6 +72,11 @@ public abstract class WarpExit extends WarpBase{
       shiftX -= pixelDif; 
       subImageWidth += pixelDif;
     }
+    
+    @Override
+    public boolean shouldBeRemoved() {
+      return subImageWidth  > PIXELS_TIL_OUT_X;
+    }
   }
   
   /**
@@ -79,9 +84,8 @@ public abstract class WarpExit extends WarpBase{
    */
   public static class Right extends WarpExit{
 
-    public Right(short connection, short id, short x, short y, 
-                short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, (short)(x + Tile.SIZE - startOffSetX), (short)(y - startOffSetY), lockx, locky, warpx, warpy);
+    public Right(short connection, short id, short lockx, short locky, short warpx, short warpy) {
+      super(connection, id, (short)(warpx + Tile.SIZE), warpy, lockx, locky);
       
     }
     
@@ -100,16 +104,20 @@ public abstract class WarpExit extends WarpBase{
       subImageX -= pixelDif; 
       subImageWidth += pixelDif;
     }
+    
+    @Override
+    public boolean shouldBeRemoved() {
+      return subImageWidth  > PIXELS_TIL_OUT_X;
+    }
   }
   
   /**
-   * Left to Right WARP exit
+   * Down to Up WARP exit
    */
   public static class Up extends WarpExit{
 
-    public Up(short connection, short id, short x, short y, 
-                short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, (short)(x - startOffSetX), (short)(y - Tile.SIZE-1), lockx, locky, warpx, warpy);
+    public Up(short connection, short id, short lockx, short locky, short warpx, short warpy) {
+      super(connection, id, warpx, (short)(warpy - Sprite.IMAGE_HEIGHT + 1), lockx, locky);
       
     }
     
@@ -129,16 +137,20 @@ public abstract class WarpExit extends WarpBase{
       shiftY -= pixelDif; 
       subImageHeight += pixelDif;
     }
+    
+    @Override
+    public boolean shouldBeRemoved() {
+      return subImageHeight  > PIXELS_TIL_OUT_Y;
+    }
   }
   
   /**
-   * Left to Right WARP exit
+   * Up to Down WARP exit
    */
   public static class Down extends WarpExit{
 
-    public Down(short connection, short id, short x, short y, 
-                short lockx, short locky, short warpx, short warpy) {
-      super(connection, id, (short)(x - startOffSetX), (short)(y + Tile.SIZE - startOffSetY + 1), lockx, locky, warpx, warpy);
+    public Down(short connection, short id, short lockx, short locky, short warpx, short warpy) {
+      super(connection, id, warpx, (short)(warpy + Tile.SIZE), lockx, locky);
       
     }
     
@@ -157,6 +169,11 @@ public abstract class WarpExit extends WarpBase{
       
       subImageY -= pixelDif; 
       subImageHeight += pixelDif;
+    }
+    
+    @Override
+    public boolean shouldBeRemoved() {
+      return subImageHeight  > PIXELS_TIL_OUT_Y;
     }
   }
 }

@@ -144,7 +144,7 @@ public class BulletBillyCannon implements MovingCollidable{
     @Override
     public float collideY(Player player, float newX, float newY) {
       if(!dead){
-        if(!intersects(player) && intersects(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT)){
+        if(!intersects(player) && intersects(newX, newY, Player.WIDTH, Player.HEIGHT)){
           //Active Bullet going from not overlapping to overlapping
           if(player.y > newY){
             //Going Up

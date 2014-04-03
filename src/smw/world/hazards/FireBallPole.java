@@ -41,7 +41,7 @@ public class FireBallPole extends AnimatedHazard{
 
   @Override
   public float collideY(Player player, float newX, float newY) {
-    Rectangle2D.Float temp = new Rectangle2D.Float(newX, newY, Sprite.IMAGE_WIDTH, Sprite.IMAGE_HEIGHT);
+    Rectangle2D.Float temp = new Rectangle2D.Float(newX, newY, Player.WIDTH, Player.HEIGHT);
     
     float currentX = x;
     float currentY = y;

@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
+import smw.entity.Player;
 import smw.ui.screen.GameFrame;
 
 public class WinnerText {
@@ -18,7 +19,7 @@ public class WinnerText {
   float velocityY;
   
   public WinnerText(int x, float y){
-    this.x = x - (WINNER_TEXT_WIDTH - Sprite.IMAGE_WIDTH)/2;
+    this.x = x - (WINNER_TEXT_WIDTH - Player.WIDTH)/2;
     this.y = y;
     velocityY = WINNER_TEXT_STARTING_VELOCITY;
   }

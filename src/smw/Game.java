@@ -91,11 +91,12 @@ public class Game implements Runnable {
       "GG_Pirhana Playground.map", //28 Straight tall plants
       "GG_Plant Fortress,map", //29 doesnt work (might be a typo)
       "JJames_Plant Infestion.map", //30 tons of plants (both fire and not)
-      "GG_Cheesy feet jungle.map" //31 always out plants
+      "GG_Cheesy feet jungle.map", //31 always out plants
+      "Warp.map" //32
     };   
     // TODO - this map doesn't work! - Tanuki_Der Ewige Garten.map
 
-    world = new World(worlds[31]);
+    world = new World(worlds[32]);
 
     //world = new World(); // Starts a random world (for now)
         
@@ -148,7 +149,7 @@ public class Game implements Runnable {
     
     for (int i = 0; i < numPlayers; ++i) {
       players[i] = new Player(pc[i], i);
-      players[i].init();
+      players[i].init("hazey_Lolo.png");
     }
   }
 

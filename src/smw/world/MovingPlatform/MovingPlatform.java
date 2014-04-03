@@ -124,10 +124,10 @@ public class MovingPlatform implements MovingCollidable{
   }
   
   public float collideX(Player player, float newX) {
-    float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
-    float bottomYPlayer = player.y +Sprite.IMAGE_HEIGHT - 1;
+    float rightMostX = newX +  Player.WIDTH - 1;
+    float bottomYPlayer = player.y +Player.HEIGHT - 1;
     
-    float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT+ 1 + path.getYChange();
+    float justUnderPlayer = player.y + Player.HEIGHT+ 1 + path.getYChange();
 
     //If the platform underneath is moving, so should the player
     if(willDrag(newX,       justUnderPlayer, justUnderPlayer) || 
@@ -173,11 +173,11 @@ public class MovingPlatform implements MovingCollidable{
   }
   
   public float collideY(Player player, float newX, float newY) {
-    float rightMostX = newX + Sprite.IMAGE_WIDTH - 1;
+    float rightMostX = newX + Player.WIDTH - 1;
     
     
     //TODO i think this (and X version) should probably be called before the collides?
-    float justUnderPlayer = player.y + Sprite.IMAGE_HEIGHT + 1 + path.getYChange();
+    float justUnderPlayer = player.y + Player.HEIGHT + 1 + path.getYChange();
 
     //If the platform underneath is moving, so should the player
     if(willDrag(newX,       justUnderPlayer, justUnderPlayer) || 
@@ -186,7 +186,7 @@ public class MovingPlatform implements MovingCollidable{
       newY += path.getYChange();
     }
          
-    float bottomYPlayer = newY + Sprite.IMAGE_HEIGHT;
+    float bottomYPlayer = newY + Player.HEIGHT;
     
     newY = checkCollisionTop   (player, newX,       newY,      newY);
     newY = checkCollisionTop   (player, rightMostX, newY,      newY);
