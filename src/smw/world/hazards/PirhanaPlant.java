@@ -1,8 +1,11 @@
 package smw.world.hazards;
 
 import smw.entity.Player;
+import smw.world.Tile;
 
 public abstract class PirhanaPlant extends AnimatedHazard{
+  static final int SHORT_SIZE = 48;
+  static final int TALL_SIZE = 64;
   
   enum State {
     in, movingOut, out, movingIn;
@@ -115,7 +118,7 @@ public abstract class PirhanaPlant extends AnimatedHazard{
    */
   public static class TallUp extends Up{
     public TallUp(int x, int y) {
-      super(x, y + 32, 64, 0, 96);
+      super(x, y + 32, TALL_SIZE, 0, 96);
     }
   }
   
@@ -125,7 +128,7 @@ public abstract class PirhanaPlant extends AnimatedHazard{
    */
   public static class ShortUp extends Up{
     public ShortUp(int x, int y) {
-      super(x, y + 32, 48, 0, 160);
+      super(x, y + 32, SHORT_SIZE, 0, 160);
     }
   }
   
@@ -156,7 +159,7 @@ public abstract class PirhanaPlant extends AnimatedHazard{
    */
   public static class TallDown extends Down{
     public TallDown(int x, int y) {
-      super(x, y, 64, 64, 96);
+      super(x, y, TALL_SIZE, 64, 96);
     }
   }
   
@@ -166,7 +169,108 @@ public abstract class PirhanaPlant extends AnimatedHazard{
    */
   public static class ShortDown extends Down{
     public ShortDown(int x, int y) {
-      super(x, y, 48, 64, 160);
+      super(x, y, SHORT_SIZE, 64, 160);
+    }
+  }
+  
+  /**
+   * Abstract class for a plant that moves left or right
+   */
+ static abstract class HorizontalPlant extends PirhanaPlant{
+   final int maxWidth;
+   
+  
+   protected HorizontalPlant(int x, int y, int width, int tileSheetX, int tileSheetY) {
+     super(x, y, width, 32, width, tileSheetX, tileSheetY);
+     
+     maxWidth = width;
+   }
+    
+   @Override
+   public void nextFrame() {
+     offsetY = (offsetY == 0) ? (int)height : 0;
+   }    
+ }
+  
+ /**
+  * Abstract class for a plant that moves right out of a pipe
+  */
+  public abstract static class Right extends HorizontalPlant{
+    final int startingWidth;
+    
+    public Right(int x, int y, int width, int tileSheetX, int tileSheetY) {
+      super(x, y, width, tileSheetX, tileSheetY);
+      
+      startingWidth = width;
+    }
+    
+    @Override
+    public void update(float timeDif_ms) {
+      super.update(timeDif_ms);
+      
+      width = (int)offset;
+      offsetX = (int)(startingWidth - (int)offset);
+    }
+  }
+  
+  /**
+   *  Tall Pirhana plant (red) that moves right out of
+   *  a pipe
+   */
+  public static class TallRight extends Right{
+    public TallRight(int x, int y) {
+      super(x, y, TALL_SIZE, 192, 192);
+    }
+  }
+  
+  /**
+   *  Short Pirhana plant (green) that moves right out of
+   *  a pipe
+   */
+  public static class ShortRight extends Right{
+    public ShortRight(int x, int y) {
+      super(x, y, SHORT_SIZE, 144, 192);
+    }
+  }
+  
+  /**
+   * Abstract class for a plant that moves left out of a pipe
+   */
+  public static class Left extends HorizontalPlant{
+    final int startingX;
+    
+    public Left(int x, int y, int width, int tileSheetX, int tileSheetY) {
+      super(x + Tile.SIZE, y, width, tileSheetX, tileSheetY);
+      
+      startingX = x + Tile.SIZE;
+    }
+    
+   
+    @Override
+    public void update(float timeDif_ms) {
+      super.update(timeDif_ms);
+      x = startingX - (int)offset;
+      width = (int)offset;
+    }
+  }
+  
+  /**
+   *  Tall Pirhana plant (red) that moves left out of
+   *  a pipe
+   */
+  public static class TallLeft extends Left{
+    public TallLeft(int x, int y) {
+      super(x, y, TALL_SIZE, 192, 128);
+    }
+  }
+  
+  /**
+   *  Short Pirhana plant (green) that moves left out of
+   *  a pipe
+   */
+  public static class ShortLeft extends Left{
+    public ShortLeft(int x, int y) {
+      super(x, y, SHORT_SIZE, 144, 128);
     }
   }
 }
