@@ -7,6 +7,7 @@ import java.util.List;
 
 import smw.Game;
 import smw.menu.MenuInput.Action;
+import smw.menu.MenuItem.ItemType;
 
 public class TitleMenu extends Menu {
   
@@ -25,6 +26,10 @@ public class TitleMenu extends Menu {
   private Action lastAction;
     
   public TitleMenu() {
+    
+    playerSettings[0] = 1;
+    playerSettings[1] = 1;
+    
     ArrayList<MenuItem> optionRow = new ArrayList<MenuItem>();
     optionRow.add(new MenuItem(ItemType.PIPE_GREEN, "Start", 310, 120, 210, false));
     optionRow.add(new MenuItem(ItemType.PIPE_GRAY, "Go!", 80, 440, 210, false));
@@ -32,7 +37,10 @@ public class TitleMenu extends Menu {
     
     optionRow = new ArrayList<MenuItem>();
     optionRow.add(new MenuItem(ItemType.PLAYER_SELECT, "Players", 400, 120, 250, false));
-    // TODO - add player select buttons
+    optionRow.add(new MenuItem(ItemType.PLAYER_SELECT_BUTTON, "", 32, 286, 250 + 16, false, 1));
+    optionRow.add(new MenuItem(ItemType.PLAYER_SELECT_BUTTON, "", 32, 286 + 60, 250 + 16, false, 2));
+    optionRow.add(new MenuItem(ItemType.PLAYER_SELECT_BUTTON, "", 32, 286 + 120, 250 + 16, false, 3));
+    optionRow.add(new MenuItem(ItemType.PLAYER_SELECT_BUTTON, "", 32, 286 + 180, 250 + 16, false, 4));
     menuItems.add(optionRow);
     
     optionRow = new ArrayList<MenuItem>();

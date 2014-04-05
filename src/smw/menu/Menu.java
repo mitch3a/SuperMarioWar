@@ -13,29 +13,7 @@ import smw.gfx.Palette;
 
 /** Base menu class for all menus in game. */
 public abstract class Menu {
-  
-  /** Defines the type of menu items. */
-  public enum ItemType {PIPE_GREEN, PIPE_GRAY, PLAYER_SELECT};
-  
-  /** Encapsulates all data needed for a menu item. */
-  final class MenuItem {
-    public ItemType type;
-    public String label;
-    public int length;
-    public int x;
-    public int y;
-    public boolean centerText;
-
-    public MenuItem(ItemType type, String label, int length, int x, int y, boolean centerText) {
-      this.type = type;
-      this.label = label;
-      this.length = length;
-      this.x = x;
-      this.y = y;
-      this.centerText = centerText;
-    }
-  }
-  
+    
   public static MenuInput input = new MenuInput();
   
   private static final int PIPE_TILE_SIZE = 32;
@@ -60,10 +38,17 @@ public abstract class Menu {
   /** Select field images to be indexed by: left/middle/right, selected or not. */
   private BufferedImage selectField[][] = new BufferedImage[3][2];
   
+  private BufferedImage playerSelectIcons[] = new BufferedImage[3];
+  
+  private BufferedImage playerSelectAnimation[] = new BufferedImage[4];
+  
   /** Blue field images, to be index by: left/middle/right. */
   private BufferedImage blueField[] = new BufferedImage[3];
   
   protected BufferedImage titleImg;
+  
+  //TODO - should be using Mitch's settings probably
+  protected static int playerSettings[] = new int[4];
   
   /** Constructor to read in all of the needed image files to create menus. */
   Menu() {
@@ -122,6 +107,14 @@ public abstract class Menu {
         selectField[RIGHT_INDEX][i] = playerSelect.getSubimage(32 * 15 + 16, y, 16, 64);
       }
       
+      for (int i = 0; i < 3; i++) {
+        playerSelectIcons[i] = playerSelect.getSubimage(i * 34 + 32, 206, 34, 32);
+      }
+      
+      for (int i = 0; i < 4; i++) {
+        playerSelectAnimation[i] = playerSelect.getSubimage(i * 75 + 36, 132, 75, 75); 
+      }
+      
       // Store the plain blue field image.
       tempImg = ImageIO.read(this.getClass().getClassLoader().getResource("menu/menu_plain_field.png"));
       BufferedImage plainFieldImg = new BufferedImage(tempImg.getWidth(), tempImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -130,8 +123,6 @@ public abstract class Menu {
       blueField[LEFT_INDEX] = plainFieldImg.getSubimage(0, 0, 32, 32);
       blueField[MID_INDEX] = plainFieldImg.getSubimage(32, 0, 32, 32);
       blueField[RIGHT_INDEX] = plainFieldImg.getSubimage(480, 0, 32, 32);
-      
-      // TODO - get and store player, bot, none icons, also small menu text for font..., selection animations
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -176,9 +167,26 @@ public abstract class Menu {
     case PLAYER_SELECT:
       drawPlayerSelectField(g, m.label, m.x, m.y, selected);
       break;
+      case PLAYER_SELECT_BUTTON:
+        drawPlayerSelectButton(g, m, selected);
+        break;
+      default:
+        break;
     }
   }
-  
+
+  /**
+   * Draw the player select button.
+   * @param g
+   * @param x
+   * @param y
+   * @param selected
+   */
+  private void drawPlayerSelectButton(Graphics2D g, MenuItem m, boolean selected) {
+    // TODO - get setting for player type and display based on that (empty, player, bot)
+    g.drawImage(playerSelectIcons[playerSettings[m.data - 1]], m.x, m.y, null);
+  }
+
   /**
    * Draw the blue field.
    * @param g
