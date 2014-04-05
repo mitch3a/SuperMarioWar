@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 import smw.entity.Player;
-import smw.gfx.Sprite;
 import smw.world.MovingPlatform.EllipticalPath;
 
 public class FireBallPole extends AnimatedHazard{

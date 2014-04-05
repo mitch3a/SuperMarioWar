@@ -3,7 +3,6 @@ package smw;
 import java.awt.geom.Rectangle2D;
 
 import smw.entity.Player;
-import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
 import smw.world.Tile;
 import smw.world.warps.WarpBase.Direction;
@@ -11,9 +10,7 @@ import smw.world.warps.WarpBase.Direction;
 //TODO mk as other objects are implemented, might want to replace Player with something generic
 //     ALSO this should probably be an abstract type
 public abstract class Collidable extends Rectangle2D.Float{
-  /**
-   * 
-   */
+
   private static final long serialVersionUID = -8638553429127344457L;
 
   //TODO mk i hate this enough to leave it as is to draw attention to itself for being awful

@@ -19,7 +19,6 @@ import smw.Collidable;
 import smw.Drawable;
 import smw.Updatable;
 import smw.entity.Player;
-import smw.gfx.Sprite;
 import smw.settings.Debug;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingPlatform.MovingPlatform;

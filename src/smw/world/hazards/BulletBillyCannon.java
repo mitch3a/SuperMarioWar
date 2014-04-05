@@ -7,9 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import smw.entity.Player;
-import smw.entity.PlayerPhysics;
 import smw.entity.PlayerPhysics.PhysicsValues;
-import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingCollidable;
 
@@ -109,6 +107,7 @@ public class BulletBillyCannon implements MovingCollidable{
   }
   
   private class BulletBilly extends AnimatedHazard{
+    private static final long serialVersionUID = 8512498504105585302L;
     static final float STARTING_FALLING_VELOCITY = -.25f;
     static final float GRAVITY = PhysicsValues.GRAVITY/16.0f;
     boolean dead = false;

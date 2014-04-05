@@ -5,10 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 import smw.Collidable;
-import smw.Drawable;
-import smw.Updatable;
 import smw.entity.Player;
-import smw.gfx.Sprite;
 import smw.world.MovingCollidable;
 import smw.world.TileSheet;
 import smw.world.TileSheetManager;

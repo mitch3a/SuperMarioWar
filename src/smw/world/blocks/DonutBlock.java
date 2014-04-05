@@ -4,15 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 
 import smw.Game;
-import smw.Updatable;
 import smw.entity.Player;
-import smw.gfx.Sprite;
 import smw.ui.screen.GameFrame;
 import smw.world.MovingCollidable;
 import smw.world.Tile;
 import smw.world.MovingPlatform.StraightSegmentPath;
 
 public class DonutBlock extends SolidBlock implements MovingCollidable{
+  private static final long serialVersionUID = -305938104261084208L;
   public boolean isFalling;
   boolean playerOnTop;
   float playerOnTopTime;

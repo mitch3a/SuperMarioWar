@@ -1,7 +1,6 @@
 package smw.world.hazards;
 
 import smw.entity.Player;
-import smw.gfx.Sprite;
 
 public class FireBall extends AnimatedHazard{
   
